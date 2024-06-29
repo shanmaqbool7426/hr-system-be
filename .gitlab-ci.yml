@@ -6,7 +6,7 @@ deploy_dev-api:
     - zaffretech
   script:
     - cd /root/dev/be
-    - npm i -f
+    - sudo npm i -f
     - pm2 restart devapi
   only:
     - development
