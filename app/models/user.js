@@ -1,0 +1,87 @@
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+
+module.exports = mongoose.model("user", new Schema({
+    email: { type: String, required: true },
+    firstName: { type: String },
+    lastName: { type: String },
+    password: { type: String },
+    avatar: { type: String },
+
+    cnic: { type: String },
+    fatherName: { type: String },
+    fatherCnic: { type: String },
+    dateOfBirth: { type: Date },
+    contact: { type: String },
+    employeeCode: { type: String },
+    passportNumber: { type: String },
+
+
+    nationality: { type: String },
+    religion: { type: String },
+    emailVerifiedAt: { type: Date },
+    joiningDate: { type: Date },
+    canLogin: { type: Boolean, default: false },
+    lineManager: { type: mongoose.Types.ObjectId, ref: 'user' },
+    mobileAttendance: { type: Boolean, default: false },
+    webAttendance: { type: Boolean, default: false },
+    role: { type: mongoose.Types.ObjectId, ref: 'role' },
+
+    department: { type: mongoose.Types.ObjectId, ref: 'department' },
+    company: { type: mongoose.Types.ObjectId, ref: 'company' },
+    devices: [{ type: mongoose.Types.ObjectId, ref: 'userdevice' }],
+    cnicIssueDate: { type: Date },
+    cnicExpiryDate: { type: Date },
+    EOBI: { type: String },
+    SSA: { type: String },
+    address: { type: String },
+
+    maritalStatus: { type: mongoose.Types.ObjectId, ref: 'custom_field' },
+    workMode: { type: mongoose.Types.ObjectId, ref: 'custom_field' },
+    designation: { type: mongoose.Types.ObjectId, ref: 'custom_field' },
+    gender: { type: mongoose.Types.ObjectId, ref: 'custom_field' },
+    status: { type: mongoose.Types.ObjectId, ref: 'custom_field' },
+    grade: { type: mongoose.Types.ObjectId, ref: 'custom_field' },
+    station: { type: mongoose.Types.ObjectId, ref: 'custom_field' },
+
+    emergencyContact: {
+        fullname: { type: String },
+        relation: { type: String },
+        contact1: { type: String },
+        contact2: { type: String },
+    },
+    nextOfKin: {
+        fullname: { type: String },
+        relation: { type: String },
+        contact: { type: String },
+        cnic: { type: String },
+    },
+    reference1: {
+        fullname: { type: String },
+        position: { type: String },
+        contact: { type: String },
+        cnic: { type: String },
+        organization: { type: String },
+        workContact: { type: String },
+    },
+    reference2: {
+        fullname: { type: String },
+        position: { type: String },
+        contact: { type: String },
+        cnic: { type: String },
+        organization: { type: String },
+        workContact: { type: String },
+    },
+    bankDetails: {
+        accountNumber: { type: String },
+        IBAN: { type: String },
+        accountTitle: { type: String },
+        bankName: { type: String },
+        branch: { type: String },
+        branchCode: { type: String },
+    },
+    academicsHistory: [{ type: mongoose.Types.ObjectId, ref: 'user_acadamic' }],
+    jobExperiences: [{ type: mongoose.Types.ObjectId, ref: 'user_job_experience' }],
+}, {
+    timestamps: true,
+}));
