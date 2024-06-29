@@ -1,0 +1,12 @@
+stages:
+  - deploy
+deploy_dev-api:
+  stage: deploy
+  tags:
+    - zaffretech
+  script:
+    - cd /root/dev/be
+    - sudo npm i -f
+    - sudo pm2 restart devapi
+  only:
+    - development
