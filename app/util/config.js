@@ -13,6 +13,6 @@ module.exports.MAILER_SENDER = process.env.MAILER_SENDER
 module.exports.USER_FIELDS = "_id firstName lastName email avatar role company";
 module.exports.whitelist = [
     "https://zaffretech.co",
-    new RegExp(`^https?://[a-z0-9]+\\.${zaffretech.co}$`),
+    "https://dev.zaffretech.co",
     "http://localhost:3000"
 ]
