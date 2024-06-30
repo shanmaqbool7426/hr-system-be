@@ -6,7 +6,7 @@ deploy_dev-api:
     - zaffretech
   script:
     - cp .env.dev .env
-    - sudo npm i -f
+    - npm i -f
     - pm2 restart devapi
   only:
     - development
