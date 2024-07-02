@@ -1,5 +1,6 @@
 const { Response, BadRequest, serverError } = require('../../util/helpers')
 const BiometricDevice = require('../../models/biometric_device')
+const service = require('./service')
 class BiometricController {
     async list(req, res) {
         try {
@@ -58,7 +59,8 @@ class BiometricController {
                 return BadRequest(res, 'deviceNotFound')
             }
 
-            
+            service.syncAttendanceFromZKT(exists.ipAddress, exists.port, user.company._id)
+
             return Response(res)
         } catch (error) {
             return serverError(res, error)
