@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 module.exports = mongoose.model("attendance", new Schema({
+    date: { type: String },
     checkInAt: { type: Date },
     checkOutAt: { type: Date },
     company: { type: mongoose.Types.ObjectId, ref: 'company' },
