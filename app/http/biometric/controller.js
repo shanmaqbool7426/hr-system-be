@@ -59,7 +59,7 @@ class BiometricController {
                 return BadRequest(res, 'deviceNotFound')
             }
 
-            service.syncAttendanceFromZKT(exists.ipAddress, exists.port, user.company._id)
+            await service.syncAttendanceFromZKT(exists.ipAddress, exists.port, user.company._id)
 
             return Response(res)
         } catch (error) {

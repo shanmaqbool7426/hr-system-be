@@ -49,8 +49,9 @@ class BiometricService {
                         }
                     }
                 }
-                return resolve()
+                return resolve("Done")
             } catch (error) {
+                console.error("Error is attendance sync: ", error)
                 return reject(error)
             }
         })
