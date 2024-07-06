@@ -7,7 +7,7 @@ class BiometricService {
     async syncAttendanceFromZKT(ip, port, company) {
         return new Promise(async (resolve, reject) => {
             try {
-                const zkt = new ZKJUBAER(ip, port, 5200, process.env.PORT);
+                const zkt = new ZKJUBAER(ip, port, 5200, 5000);
                 await zkt.createSocket()
                 let logs = await zkt.getAttendances()
                 await zkt.disconnect()
@@ -49,7 +49,7 @@ class BiometricService {
                         }
                     }
                 }
-                return resolve("Done")
+                return resolve(true)
             } catch (error) {
                 console.error("Error is attendance sync: ", error)
                 return reject(error)
