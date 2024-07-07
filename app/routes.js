@@ -11,6 +11,9 @@ router.use('/employees', require('./http/employee/routes'))
 router.use('/files', require('./http/files/routes'))
 router.use('/leaves', require('./http/leave/routes'))
 router.use('/leave-requests', require('./http/leave-request/routes'))
+router.use('/projects', require('./http/projects/routes'))
 router.use('/roles', require('./http/role/routes'))
+router.use('/task-boards', require('./http/task-boards/routes'))
+router.use('/tasks', require('./http/tasks/routes'))
 
 module.exports = router;
