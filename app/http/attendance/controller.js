@@ -19,7 +19,9 @@ class AttendanceController {
     }
     async list(req, res) {
         try {
-            return Response(res, {})
+            const { user } = req.payload
+            const list = await Attendance.find({ company: user.company, }).populate('user')
+            return Response(res, { list })
         } catch (error) {
             return serverError(res, error)
         }

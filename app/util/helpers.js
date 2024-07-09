@@ -31,7 +31,8 @@ module.exports.serverError = function (res, error) {
     if (DEBUG === true) {
         console.error(error);
         data = error
-        message = error.message
+        if (error.message)
+            message = error.message
     }
     return res.status(500).json({ data, message })
 }
