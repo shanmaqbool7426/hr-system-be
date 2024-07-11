@@ -14,5 +14,6 @@ module.exports.USER_FIELDS = "_id firstName lastName email avatar role company";
 module.exports.whitelist = [
     "https://zaffretech.co",
     "https://dev.zaffretech.co",
+    "https://demo.zaffretech.co",
     "http://localhost:3000"
 ]
