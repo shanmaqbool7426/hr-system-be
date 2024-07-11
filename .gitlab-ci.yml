@@ -3,7 +3,7 @@ stages:
 deploy_dev-api:
   stage: deploy
   tags:
-    - zaffretech
+    - zaffre
   script:
     - cp .env.dev .env
     - npm i -f
