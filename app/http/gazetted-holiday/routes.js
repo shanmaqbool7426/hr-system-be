@@ -1,12 +1,16 @@
 const express = require("express");
 const router = express.Router();
-
+const validations = require("./validations");
 const { verifyToken } = require("../../middlewares");
-const holidayController = require("./controller");
+const controller = require("./controller");
 
-router.get("/list", [verifyToken], holidayController.list);
-router.post("/create", [verifyToken], holidayController.create);
-router.patch("/update/:id", [verifyToken], holidayController.update);
-router.delete("/delete/:id", [verifyToken], holidayController.delete);
+router.get("/list", [verifyToken], controller.list);
+router.post("/create", [verifyToken, validations.create], controller.create);
+router.patch(
+  "/update/:id",
+  [verifyToken, validations.create],
+  controller.update
+);
+router.delete("/delete/:id", [verifyToken], controller.delete);
 
 module.exports = router;
