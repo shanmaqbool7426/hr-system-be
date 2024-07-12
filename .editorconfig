@@ -1,0 +1,36 @@
+# EditorConfig helps developers define and maintain consistent
+# coding styles between different editors and IDEs.
+# editorconfig.org
+
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+# Set default charset
+charset = utf-8
+
+# 2 space indentation for .js, .json, .css, .html, .md, and .yml files
+[*.{js,json,css,html,md,yml}]
+indent_style = space
+indent_size = 2
+
+# 4 space indentation for .json files
+[*.json]
+indent_size = 4
+
+# Match specific files
+[*.md]
+trim_trailing_whitespace = false
+
+# Ensure soft wrapping for readability
+[*.{js,jsx,ts,tsx,html,css}]
+max_line_length = 120
+
+# Specific rules for JavaScript files
+[*.{js,jsx}]
+quote_type = double
+
+# Add additional configurations as needed
