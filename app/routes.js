@@ -15,6 +15,7 @@ router.use("/leave-requests", require("./http/leave-request/routes"));
 router.use("/projects", require("./http/projects/routes"));
 router.use("/roles", require("./http/role/routes"));
 router.use("/shift-flag", require("./http/shift-flag/routes"));
+router.use("/shift-plan", require("./http/shift-plan/routes"));
 router.use("/task-boards", require("./http/task-boards/routes"));
 router.use("/tasks", require("./http/tasks/routes"));
 
