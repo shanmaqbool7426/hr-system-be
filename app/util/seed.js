@@ -36,6 +36,14 @@ const custom_fields = [
     { name: 'On Site', type: 'work_mode' },
     { name: 'Hybrid', type: 'work_mode' },
     { name: 'Remote', type: 'work_mode' },
+    { name: 'Pakistan', type: 'country' },
+    { name: 'Lahore', type: 'city' },
+    { name: 'DHA', type: 'area' },
+    { name: 'DHA Lahore', type: 'station' },
+    { name: 'Punjab', type: 'province' },
+    { name: 'A', type: 'grade' },
+    { name: 'B', type: 'grade' },
+    { name: 'C', type: 'grade' },
 ]
 
 
