@@ -8,39 +8,36 @@ module.exports = {
         title: Joi.string().required().messages({
           "any.required": "titleRequired",
         }),
-        date: Joi.date().required().messages({
-          "any.required": "dateRequired",
+        fromDate: Joi.date().required().messages({
+          "any.required": "fromDateRequired",
         }),
-        country: Joi.string().required().messages({
+        toDate: Joi.date().required().messages({
+          "any.required": "toDateRequired",
+        }),
+        countries: Joi.array().required().messages({
           "any.required": "countryRequired",
         }),
-        province: Joi.string().required().messages({
+        provinces: Joi.array().required().messages({
           "any.required": "provinceRequired",
         }),
-        city: Joi.string().required().messages({
+        cities: Joi.array().required().messages({
           "any.required": "cityRequired",
         }),
-        area: Joi.string().required().messages({
+        areas: Joi.array().required().messages({
           "any.required": "areaRequired",
         }),
-        station: Joi.string().required().messages({
+        stations: Joi.array().required().messages({
           "any.required": "stationRequired",
         }),
-        grade: Joi.string().required().messages({
+        grades: Joi.array().required().messages({
           "any.required": "gradeRequired",
         }),
-        exemptedEmployees: Joi.array().required().messages({
-          "any.required": "exemptedEmployeesRequired",
-        }),
+        exemptedEmployees: Joi.array().optional().allow(null),
         description: Joi.string().required().messages({
           "any.required": "descriptionRequired",
         }),
-        sendEmail: Joi.boolean().required().messages({
-          "any.required": "sendEmailRequired",
-        }),
-        recursive: Joi.boolean().required().messages({
-          "any.required": "recursiveRequired",
-        }),
+        sendEmail: Joi.boolean().optional().allow("", null),
+        recursive: Joi.boolean().optional().allow("", null),
       }).validateAsync(req.body);
       next();
     } catch (error) {
