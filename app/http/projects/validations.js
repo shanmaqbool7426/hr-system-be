@@ -1,5 +1,4 @@
 const Joi = require("joi");
-const User = require("../../models/user");
 const { BadRequest } = require('../../util/helpers');
 
 module.exports = {
@@ -12,8 +11,8 @@ module.exports = {
                 client: Joi.string().required().messages({
                     'any.required': "clientRequired",
                 }),
-                priorioty: Joi.string().required().messages({
-                    'any.required': "prioriotyRequired",
+                priority: Joi.string().required().messages({
+                    'any.required': "priorityRequired",
                 }),
                 description: Joi.string().required().messages({
                     'any.required': "descriptionRequired",
@@ -24,40 +23,46 @@ module.exports = {
                 endDate: Joi.date().required().messages({
                     'any.required': "endDateRequired",
                 }),
-                payment: Joi.number().optional().allow("", null),
-                paymentCycle: Joi.string().optional().allow("", null),
+                payment: Joi.number().optional().empty(""),
+                paymentCycle: Joi.string().optional().empty(""),
                 leads: Joi.array().required().messages({
                     'any.required': "leadsRequired",
                 }),
                 members: Joi.array().required().messages({
                     'any.required': "membersRequired",
                 }),
-                attachments: Joi.array().allow(null, []),
+                attachments: Joi.array().optional().empty([]).items(Joi.object({
+                    filename: Joi.string().required(),
+                    file: Joi.binary().required()
+                })),
             }).validateAsync(req.body);
             next();
         } catch (error) {
-            return BadRequest(res, error.message)
+            return BadRequest(res, error.message);
         }
     },
     update: async (req, res, next) => {
         try {
             await Joi.object({
-                name: Joi.string().optional().allow("", null),
-                client: Joi.string().optional().allow("", null),
-                priorioty: Joi.string().optional().allow("", null),
-                description: Joi.string().optional().allow("", null),
-                startDate: Joi.date().optional().allow("", null),
-                endDate: Joi.date().optional().allow("", null),
-                payment: Joi.number().optional().allow("", null),
-                paymentCycle: Joi.string().optional().allow("", null),
-                leads: Joi.array().optional().allow("", null),
-                members: Joi.array().optional().allow("", null),
-                attachments: Joi.array().allow(null, []),
-                status: Joi.string().optional().allow(null, ""),
+                name: Joi.string().optional().empty(""),
+                client: Joi.string().optional().empty(""),
+                priority: Joi.string().optional().empty(""),
+                description: Joi.string().optional().empty(""),
+                startDate: Joi.date().optional().empty(""),
+                endDate: Joi.date().optional().empty(""),
+                payment: Joi.number().optional().empty(""),
+                paymentCycle: Joi.string().optional().empty(""),
+                leads: Joi.array().optional().empty(""),
+                members: Joi.array().optional().empty(""),
+                attachments: Joi.array().optional().empty([]).items(Joi.object({
+                    filename: Joi.string().optional().empty(""),
+                    file: Joi.binary().optional().empty("")
+                })),
+                status: Joi.string().optional().empty(""),
             }).validateAsync(req.body);
             next();
         } catch (error) {
-            return BadRequest(res, error.message)
+            return BadRequest(res, error.message);
         }
     },
-}
+};
