@@ -9,9 +9,9 @@ class ProjectController {
             const { user } = req.payload
             const list = await Project.find({ company: user.company })
                 .populate('boards')
-                .populate('createdBy', "_id firstName lastName avatar email")
-                .populate('leads', "_id firstName lastName avatar email")
-                .populate('members', "_id firstName lastName avatar email")
+                .populate('createdBy', "_id firstName lastName avatar email ")
+                .populate('leads', "_id firstName lastName avatar email ")
+                .populate('members', "_id firstName lastName avatar email ")
             return Response(res, { list })
         } catch (error) {
             return serverError(res, error)
@@ -23,9 +23,9 @@ class ProjectController {
             const { user } = req.payload
             let project = await Project.findOne({ _id: id, deletedAt: null, $or: [{ company: user.company._id }, { company: null }] })
             .populate('boards')
-            .populate('createdBy', "_id firstName lastName avatar email ")
-            .populate('leads', "_id firstName lastName avatar email ")
-            .populate('members', "_id firstName lastName avatar email ")
+            .populate('createdBy', "_id firstName lastName avatar email")
+            .populate('leads', "_id firstName lastName avatar email")
+            .populate('members', "_id firstName lastName avatar email")
 
             return Response(res, { project })
         } catch (error) {
@@ -67,9 +67,9 @@ class ProjectController {
             
             project = await Project.findById(project._id)
                 .populate('boards')
-                .populate('createdBy', "_id firstName lastName avatar email")
-                .populate('leads', "_id firstName lastName avatar email")
-                .populate('members', "_id firstName lastName avatar email")
+                .populate('createdBy', "_id firstName lastName avatar email ")
+                .populate('leads', "_id firstName lastName avatar email ")
+                .populate('members', "_id firstName lastName avatar email ")
               
             return Response(res, { project  })
         } catch (error) {
@@ -103,9 +103,9 @@ class ProjectController {
 
             project = await Project.findById(project._id)
                 .populate('boards')
-                .populate('createdBy', "_id firstName lastName avatar email")
-                .populate('leads', "_id firstName lastName avatar email")
-                .populate('members', "_id firstName lastName avatar email")
+                .populate('createdBy', "_id firstName lastName avatar email ")
+                .populate('leads', "_id firstName lastName avatar email ")
+                .populate('members', "_id firstName lastName avatar email ")
             return Response(res, { project })
         } catch (error) {
             return serverError(res, error)

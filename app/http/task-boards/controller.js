@@ -6,6 +6,7 @@ const {
 } = require("../../util/helpers");
 const TaskBoard = require("../../models/task_board");
 const Project = require("../../models/project");
+const moment = require ("moment")
 class TaskBoardController {
   async list(req, res) {
     try {
@@ -25,6 +26,11 @@ class TaskBoardController {
       const { user } = req.payload;
       const data = req.body;
 
+      const project = await Project.findOne({ _id: data.project, company: user.company });
+
+      if (!project) {
+          return NotFound(res, "Project not found");
+      }
       let board = await TaskBoard.create({
         company: user.company,
         createdBy: user._id,
@@ -33,19 +39,22 @@ class TaskBoardController {
         dueDate: moment(data.dueDate).utc().toISOString(),
         leads: data.leads,
         members: data.members,
+        project:data.project,
       });
-      board = await TaskBoard.findById(project._id)
+      await Project.updateOne(
+        { _id: data.project, company: user.company },
+        {
+          $addToSet: { boards: board._id },
+        }
+      );
+
+      board = await TaskBoard.findById(board._id)
         .populate("project")
         .populate("createdBy", "_id firstName lastName avatar email")
         .populate("leads", "_id firstName lastName avatar email")
         .populate("members", "_id firstName lastName avatar email");
 
-      await Project.updateOne(
-        { _id: data.project, company: user.company },
-        {
-          $set: { $addToSet: { boards: board._id } },
-        }
-      );
+      
       return Response(res, { board });
     } catch (error) {
       return serverError(res, error);
@@ -55,7 +64,7 @@ class TaskBoardController {
     try {
       const { user } = req.payload;
       const data = req.body;
-      const { id } = req.prams;
+      const { id } = req.params;
       let board = await TaskBoard.findOne({
         _id: id,
         company: user.company,
@@ -72,7 +81,7 @@ class TaskBoardController {
       if (data?.status) board.status = data.status;
       await board.save();
 
-      board = await TaskBoard.findById(project._id)
+      board = await TaskBoard.findById(board._id)
         .populate("project")
         .populate("createdBy", "_id firstName lastName avatar email")
         .populate("leads", "_id firstName lastName avatar email")
@@ -85,7 +94,7 @@ class TaskBoardController {
   async delete(req, res) {
     try {
       const { user } = req.payload;
-      const { id } = req.prams;
+      const { id } = req.params;
       let board = await TaskBoard.findOne({
         _id: id,
         company: user.company,
@@ -94,12 +103,15 @@ class TaskBoardController {
         return NotFound(res);
       }
       await TaskBoard.deleteOne({ _id: id });
+      const project = await Project.findOne({ _id: board.project, company: user.company });
+
+      if (project) {
       await Project.updateOne(
         { _id: data.project, company: user.company },
         {
-          $set: { $pull: { boards: board._id } },
+          $pull: { boards: board._id },
         }
-      );
+      )}
       return Response(res);
     } catch (error) {
       return serverError(res, error);
