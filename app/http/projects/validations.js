@@ -23,8 +23,8 @@ module.exports = {
                 endDate: Joi.date().required().messages({
                     'any.required': "endDateRequired",
                 }),
-                payment: Joi.number().optional().allow("", null),
-                paymentCycle: Joi.string().optional().allow("", null),
+                payment: Joi.number().optional().empty(""),
+                paymentCycle: Joi.string().optional().empty(""),
                 leads: Joi.array().required().messages({
                     'any.required': "leadsRequired",
                 }),
@@ -36,7 +36,7 @@ module.exports = {
             }).validateAsync(req.body);
             next();
         } catch (error) {
-            return BadRequest(res, error.message)
+            return BadRequest(res, error.message);
         }
     },
     update: async (req, res, next) => {
@@ -57,7 +57,7 @@ module.exports = {
             }).validateAsync(req.body);
             next();
         } catch (error) {
-            return BadRequest(res, error.message)
+            return BadRequest(res, error.message);
         }
     },
-}
+};
