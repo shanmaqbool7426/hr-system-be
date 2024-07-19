@@ -1,5 +1,4 @@
 const Joi = require("joi");
-const User = require("../../models/user");
 const { BadRequest } = require('../../util/helpers');
 
 module.exports = {
@@ -12,8 +11,8 @@ module.exports = {
                 client: Joi.string().required().messages({
                     'any.required': "clientRequired",
                 }),
-                priorioty: Joi.string().required().messages({
-                    'any.required': "prioriotyRequired",
+                priority: Joi.string().required().messages({
+                    'any.required': "priorityRequired",
                 }),
                 description: Joi.string().required().messages({
                     'any.required': "descriptionRequired",
@@ -32,7 +31,8 @@ module.exports = {
                 members: Joi.array().required().messages({
                     'any.required': "membersRequired",
                 }),
-                attachments: Joi.array().allow(null, []),
+                status: Joi.string().optional().allow(null, ""),
+                attachments: Joi.array().allow(null, ""),
             }).validateAsync(req.body);
             next();
         } catch (error) {
@@ -44,7 +44,7 @@ module.exports = {
             await Joi.object({
                 name: Joi.string().optional().allow("", null),
                 client: Joi.string().optional().allow("", null),
-                priorioty: Joi.string().optional().allow("", null),
+                priority: Joi.string().optional().allow("", null),
                 description: Joi.string().optional().allow("", null),
                 startDate: Joi.date().optional().allow("", null),
                 endDate: Joi.date().optional().allow("", null),
@@ -52,7 +52,7 @@ module.exports = {
                 paymentCycle: Joi.string().optional().allow("", null),
                 leads: Joi.array().optional().allow("", null),
                 members: Joi.array().optional().allow("", null),
-                attachments: Joi.array().allow(null, []),
+                attachments: Joi.array().allow(null, ""),
                 status: Joi.string().optional().allow(null, ""),
             }).validateAsync(req.body);
             next();
