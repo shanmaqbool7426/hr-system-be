@@ -21,6 +21,21 @@ class TaskBoardController {
       return serverError(res, error);
     }
   }
+  async details(req, res) {
+    try {
+        const { id } = req.params
+        const { user } = req.payload
+        let taskboard = await TaskBoard.findOne({  _id: id, deletedAt: null, $or: [{ company: user.company._id }, { company: null }] })
+        .populate('project')
+        .populate('createdBy', "_id firstName lastName avatar email")
+        .populate('leads', "_id firstName lastName avatar email")
+        .populate('members', "_id firstName lastName avatar email")
+
+        return Response(res, { taskboard })
+    } catch (error) {
+        return serverError(res, error)
+    }
+}
   async create(req, res) {
     try {
       const { user } = req.payload;

@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 module.exports = mongoose.model("task", new Schema({
     name: { type: String },
     description: { type: String },
+    subTask:{type:String},
     status: { type: String },
     requiredTime: { type: String },
     dueDate: { type: Date },

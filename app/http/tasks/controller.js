@@ -1,16 +1,18 @@
 const { Response, BadRequest, serverError, NotFound } = require('../../util/helpers')
 const Project = require("../../models/project")
+const TaskBoard = require("../../models/task_board");
 const Task = require("../../models/task")
+const moment = require("moment")
 class TaskController {
 
     async list(req, res) {
         try {
             const { user } = req.payload
-            const list = await Project.find({ company: user.company })
-                .populate('boards')
-                .populate('createdBy', "_id firstName lastName avatar email")
-                .populate('leads', "_id firstName lastName avatar email")
-                .populate('members', "_id firstName lastName avatar email")
+            const list = await Task.find({ company: user.company })
+                .populate('board')
+                // .populate('createdBy', "_id firstName lastName avatar email")
+                // .populate('leads', "_id firstName lastName avatar email")
+                // .populate('members', "_id firstName lastName avatar email")
             return Response(res, { list })
         } catch (error) {
             return serverError(res, error)
@@ -24,6 +26,8 @@ class TaskController {
                 company: user.company,
                 createdBy: user._id,
                 name: data.name,
+                subTask:data.subTask,
+                status: data.status,
                 description: data.description,
                 priority: data.priority,
                 requiredTime: data.requiredTime,
@@ -32,9 +36,19 @@ class TaskController {
                 project: data.project,
                 board: data.board,
             })
+            await TaskBoard.updateOne(
+                { _id: data.board, company: user.company },
+                {
+                    $addToSet: { tasks: task._id },
+                }
+            );
             task = await Task.findById(task._id)
                 .populate('createdBy', "_id firstName lastName avatar email")
                 .populate('assignedTo', "_id firstName lastName avatar email")
+                .populate('project')
+                .populate('board')
+
+
             return Response(res, { task })
         } catch (error) {
             return serverError(res, error)
@@ -44,7 +58,7 @@ class TaskController {
         try {
             const { user } = req.payload
             const data = req.body
-            const { id } = req.prams
+            const { id } = req.params
             let task = await Task.findOne({
                 _id: id, company: user.company
             })
@@ -71,7 +85,7 @@ class TaskController {
     async delete(req, res) {
         try {
             const { user } = req.payload
-            const { id } = req.prams
+            const { id } = req.params
             let task = await Task.findOne({
                 _id: id, company: user.company
             })
