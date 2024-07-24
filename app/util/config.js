@@ -3,6 +3,7 @@ module.exports.DEBUG = Boolean(process.env.DEBUG || false)
 module.exports.MONGO_DB_URI = process.env.MONGO_DB_URI || "mongodb://localhost:27017/zaffre?retryWrites=true&w=majority"
 module.exports.TOKENEXPIRY = process.env.TOKENEXPIRY || '15m'
 module.exports.REFRESHTOKENEXPIRY = process.env.REFRESHTOKENEXPIRY || '18h'
+module.exports.REMOTEEXPIRY = process.env.REMOTEEXPIRY || '7d'
 module.exports.JWT_SECRET = process.env.JWT_SECRET || ''
 module.exports.origin = process.env.ORIGIN || 'localhost'
 module.exports.MAILER_HOST = process.env.MAILER_HOST

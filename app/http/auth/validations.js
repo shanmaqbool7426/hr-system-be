@@ -14,6 +14,7 @@ module.exports = {
                 password: Joi.string().required().messages({
                     'any.required': "passwordRequired"
                 }),
+                is_remote: Joi.boolean().optional().allow(null, ""),
             }).validateAsync(req.body);
             next();
         } catch (error) {
