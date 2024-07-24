@@ -18,4 +18,7 @@ router.use("/shift-flag", require("./http/shift-flag/routes"));
 router.use("/task-boards", require("./http/task-boards/routes"));
 router.use("/tasks", require("./http/tasks/routes"));
 
+
+router.use("/add-new-jobs",require("./http/add-new-jobs/routes"))
+
 module.exports = router;
