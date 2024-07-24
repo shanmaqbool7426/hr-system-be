@@ -1,7 +1,6 @@
 const { Response, BadRequest, serverError, NotFound } = require('../../util/helpers')
 const Project = require("../../models/project")
-const moment = require("moment");
-
+const moment = require("moment")
 class ProjectController {
 
     async list(req, res) {

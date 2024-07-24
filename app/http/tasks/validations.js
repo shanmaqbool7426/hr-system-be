@@ -9,14 +9,12 @@ module.exports = {
                 name: Joi.string().required().messages({
                     'any.required': "nameRequired",
                 }),
-                status: Joi.string().required().messages({
-                    'any.required': "statusRequired",
-                }),
+                parent: Joi.string().optional().allow(null,""),
                 priority: Joi.string().required().messages({
                     'any.required': "priorityRequired",
                 }),
-                subTask: Joi.string().required().messages({
-                    'any.required': "subTaskRequired",
+                status : Joi.string().required().messages({
+                    'any.required': "statusRequired",
                 }),
                 description: Joi.string().required().messages({
                     'any.required': "descriptionRequired",
@@ -26,6 +24,9 @@ module.exports = {
                 }),
                 assignedTo: Joi.string().required().messages({
                     'any.required': "assignedToRequired",
+                }),
+                leader: Joi.string().required().messages({
+                    'any.required': "leaderRequired",
                 }),
                 board: Joi.string().required().messages({
                     'any.required': "boardRequired",
@@ -46,11 +47,13 @@ module.exports = {
         try {
             await Joi.object({
                 name: Joi.string().optional().allow("", null),
+                parent : Joi.string().optional().allow(null, ""),
                 description: Joi.string().optional().allow("", null),
                 priority: Joi.string().optional().allow("", null),
                 requiredTime: Joi.string().optional().allow("", null),
                 dueDate: Joi.date().optional().allow("", null),
                 assignedTo: Joi.array().optional().allow("", null),
+                leader: Joi.array().optional().allow("", null),
                 status: Joi.string().optional().allow(null, ""),
             }).validateAsync(req.body);
             next();
