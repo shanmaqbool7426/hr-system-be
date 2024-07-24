@@ -26,9 +26,6 @@ module.exports = {
                 salaryTo: Joi.number().required().messages({
                     'any.required': "salaryToRequired",
                 }),
-                flagCount: Joi.string().required().messages({
-                    'any.required': "flagCountRequired",
-                }),
                 jobType: Joi.string().valid("Full Time", "Part Time").required().messages({
                     'any.required': "jobTypeRequired",
                     'any.only': "jobTypeInvalid",

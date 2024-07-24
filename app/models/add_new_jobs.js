@@ -31,10 +31,6 @@ const JobSchema = new Schema({
         type: Number,
         required: true
     },
-    flagCount: {
-        type: String,
-        required: true
-    },
     jobType: {
         type: String,
         required: true,
