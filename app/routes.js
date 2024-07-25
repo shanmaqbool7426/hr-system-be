@@ -13,6 +13,7 @@ router.use("/gazette-holidays", require("./http/gazetted-holiday/routes"));
 router.use("/leaves", require("./http/leave/routes"));
 router.use("/leave-requests", require("./http/leave-request/routes"));
 router.use("/projects", require("./http/projects/routes"));
+router.use("/remote", require("./http/remote/routes"));
 router.use("/roles", require("./http/role/routes"));
 router.use("/shift-flag", require("./http/shift-flag/routes"));
 router.use("/shift-plan", require("./http/shift-plan/routes"));
