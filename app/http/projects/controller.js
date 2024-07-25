@@ -133,7 +133,9 @@ class ProjectController {
             if (!project) {
                 return NotFound(res)
             }
-            await Project.deleteOne({ _id: id })
+          
+             await TaskBoard.deleteMany({ project: id });
+             await Project.deleteOne({ _id: id });
             return Response(res)
         } catch (error) {
             return serverError(res, error)

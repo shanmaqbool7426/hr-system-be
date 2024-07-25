@@ -24,6 +24,26 @@ class TaskController {
             return serverError(res, error)
         }
     }
+    async overDueTasksList(req, res) {
+        try {
+            const { user } = req.payload;
+            const query = { 
+                company: user.company, 
+                dueDate: { $lt: moment().utc().toISOString() } 
+            };
+            const list = await Task.find(query)
+                .populate('board')
+                .populate('project')
+                .populate('createdBy', "_id firstName lastName avatar email")
+                .populate('assignedTo', "_id firstName lastName avatar email")
+                .populate('leader', "_id firstName lastName avatar email");
+            
+            return Response(res, { list });
+        }catch (error) {
+            return serverError(res, error);
+        }
+    }
+
     async details(req, res) {
         try {
             const { id } = req.params
