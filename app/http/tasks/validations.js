@@ -22,10 +22,10 @@ module.exports = {
                 requiredTime: Joi.string().required().messages({
                     'any.required': "requiredTimeRequired",
                 }),
-                assignedTo: Joi.string().required().messages({
+                assignedTo: Joi.array().required().messages({
                     'any.required': "assignedToRequired",
                 }),
-                leader: Joi.string().required().messages({
+                leader: Joi.array().required().messages({
                     'any.required': "leaderRequired",
                 }),
                 board: Joi.string().required().messages({
@@ -55,6 +55,8 @@ module.exports = {
                 assignedTo: Joi.array().optional().allow("", null),
                 leader: Joi.array().optional().allow("", null),
                 status: Joi.string().optional().allow(null, ""),
+                board: Joi.string().optional().allow(null, ""),
+                project :Joi.string().optional().allow(null, ""),
             }).validateAsync(req.body);
             next();
         } catch (error) {

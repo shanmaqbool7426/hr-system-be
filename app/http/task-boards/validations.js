@@ -39,6 +39,7 @@ module.exports = {
                 leads: Joi.array().optional().allow("", null),
                 members: Joi.array().optional().allow("", null),
                 status: Joi.string().optional().allow(null, ""),
+                project: Joi.string().optional().allow(null, ""),
             }).validateAsync(req.body);
             next();
         } catch (error) {

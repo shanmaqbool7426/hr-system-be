@@ -111,6 +111,8 @@ class TaskController {
             await task.save()
 
             task = await Task.findById(task._id)
+                .populate('board')
+                .populate('project')
                 .populate('createdBy', "_id firstName lastName avatar email")
                 .populate('assignedTo', "_id firstName lastName avatar email")
                 .populate('leader', "_id firstName lastName avatar email")

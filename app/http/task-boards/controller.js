@@ -11,7 +11,13 @@ class TaskBoardController {
   async list(req, res) {
     try {
       const { user } = req.payload;
-      const list = await TaskBoard.find({ company: user.company })
+      const {project_id} = req.params
+      const query = { company: user.company };
+    
+      if (project_id) {
+        query.project = project_id;
+      }
+      const list = await TaskBoard.find(query)
         .populate("project")
         .populate("createdBy", "_id firstName lastName avatar email")
         .populate("leads", "_id firstName lastName avatar email")
@@ -25,13 +31,13 @@ class TaskBoardController {
     try {
         const { id } = req.params
         const { user } = req.payload
-        let taskboard = await TaskBoard.findOne({  _id: id, deletedAt: null, $or: [{ company: user.company._id }, { company: null }] })
+        let board = await TaskBoard.findOne({  _id: id, deletedAt: null, $or: [{ company: user.company._id }, { company: null }] })
         .populate('project')
         .populate('createdBy', "_id firstName lastName avatar email")
         .populate('leads', "_id firstName lastName avatar email")
         .populate('members', "_id firstName lastName avatar email")
 
-        return Response(res, { taskboard })
+        return Response(res, { board })
     } catch (error) {
         return serverError(res, error)
     }
@@ -57,7 +63,7 @@ class TaskBoardController {
         project:data.project,
       });
       await Project.updateOne(
-        { _id: data.project, company: user.company },
+        { _id: board.project, company: user.company },
         {
           $addToSet: { boards: board._id },
         }
@@ -122,7 +128,7 @@ class TaskBoardController {
 
       if (project) {
       await Project.updateOne(
-        { _id: data.project, company: user.company },
+        { _id: board.project, company: user.company },
         {
           $pull: { boards: board._id },
         }

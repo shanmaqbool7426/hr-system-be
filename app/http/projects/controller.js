@@ -1,5 +1,6 @@
 const { Response, BadRequest, serverError, NotFound } = require('../../util/helpers')
 const Project = require("../../models/project")
+const TaskBoard = require("../../models/task_board");
 const moment = require("moment")
 class ProjectController {
 
@@ -99,6 +100,18 @@ class ProjectController {
             if (data?.attachments) project.attachments = data.attachments
             if (data?.status) project.status = data.status
             await project.save()
+
+            if (data?.leads || data?.members) {
+                await TaskBoard.updateMany(
+                    { project: id },
+                    {
+                        $set: {
+                            leads: data.leads || project.leads,
+                            members: data.members || project.members,
+                        }
+                    }
+                );
+            }
 
             project = await Project.findById(project._id)
                 .populate('boards')
