@@ -9,8 +9,12 @@ module.exports = {
                 name: Joi.string().required().messages({
                     'any.required': "nameRequired",
                 }),
-                priorioty: Joi.string().required().messages({
-                    'any.required': "prioriotyRequired",
+                parent: Joi.string().optional().allow(null,""),
+                priority: Joi.string().required().messages({
+                    'any.required': "priorityRequired",
+                }),
+                status : Joi.string().required().messages({
+                    'any.required': "statusRequired",
                 }),
                 description: Joi.string().required().messages({
                     'any.required': "descriptionRequired",
@@ -18,8 +22,11 @@ module.exports = {
                 requiredTime: Joi.string().required().messages({
                     'any.required': "requiredTimeRequired",
                 }),
-                assignedTo: Joi.string().required().messages({
+                assignedTo: Joi.array().required().messages({
                     'any.required': "assignedToRequired",
+                }),
+                leader: Joi.array().required().messages({
+                    'any.required': "leaderRequired",
                 }),
                 board: Joi.string().required().messages({
                     'any.required': "boardRequired",
@@ -40,12 +47,16 @@ module.exports = {
         try {
             await Joi.object({
                 name: Joi.string().optional().allow("", null),
+                parent : Joi.string().optional().allow(null, ""),
                 description: Joi.string().optional().allow("", null),
-                priorioty: Joi.string().optional().allow("", null),
+                priority: Joi.string().optional().allow("", null),
                 requiredTime: Joi.string().optional().allow("", null),
                 dueDate: Joi.date().optional().allow("", null),
-                assignedTo: Joi.array().optional().allow("", null),
+                assignedTo: Joi.array().optional().empty(""),
+                leader: Joi.array().optional().empty(""),
                 status: Joi.string().optional().allow(null, ""),
+                board: Joi.string().optional().allow(null, ""),
+                project :Joi.string().optional().allow(null, ""),
             }).validateAsync(req.body);
             next();
         } catch (error) {

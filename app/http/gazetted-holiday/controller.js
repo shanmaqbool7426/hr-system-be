@@ -1,6 +1,6 @@
 const { Response, BadRequest, serverError } = require("../../util/helpers");
 const Holiday = require("../../models/gazetted_holiday");
-const moment = require('moment')
+const moment = require("moment");
 class GazettedHolidayController {
   async list(req, res) {
     try {
@@ -35,7 +35,7 @@ class GazettedHolidayController {
         modifiedBy: user._id,
       };
       if (data?.sendEmail) {
-        // TODO : notify all the relevent employees 
+        // TODO : notify all the relevent employees
       }
 
       let holiday = await Holiday.create(insert);
@@ -61,23 +61,25 @@ class GazettedHolidayController {
       if (!holiday) {
         return BadRequest(res, "notFound");
       }
-      
+
       if (data?.title) holiday.title = data.title;
-      if (data?.fromDate) holiday.fromDate = moment(data.fromDate).utc().format();
+      if (data?.fromDate)
+        holiday.fromDate = moment(data.fromDate).utc().format();
       if (data?.toDate) holiday.toDate = moment(data.toDate).utc().format();
       if (data?.countries) holiday.countries = data.countries;
       if (data?.provinces) holiday.provinces = data.provinces;
-      if (data?.citeis) holiday.citeis = data.citeis;
+      if (data?.cities) holiday.cities = data.cities;
       if (data?.areas) holiday.areas = data.areas;
       if (data?.stations) holiday.stations = data.stations;
       if (data?.grades) holiday.grades = data.grades;
-      if (data?.exemptedEmployees) holiday.exemptedEmployees = data.exemptedEmployees;
+      if (data?.exemptedEmployees)
+        holiday.exemptedEmployees = data.exemptedEmployees;
 
       if (data?.description) holiday.description = data.description;
       if (data?.recursive) holiday.recursive = data.recursive;
 
       if (data?.sendEmail) {
-        // TODO : notify all the relevent employees 
+        // TODO : notify all the relevent employees
       }
       await holiday.save();
       holiday = await Holiday.findById(holiday._id).populate(

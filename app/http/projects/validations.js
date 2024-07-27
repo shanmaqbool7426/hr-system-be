@@ -31,10 +31,8 @@ module.exports = {
                 members: Joi.array().required().messages({
                     'any.required': "membersRequired",
                 }),
-                attachments: Joi.array().optional().empty([]).items(Joi.object({
-                    filename: Joi.string().required(),
-                    file: Joi.binary().required()
-                })),
+                status: Joi.string().optional().allow(null, ""),
+                // attachments: Joi.array().allow(null, ""),
             }).validateAsync(req.body);
             next();
         } catch (error) {
@@ -54,10 +52,10 @@ module.exports = {
                 paymentCycle: Joi.string().optional().empty(""),
                 leads: Joi.array().optional().empty(""),
                 members: Joi.array().optional().empty(""),
-                attachments: Joi.array().optional().empty([]).items(Joi.object({
-                    filename: Joi.string().optional().empty(""),
-                    file: Joi.binary().optional().empty("")
-                })),
+                // attachments: Joi.array().optional().empty([]).items(Joi.object({
+                //     filename: Joi.string().optional().empty(""),
+                //     file: Joi.binary().optional().empty("")
+                // })),
                 status: Joi.string().optional().empty(""),
             }).validateAsync(req.body);
             next();
@@ -65,4 +63,5 @@ module.exports = {
             return BadRequest(res, error.message);
         }
     },
+
 };

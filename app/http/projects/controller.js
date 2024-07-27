@@ -1,5 +1,7 @@
 const { Response, BadRequest, serverError, NotFound } = require('../../util/helpers')
 const Project = require("../../models/project")
+const TaskBoard = require("../../models/task_board");
+const moment = require("moment")
 class ProjectController {
 
     async list(req, res) {
@@ -7,10 +9,25 @@ class ProjectController {
             const { user } = req.payload
             const list = await Project.find({ company: user.company })
                 .populate('boards')
-                .populate('createdBy', "_id firstName lastName avatar email")
-                .populate('leads', "_id firstName lastName avatar email")
-                .populate('members', "_id firstName lastName avatar email")
+                .populate('createdBy', "_id firstName lastName avatar email ")
+                .populate('leads', "_id firstName lastName avatar email ")
+                .populate('members', "_id firstName lastName avatar email ")
             return Response(res, { list })
+        } catch (error) {
+            return serverError(res, error)
+        }
+    }
+    async details(req, res) {
+        try {
+            const { id } = req.params
+            const { user } = req.payload
+            let project = await Project.findOne({ _id: id, deletedAt: null, $or: [{ company: user.company._id }, { company: null }] })
+            .populate('boards')
+            .populate('createdBy', "_id firstName lastName avatar email")
+            .populate('leads', "_id firstName lastName avatar email")
+            .populate('members', "_id firstName lastName avatar email")
+
+            return Response(res, { project })
         } catch (error) {
             return serverError(res, error)
         }
@@ -19,9 +36,21 @@ class ProjectController {
         try {
             const { user } = req.payload
             const data = req.body
+
+            const prefix = "PJT";
+            let projectId = `${prefix}-001`;
+            const exists = await Project.findOne({ projectId: { $regex: `^${prefix}-`, $options: 'i' } })
+                .sort({ projectId: -1 });
+
+            if (exists) {
+                const currentNumber = parseInt(exists.projectId.split('-')[1]) + 1;
+                projectId = `${prefix}-${currentNumber.toString().padStart(3, '0')}`;
+            }
+
             let insert = {
-                company: user.company,
+                company: user.company._id,
                 createdBy: user._id,
+                projectId:projectId,
                 name: data.name,
                 client: data.client,
                 description: data.description,
@@ -35,12 +64,14 @@ class ProjectController {
             if (data?.paymentCycle) insert.paymentCycle = data.paymentCycle
             if (data?.attachments) insert.attachments = data.attachments
             let project = await Project.create(insert)
+            
             project = await Project.findById(project._id)
                 .populate('boards')
-                .populate('createdBy', "_id firstName lastName avatar email")
-                .populate('leads', "_id firstName lastName avatar email")
-                .populate('members', "_id firstName lastName avatar email")
-            return Response(res, { project })
+                .populate('createdBy', "_id firstName lastName avatar email ")
+                .populate('leads', "_id firstName lastName avatar email ")
+                .populate('members', "_id firstName lastName avatar email ")
+              
+            return Response(res, { project  })
         } catch (error) {
             return serverError(res, error)
         }
@@ -49,7 +80,7 @@ class ProjectController {
         try {
             const { user } = req.payload
             const data = req.body
-            const { id } = req.prams
+            const { id } = req.params
             let project = await Project.findOne({
                 _id: id, company: user.company
             })
@@ -70,11 +101,23 @@ class ProjectController {
             if (data?.status) project.status = data.status
             await project.save()
 
+            if (data?.leads || data?.members) {
+                await TaskBoard.updateMany(
+                    { project: id },
+                    {
+                        $set: {
+                            leads: data.leads || project.leads,
+                            members: data.members || project.members,
+                        }
+                    }
+                );
+            }
+
             project = await Project.findById(project._id)
                 .populate('boards')
-                .populate('createdBy', "_id firstName lastName avatar email")
-                .populate('leads', "_id firstName lastName avatar email")
-                .populate('members', "_id firstName lastName avatar email")
+                .populate('createdBy', "_id firstName lastName avatar email ")
+                .populate('leads', "_id firstName lastName avatar email ")
+                .populate('members', "_id firstName lastName avatar email ")
             return Response(res, { project })
         } catch (error) {
             return serverError(res, error)
@@ -83,14 +126,16 @@ class ProjectController {
     async delete(req, res) {
         try {
             const { user } = req.payload
-            const { id } = req.prams
+            const { id } = req.params
             let project = await Project.findOne({
                 _id: id, company: user.company
             })
             if (!project) {
                 return NotFound(res)
             }
-            await Project.deleteOne({ _id: id })
+          
+             await TaskBoard.deleteMany({ project: id });
+             await Project.deleteOne({ _id: id });
             return Response(res)
         } catch (error) {
             return serverError(res, error)
