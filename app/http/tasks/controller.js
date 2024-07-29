@@ -9,14 +9,14 @@ class TaskController {
         try {
             const { user } = req.payload
             const {board_id} = req.params
-            const query = { company: user.company , board : board_id};
+            const query = { company: user.company , board : board_id , status: { $ne: 'awaiting' }};
            
             const list = await Task.find( query )
             .populate('board')
             .populate('project')
             .populate('createdBy', "_id firstName lastName avatar email")
             .populate('assignedTo', "_id firstName lastName avatar email")
-            .populate('leader', "_id firstName lastName avatar email")
+            .populate('lead', "_id firstName lastName avatar email")
 
                
             return Response(res, { list })
@@ -24,22 +24,45 @@ class TaskController {
             return serverError(res, error)
         }
     }
-    async overDueTasksList(req, res) {
+    async overDueTaskList(req, res) {
         try {
             const { user } = req.payload;
             const query = { 
                 company: user.company, 
-                dueDate: { $lt: moment().utc().toISOString() } 
+                dueDate: { $lt: moment().utc().toISOString() } ,
+                status: { $ne: 'awaiting' }
+
             };
             const list = await Task.find(query)
                 .populate('board')
                 .populate('project')
                 .populate('createdBy', "_id firstName lastName avatar email")
                 .populate('assignedTo', "_id firstName lastName avatar email")
-                .populate('leader', "_id firstName lastName avatar email");
+                .populate('lead', "_id firstName lastName avatar email");
             
             return Response(res, { list });
         }catch (error) {
+            return serverError(res, error);
+        }
+    }
+
+    async awaitingTaskList(req, res) {
+        try {
+            const { user } = req.payload;
+            const query = { 
+                company: user.company, 
+                status: 'awaiting' 
+            };
+    
+            const list = await Task.find(query)
+                .populate('board')
+                .populate('project')
+                .populate('createdBy', "_id firstName lastName avatar email")
+                .populate('assignedTo', "_id firstName lastName avatar email")
+                .populate('lead', "_id firstName lastName avatar email");
+    
+            return Response(res, { list });
+        } catch (error) {
             return serverError(res, error);
         }
     }
@@ -53,7 +76,7 @@ class TaskController {
             .populate('project')
             .populate('createdBy', "_id firstName lastName avatar email")
             .populate('assignedTo', "_id firstName lastName avatar email")
-            .populate('leader', "_id firstName lastName avatar email")
+            .populate('lead', "_id firstName lastName avatar email")
 
             return Response(res, { task })
         } catch (error) {
@@ -73,7 +96,7 @@ class TaskController {
                 taskId = prefix + "-" + (currentNumber.toString().padStart(3, '0'));
             }
             const parent = data.parent === "" ? null : data.parent;
-
+            const status = data.status === "" ? "awaiting" : data.status;
             let task = await Task.create({
                 company: user.company,
                 createdBy: user._id,
@@ -83,11 +106,11 @@ class TaskController {
                 parent: parent,
                 description: data.description,
                 priority: data.priority,
-                status:data.status,
+                status:status,
                 requiredTime: data.requiredTime,
                 dueDate: moment(data.dueDate).utc().toISOString(),
                 assignedTo: data.assignedTo,
-                leader : data.leader,
+                lead : data.lead,
                 project: data.project,
                 board: data.board,
             })
@@ -102,7 +125,7 @@ class TaskController {
                 .populate('project')
                 .populate('createdBy', "_id firstName lastName avatar email")
                 .populate('assignedTo', "_id firstName lastName avatar email")
-                .populate('leader', "_id firstName lastName avatar email")
+                .populate('lead', "_id firstName lastName avatar email")
 
             return Response(res, { task })
         } catch (error) {
@@ -122,11 +145,12 @@ class TaskController {
             }
             if (data?.name) task.name = data.name
             if (data?.description) task.description = data.description
+            if (data?.parent) task.parent = data.parent
             if (data?.priority) task.priority = data.priority
             if (data?.requiredTime) task.requiredTime = data.requiredTime
             if (data?.dueDate) task.dueDate = moment(data.dueDate).utc().toISOString()
             if (data?.assignedTo) task.assignedTo = data.assignedTo
-            if (data?.leader) task.leader = data.leader
+            if (data?.lead) task.lead = data.lead
             if (data?.status) task.status = data.status
             await task.save()
 
@@ -135,7 +159,7 @@ class TaskController {
                 .populate('project')
                 .populate('createdBy', "_id firstName lastName avatar email")
                 .populate('assignedTo', "_id firstName lastName avatar email")
-                .populate('leader', "_id firstName lastName avatar email")
+                .populate('lead', "_id firstName lastName avatar email")
 
             return Response(res, { task })
         } catch (error) {

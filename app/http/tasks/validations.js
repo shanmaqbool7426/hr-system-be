@@ -13,20 +13,18 @@ module.exports = {
                 priority: Joi.string().required().messages({
                     'any.required': "priorityRequired",
                 }),
-                status : Joi.string().required().messages({
-                    'any.required': "statusRequired",
-                }),
+                status : Joi.string().optional().allow(null,""),
                 description: Joi.string().required().messages({
                     'any.required': "descriptionRequired",
                 }),
                 requiredTime: Joi.string().required().messages({
                     'any.required': "requiredTimeRequired",
                 }),
-                assignedTo: Joi.array().required().messages({
+                assignedTo: Joi.string().required().messages({
                     'any.required': "assignedToRequired",
                 }),
-                leader: Joi.array().required().messages({
-                    'any.required': "leaderRequired",
+                lead: Joi.string().required().messages({
+                    'any.required': "leadRequired",
                 }),
                 board: Joi.string().required().messages({
                     'any.required': "boardRequired",
@@ -52,8 +50,8 @@ module.exports = {
                 priority: Joi.string().optional().allow("", null),
                 requiredTime: Joi.string().optional().allow("", null),
                 dueDate: Joi.date().optional().allow("", null),
-                assignedTo: Joi.array().optional().empty(""),
-                leader: Joi.array().optional().empty(""),
+                assignedTo: Joi.string().optional().allow("", null),
+                lead: Joi.string().optional().allow("", null),
                 status: Joi.string().optional().allow(null, ""),
                 board: Joi.string().optional().allow(null, ""),
                 project :Joi.string().optional().allow(null, ""),
