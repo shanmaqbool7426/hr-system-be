@@ -7,6 +7,7 @@ module.exports = mongoose.model("task", new Schema({
     parent: { type: mongoose.Types.ObjectId, ref: 'task', default:null},
     description: { type: String },
     status: { type: String  , default:"awaiting" },
+    raiseIssue: { type: mongoose.Types.ObjectId, ref:'task_raise_issue' },
     requiredTime: { type: String },
     dueDate: { type: Date },
     priority: { type: String },

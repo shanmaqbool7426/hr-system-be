@@ -51,7 +51,11 @@ class TaskController {
             const { user } = req.payload;
             const query = { 
                 company: user.company, 
-                status: 'awaiting' 
+                status: 'awaiting', 
+                $or: [
+                    { raiseIssue: null },
+                    { raiseIssue: { $exists: false } }
+                ]
             };
     
             const list = await Task.find(query)
@@ -66,7 +70,27 @@ class TaskController {
             return serverError(res, error);
         }
     }
+    async reportedTaskList(req, res) {
+        try {
+            const { user } = req.payload;
+            const query = { 
+                company: user.company, 
+                raiseIssue: { $ne: null } 
+            };
 
+            const list = await Task.find(query)
+                .populate('board')
+                .populate('project')
+                .populate('createdBy', "_id firstName lastName avatar email")
+                .populate('assignedTo', "_id firstName lastName avatar email")
+                .populate('lead', "_id firstName lastName avatar email")
+                .populate('raiseIssue');
+
+            return Response(res, { list });
+        } catch (error) {
+            return serverError(res, error);
+        }
+    }
     async details(req, res) {
         try {
             const { id } = req.params
@@ -97,6 +121,7 @@ class TaskController {
             }
             const parent = data.parent === "" ? null : data.parent;
             const status = data.status === "" ? "awaiting" : data.status;
+
             let task = await Task.create({
                 company: user.company,
                 createdBy: user._id,
@@ -113,6 +138,7 @@ class TaskController {
                 lead : data.lead,
                 project: data.project,
                 board: data.board,
+                raiseIssue: data.raiseIssue || null,
             })
             await TaskBoard.updateOne(
                 { _id: data.board, company: user.company },
@@ -126,6 +152,7 @@ class TaskController {
                 .populate('createdBy', "_id firstName lastName avatar email")
                 .populate('assignedTo', "_id firstName lastName avatar email")
                 .populate('lead', "_id firstName lastName avatar email")
+                .populate('raiseIssue')
 
             return Response(res, { task })
         } catch (error) {

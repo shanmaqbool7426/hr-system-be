@@ -1,6 +1,7 @@
 const { Response, BadRequest, serverError, NotFound } = require('../../util/helpers')
 const Project = require("../../models/project")
 const TaskBoard = require("../../models/task_board");
+const Task = require("../../models/task");
 const moment = require("moment")
 class ProjectController {
 
@@ -26,8 +27,10 @@ class ProjectController {
             .populate('createdBy', "_id firstName lastName avatar email")
             .populate('leads', "_id firstName lastName avatar email")
             .populate('members', "_id firstName lastName avatar email")
+            const total_tasks = await Task.countDocuments({project: id})
+            const completed_tasks = await Task.countDocuments({project: id , status: "completed"})
 
-            return Response(res, { project })
+            return Response(res, { project ,  total_tasks, completed_tasks })
         } catch (error) {
             return serverError(res, error)
         }
