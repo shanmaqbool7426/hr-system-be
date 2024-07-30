@@ -21,4 +21,7 @@ router.use("/tasks", require("./http/tasks/routes"));
 router.use("/task-boards", require("./http/task-boards/routes"));
 router.use("/task-raise-issue", require("./http/task-raise-issue/routes"))
 
+
+router.use("/add-new-jobs",require("./http/add-new-jobs/routes"))
+
 module.exports = router;
