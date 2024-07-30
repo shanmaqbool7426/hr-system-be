@@ -3,6 +3,7 @@ const RemoteProcess = require('../../models/remote_process')
 const RemoteUserProcess = require('../../models/remote_user_process')
 const RemoteUserScreenshot = require('../../models/remote_user_screenshot')
 const service = require('./service')
+const moment = require('moment')
 class RemoteController {
   async saveProcessStats(req, res) {
     try {
