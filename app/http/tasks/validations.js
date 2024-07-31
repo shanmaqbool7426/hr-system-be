@@ -10,7 +10,7 @@ module.exports = {
                     'any.required': "nameRequired",
                 }),
                 parent: Joi.string().optional().allow(null,""),
-                raiseIssue: Joi.string().optional().allow(null,""),
+                issueRaised: Joi.array().optional().allow(null,""),
                 priority: Joi.string().required().messages({
                     'any.required': "priorityRequired",
                 }),
@@ -47,7 +47,7 @@ module.exports = {
             await Joi.object({
                 name: Joi.string().optional().allow("", null),
                 parent : Joi.string().optional().allow(null, ""),
-                raiseIssue: Joi.string().optional().allow(null,""),
+                issueRaised: Joi.array().optional().allow(null,""),
                 description: Joi.string().optional().allow("", null),
                 priority: Joi.string().optional().allow("", null),
                 requiredTime: Joi.string().optional().allow("", null),

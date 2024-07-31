@@ -17,7 +17,12 @@ class TaskRaiseIssueController {
                 issueResolve: data.resolve,
             });
 
-            await Task.findByIdAndUpdate(data.task, { raiseIssue: issue._id });
+            let task = await Task.findById(data.task);
+            if (task) {
+                task.issueRaised.push(issue._id);
+                task.status = "issue_raise";
+                await task.save();
+            }
 
             issue = await RaiseIssue.findById(issue._id)
                 .populate('task')
@@ -49,7 +54,7 @@ class TaskRaiseIssueController {
             if (data?.issueResolve) {
                 const task = await Task.findById(issue.task);
                 if (task) {
-                    task.raiseIssue = null;
+                    task.status = "awaiting";
                     await task.save();
                 }
             }

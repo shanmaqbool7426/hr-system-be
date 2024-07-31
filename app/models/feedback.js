@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-module.exports = mongoose.model("task", new Schema({
+module.exports = mongoose.model("feedback", new Schema({
     name: { type: String },
     taskId:  { type: String },
     parent: { type: mongoose.Types.ObjectId, ref: 'task', default:null},
     description: { type: String },
     status: { type: String  , default:"awaiting" },
-    issueRaised: [{ type: mongoose.Types.ObjectId, ref:'task_raise_issue' }],  
+    raiseIssue: { type: mongoose.Types.ObjectId, ref:'task_raise_issue' },  // convert into array
     requiredTime: { type: String },
     dueDate: { type: Date },
     priority: { type: String },

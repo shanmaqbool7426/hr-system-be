@@ -67,10 +67,6 @@ class TaskController {
             const query = { 
                 company: user.company, 
                 status: 'awaiting', 
-                $or: [
-                    { raiseIssue: null },
-                    { raiseIssue: { $exists: false } }
-                ]
             };
     
             const list = await Task.find(query)
@@ -90,7 +86,7 @@ class TaskController {
             const { user } = req.payload;
             const query = { 
                 company: user.company, 
-                raiseIssue: { $ne: null } 
+                status: 'issue_raise', 
             };
 
             const list = await Task.find(query)
@@ -99,7 +95,7 @@ class TaskController {
                 .populate('createdBy', "_id firstName lastName avatar email")
                 .populate('assignedTo', "_id firstName lastName avatar email")
                 .populate('lead', "_id firstName lastName avatar email")
-                .populate('raiseIssue');
+                .populate('issueRaised');
 
             return Response(res, { list });
         } catch (error) {
@@ -153,7 +149,7 @@ class TaskController {
                 lead : data.lead,
                 project: data.project,
                 board: data.board,
-                raiseIssue: data.raiseIssue || null,
+                issueRaised: data.issueRaised,
             })
             await TaskBoard.updateOne(
                 { _id: data.board, company: user.company },
@@ -167,7 +163,7 @@ class TaskController {
                 .populate('createdBy', "_id firstName lastName avatar email")
                 .populate('assignedTo', "_id firstName lastName avatar email")
                 .populate('lead', "_id firstName lastName avatar email")
-                .populate('raiseIssue')
+                .populate('issueRaised')
 
             return Response(res, { task })
         } catch (error) {
