@@ -14,7 +14,7 @@ class TaskRaiseIssueController {
                 name: data.name,
                 description: data.description,
                 task: data.task,
-                project: data.project,
+                issueResolve: data.resolve,
             });
 
             await Task.findByIdAndUpdate(data.task, { raiseIssue: issue._id });
@@ -26,6 +26,42 @@ class TaskRaiseIssueController {
             return Response(res, { issue });
         } catch (error) {
             return serverError(res, error);
+        }
+    }
+    async update(req, res) {
+        try {
+            const { user } = req.payload
+            const data = req.body
+            const { id } = req.params
+            let issue = await RaiseIssue.findOne({
+                _id: id, company: user.company
+            })
+            if (!issue) {
+                return NotFound(res)
+            }
+            if (data?.name) issue.name = data.name
+            if (data?.description) issue.description = data.description
+            if (data?.issueResolve) issue.issueResolve = data.issueResolve
+            if (data?.task) issue.task = data.task
+
+            await issue.save()
+
+            if (data?.issueResolve) {
+                const task = await Task.findById(issue.task);
+                if (task) {
+                    task.raiseIssue = null;
+                    await task.save();
+                }
+            }
+            
+            issue = await Task.findById(issue._id)
+            .populate('task')
+            .populate('createdBy', "_id firstName lastName avatar email");
+
+
+            return Response(res, { issue })
+        } catch (error) {
+            return serverError(res, error)
         }
     }
 }

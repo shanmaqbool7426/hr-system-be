@@ -45,7 +45,7 @@ class ChangeRequestController {
             const changeRequest = await UserChangeRequest.create(insert)
             if (new Date(data.effectiveDate) <= new Date) {
                 employee.designation = data.designation
-                employee.save()
+                await employee.save()
             }
 
             return Response(res, {

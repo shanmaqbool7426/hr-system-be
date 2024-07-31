@@ -5,6 +5,7 @@ const validations = require('./validations')
 const { verifyToken } = require('../../middlewares')
 
 router.get('/list/:board_id', [verifyToken], controller.list);
+router.get('/list-completed', [verifyToken], controller.completedTaskList);
 router.get('/list-overdue', [verifyToken], controller.overDueTaskList);
 router.get('/list-awaiting', [verifyToken], controller.awaitingTaskList);
 router.get('/list-reported', [verifyToken], controller.reportedTaskList);

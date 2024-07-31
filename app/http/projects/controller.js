@@ -18,6 +18,19 @@ class ProjectController {
             return serverError(res, error)
         }
     }
+    async completedProjectList(req, res) {
+        try {
+            const { user } = req.payload;
+            const list = await Project.find({ company: user.company, status: "completed" })
+                .populate('boards')
+                .populate('createdBy', "_id firstName lastName avatar email")
+                .populate('leads', "_id firstName lastName avatar email")
+                .populate('members', "_id firstName lastName avatar email");
+            return Response(res, { list });
+        } catch (error) {
+            return serverError(res, error);
+        }
+    }
     async details(req, res) {
         try {
             const { id } = req.params

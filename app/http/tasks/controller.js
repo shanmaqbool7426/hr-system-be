@@ -1,7 +1,7 @@
 const { Response, BadRequest, serverError, NotFound } = require('../../util/helpers')
-const Project = require("../../models/project")
 const TaskBoard = require("../../models/task_board");
 const Task = require("../../models/task")
+const RaiseIssue = require("../../models/task_raise_issue");
 const moment= require('moment')
 class TaskController {
 
@@ -22,6 +22,21 @@ class TaskController {
             return Response(res, { list })
         } catch (error) {
             return serverError(res, error)
+        }
+    }
+    async completedTaskList(req, res) {
+        try {
+            const { user } = req.payload;
+            const list = await Task.find({ company: user.company, status: "completed" })
+            .populate('board')
+            .populate('project')
+            .populate('createdBy', "_id firstName lastName avatar email")
+            .populate('assignedTo', "_id firstName lastName avatar email")
+            .populate('lead', "_id firstName lastName avatar email")
+            
+            return Response(res, { list });
+        } catch (error) {
+            return serverError(res, error);
         }
     }
     async overDueTaskList(req, res) {
