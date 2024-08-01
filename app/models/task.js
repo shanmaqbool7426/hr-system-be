@@ -11,6 +11,7 @@ module.exports = mongoose.model("task", new Schema({
     requiredTime: { type: String },
     dueDate: { type: Date },
     priority: { type: String },
+    feedback: { type: mongoose.Types.ObjectId, ref: 'feedback' },
     assignedTo: { type: mongoose.Types.ObjectId, ref: 'user' },
     lead: { type: mongoose.Types.ObjectId, ref: 'user' },
     project: { type: mongoose.Types.ObjectId, ref: 'project' },

@@ -11,6 +11,7 @@ module.exports = {
                 }),
                 parent: Joi.string().optional().allow(null,""),
                 issueRaised: Joi.array().optional().allow(null,""),
+                feedback: Joi.string().optional().allow(null,""),
                 priority: Joi.string().required().messages({
                     'any.required': "priorityRequired",
                 }),

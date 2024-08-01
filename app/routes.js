@@ -8,6 +8,7 @@ router.use("/biometric", require("./http/biometric/routes"));
 router.use("/custom-fields", require("./http/custom-field/routes"));
 router.use("/departments", require("./http/department/routes"));
 router.use("/employees", require("./http/employee/routes"));
+router.use("/feedback", require("./http/feedback/routes"));
 router.use("/files", require("./http/files/routes"));
 router.use("/gazette-holidays", require("./http/gazetted-holiday/routes"));
 router.use("/leaves", require("./http/leave/routes"));

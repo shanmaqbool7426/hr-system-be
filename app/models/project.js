@@ -13,6 +13,7 @@ module.exports = mongoose.model("project", new Schema({
     endDate: { type: Date },
     payment: { type: Number },
     paymentCycle: { type: String },
+    feedback: { type: mongoose.Types.ObjectId, ref: 'feedback' },
     leads: [{ type: mongoose.Types.ObjectId, ref: 'user' }],
     members: [{ type: mongoose.Types.ObjectId, ref: 'user' }],
     boards: [{ type: mongoose.Types.ObjectId, ref: 'task_board' }],

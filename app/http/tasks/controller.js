@@ -30,6 +30,13 @@ class TaskController {
             const list = await Task.find({ company: user.company, status: "completed" })
             .populate('board')
             .populate('project')
+            .populate({
+                path: 'feedback',
+                populate: {
+                    path: 'createdBy',
+                    select: "_id firstName lastName avatar email"
+                }
+            })
             .populate('createdBy', "_id firstName lastName avatar email")
             .populate('assignedTo', "_id firstName lastName avatar email")
             .populate('lead', "_id firstName lastName avatar email")
@@ -109,6 +116,7 @@ class TaskController {
             let task = await Task.findOne({ _id: id, deletedAt: null, $or: [{ company: user.company._id }, { company: null }] })
             .populate('board')
             .populate('project')
+            .populate('feedback')
             .populate('createdBy', "_id firstName lastName avatar email")
             .populate('assignedTo', "_id firstName lastName avatar email")
             .populate('lead', "_id firstName lastName avatar email")
@@ -148,6 +156,7 @@ class TaskController {
                 assignedTo: data.assignedTo,
                 lead : data.lead,
                 project: data.project,
+                feedback:data.feedback,
                 board: data.board,
                 issueRaised: data.issueRaised,
             })
@@ -160,6 +169,7 @@ class TaskController {
             task = await Task.findById(task._id)
                 .populate('board')
                 .populate('project')
+                .populate('feedback')
                 .populate('createdBy', "_id firstName lastName avatar email")
                 .populate('assignedTo', "_id firstName lastName avatar email")
                 .populate('lead', "_id firstName lastName avatar email")

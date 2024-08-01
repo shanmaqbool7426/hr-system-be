@@ -3,18 +3,12 @@ const Schema = mongoose.Schema;
 
 module.exports = mongoose.model("feedback", new Schema({
     name: { type: String },
-    taskId:  { type: String },
-    parent: { type: mongoose.Types.ObjectId, ref: 'task', default:null},
-    description: { type: String },
-    status: { type: String  , default:"awaiting" },
-    raiseIssue: { type: mongoose.Types.ObjectId, ref:'task_raise_issue' },  // convert into array
-    requiredTime: { type: String },
-    dueDate: { type: Date },
-    priority: { type: String },
-    assignedTo: { type: mongoose.Types.ObjectId, ref: 'user' },
-    lead: { type: mongoose.Types.ObjectId, ref: 'user' },
+    member :  [{ type: mongoose.Types.ObjectId, ref: 'user' }],
+    rating: { type: Number },
+    comments: { type: String },
+    feedbackReply: { type: String },
+    task: { type: mongoose.Types.ObjectId, ref: 'task'},
     project: { type: mongoose.Types.ObjectId, ref: 'project' },
-    board: { type: mongoose.Types.ObjectId, ref: 'task_board' },
     company: { type: mongoose.Types.ObjectId, ref: 'company' },
     createdBy: { type: mongoose.Types.ObjectId, ref: 'user' },
 }, {

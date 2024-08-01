@@ -23,6 +23,13 @@ class ProjectController {
             const { user } = req.payload;
             const list = await Project.find({ company: user.company, status: "completed" })
                 .populate('boards')
+                .populate({
+                    path: 'feedback',
+                    populate: {
+                        path: 'createdBy',
+                        select: "_id firstName lastName avatar email"
+                    }
+                })
                 .populate('createdBy', "_id firstName lastName avatar email")
                 .populate('leads', "_id firstName lastName avatar email")
                 .populate('members', "_id firstName lastName avatar email");
@@ -131,6 +138,7 @@ class ProjectController {
 
             project = await Project.findById(project._id)
                 .populate('boards')
+                .populate('feedback')
                 .populate('createdBy', "_id firstName lastName avatar email ")
                 .populate('leads', "_id firstName lastName avatar email ")
                 .populate('members', "_id firstName lastName avatar email ")
