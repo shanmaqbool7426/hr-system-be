@@ -9,6 +9,7 @@ const UserDevice = require('../models/userdevice')
 const validateRole = async (req, res, next, user) => {
     const module = req.baseUrl.replace('/api/', '')
     const right = req.path.split('/').filter((value) => value != "")[0]
+    return next()
     // console.log(module, right);
     const role = await Role.findById(user.role)
     if (!role)
