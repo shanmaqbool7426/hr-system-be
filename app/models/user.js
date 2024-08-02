@@ -21,6 +21,9 @@ module.exports = mongoose.model("user", new Schema({
     religion: { type: String },
     emailVerifiedAt: { type: Date },
     joiningDate: { type: Date },
+    confirmationDate : { type: Date },
+    lastWorkingDate : { type: Date },
+    resignDate : { type: Date },
     canLogin: { type: Boolean, default: false },
     lineManager: { type: mongoose.Types.ObjectId, ref: 'user' },
     mobileAttendance: { type: Boolean, default: false },
@@ -82,6 +85,7 @@ module.exports = mongoose.model("user", new Schema({
     },
     academicsHistory: [{ type: mongoose.Types.ObjectId, ref: 'user_acadamic' }],
     jobExperiences: [{ type: mongoose.Types.ObjectId, ref: 'user_job_experience' }],
+    project: [{type: mongoose.Types.ObjectId, ref: 'project'}]  //i added the project refrence here
 }, {
     timestamps: true,
 }));

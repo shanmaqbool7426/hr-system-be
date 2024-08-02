@@ -59,6 +59,9 @@ module.exports = {
                 role: Joi.string().optional().allow(null, ""),
                 canLogin: Joi.boolean().optional().allow(null, ""),
                 department: Joi.string().optional().allow(null, ""),
+                confirmationDate: Joi.date().optional().allow(null, ""),
+                resignDate: Joi.date().optional().allow(null, ""),
+                lastWorkingDate: Joi.date().optional().allow(null, ""),
             }).validateAsync(req.body);
             next();
         } catch (error) {
@@ -74,8 +77,13 @@ module.exports = {
                 email: Joi.string().email().optional().allow(null, ""),
                 dateOfBirth: Joi.date().optional().allow(null, ""),
                 joiningDate: Joi.date().optional().allow(null, ""),
+                confirmationDate: Joi.date().optional().allow(null, ""),
+                resignDate: Joi.date().optional().allow(null, ""),
+                lastWorkingDate: Joi.date().optional().allow(null, ""),
                 lineManager: Joi.string().optional().allow(null, ""),
                 mobileAttendance: Joi.boolean().optional().allow(null, ""),
+                status: Joi.string().optional().allow(null, ""),
+                designation: Joi.string().optional().allow(null, ""),
                 webAttendance: Joi.boolean().optional().allow(null, ""),
                 sendEmail: Joi.boolean().optional().allow(null, ""),
                 password: Joi.string().optional().allow(null, ""),

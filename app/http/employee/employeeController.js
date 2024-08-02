@@ -26,10 +26,16 @@ class EmployeeController {
             }
 
             let data = await User.find(_filters)
+                .populate('department')
+                .populate('project')
                 .populate('designation')
                 .populate('status')
                 .populate('workMode')
+                .populate('grade')
+                .populate('station')
                 .populate('lineManager')
+                .populate('maritalStatus')
+                .populate('gender')
 
             return Response(res, { list: data })
         } catch (error) {
@@ -43,6 +49,7 @@ class EmployeeController {
             let employee = await User.findOne({
                 _id: id, company: user.company._id
             }).select("-password -devices")
+                .populate('department')
                 .populate('academicsHistory')
                 .populate('jobExperiences')
                 .populate('designation')
@@ -50,10 +57,12 @@ class EmployeeController {
                 .populate('workMode')
                 .populate('grade')
                 .populate('station')
+                .populate('project')
                 .populate('gender')
                 .populate('maritalStatus')
                 .populate('lineManager')
 
+                console.log('Created Employee Projects:', employee.project);
             return Response(res, {
                 employee
             })
@@ -84,6 +93,9 @@ class EmployeeController {
             insert.webAttendance = !!data?.webAttendance
             if (data?.password) insert.password = bcrypt.hashSync(data.password, bcrypt.genSaltSync(10))
             if (data?.department) insert.department = data.department
+            if(data?.confirmationDate) insert.confirmationDate = data.confirmationDate
+            if(data?.resignDate) insert.resignDate = data.resignDate
+            if(data?.lastWorkingDate) insert.lastWorkingDate = data.lastWorkingDate
             if (data?.lineManager && data?.lineManager !== 'none') insert.lineManager = data.lineManager
             if (data?.avatar) insert.avatar = data.avatar
             if (data?.role) insert.role = data.role
@@ -97,10 +109,16 @@ class EmployeeController {
             let employee = await User.create(insert)
             await Company.updateOne({ _id: user.company._id }, { $set: { currentEmployeeCode: (parseInt(user.company.currentEmployeeCode) + 1).toString() } })
             employee = await User.findById(employee._id)
+                .populate('department')
                 .populate('designation')
+                .populate('maritalStatus')
+                .populate('gender')
                 .populate('status')
+                .populate('project')
                 .populate('workMode')
                 .populate('lineManager')
+                .populate('grade')
+            .populate('station')
             return Response(res, {
                 employee
             })
@@ -124,18 +142,25 @@ class EmployeeController {
             if (data?.firstName) employee.firstName = data.firstName
             if (data?.lastName) employee.lastName = data.lastName
             if (data?.fatherName) employee.fatherName = data.fatherName
+            if (data?.email) employee.email = data.email
             if (data?.dateOfBirth) employee.dateOfBirth = data.dateOfBirth
             if ((Object.keys(data)).includes('mobileAttendance')) employee.mobileAttendance = !!data.mobileAttendance
             if ((Object.keys(data)).includes('webAttendance')) employee.webAttendance = !!data.webAttendance
-            if (data?.department) employee.department = data.department
-            if (data?.lineManager && lineManager !== 'none') employee.lineManager = data.lineManager
-            else if (data?.lineManager === 'none') employee.lineManager = null
+            if (data?.department && data?.department !== '') employee.department = data.department
+            else if (data?.department === '') employee.department = null
+            if (data?.designation) employee.designation = data.designation
+            if (data?.lineManager && data?.lineManager !== '') employee.lineManager = data.lineManager
+            else if (data?.lineManager === '') employee.lineManager = null
             if (data?.avatar) employee.avatar = data.avatar
             if (data?.role) employee.role = data.role
+            if (data?.status) employee.status = data.status
             if (data?.cnic) employee.cnic = data.cnic
             if (data?.fatherCnic) employee.fatherCnic = data.fatherCnic
             if (data?.employeeCode) employee.employeeCode = data.employeeCode
             if (data?.joiningDate) employee.joiningDate = data.joiningDate
+            if(data?.confirmationDate) employee.confirmationDate = data.confirmationDate
+            if(data?.resignDate) employee.resignDate = data.resignDate
+            if(data?.lastWorkingDate) employee.lastWorkingDate = data.lastWorkingDate
             if (data?.contact) employee.contact = data.contact
             if (data?.passportNumber) employee.passportNumber = data.passportNumber
             if (data?.gender) employee.gender = data.gender
@@ -157,6 +182,18 @@ class EmployeeController {
 
             await employee.save()
 
+            employee = await User.findById(employee._id)
+            .populate('department')
+            .populate('maritalStatus')
+            .populate('gender')
+            .populate('grade')
+            .populate('station')
+            .populate('designation')
+            .populate('project')
+            .populate('status')
+            .populate('workMode')
+            .populate('lineManager')
+            
             return Response(res, {
                 employee
             })
