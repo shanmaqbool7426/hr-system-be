@@ -10,6 +10,7 @@ module.exports = {
                 name: Joi.string().required().messages({
                     'any.required': "nameRequired",
                 }),
+                description: Joi.string().optional(),
                 rights: Joi.object().optional(),
             }).validateAsync(req.body);
             next();
