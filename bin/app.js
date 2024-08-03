@@ -25,11 +25,12 @@ app.use(express.static(path.join(__dirname, '.../', 'public')));
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
+    callback(null, true);
+    // if (!origin || whitelist.indexOf(origin) !== -1) {
+    //   callback(null, true);
+    // } else {
+    //   callback(new Error("Not allowed by CORS"));
+    // }
   },
   credentials: true,
 }));
