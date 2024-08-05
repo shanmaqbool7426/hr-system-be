@@ -16,5 +16,6 @@ module.exports.whitelist = [
     "https://zaffretech.co",
     "https://dev.zaffretech.co",
     "https://demo.zaffretech.co",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "http://localhost:1420",
 ]
