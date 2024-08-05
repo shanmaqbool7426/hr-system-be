@@ -2,9 +2,11 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 module.exports = mongoose.model("user_change_request", new Schema({
+    employee: { type: mongoose.Types.ObjectId, ref: 'user' },
     effectiveDate: { type: Date },
     type: { type: String },
     reason: { type: String },
+    detail : {type:String},
     employeeCode: { type: String },
     attachment: { type: String },
     salary: { type: Number },

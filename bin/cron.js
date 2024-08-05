@@ -8,7 +8,8 @@ const everyMinute = cron.schedule('* * * * *', async () => {
     await RemoveExpiredOTP()
 });
 
-// to
+// *TO DO*
+// change request --> designation 
 
 module.exports = () => {
     everyMinute.start()

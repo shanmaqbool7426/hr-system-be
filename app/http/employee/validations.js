@@ -1,6 +1,7 @@
 const Joi = require("joi");
 const { BadRequest, serverError } = require('../../util/helpers');
-const User = require("../../models/user")
+const User = require("../../models/user");
+const { salary } = require("./changeRequestController");
 module.exports = {
     uniqueEmail: async (req, res, next) => {
         try {
@@ -173,6 +174,121 @@ module.exports = {
                 }),
                 designation: Joi.string().required().messages({
                     'any.required': "designationRequired",
+                }),
+                effectiveDate: Joi.date().required().messages({
+                    'any.required': "effectiveDateRequired",
+                }),
+                reason: Joi.string().required().messages({
+                    'any.required': "reasonRequired",
+                }),
+                detail: Joi.string().optional().allow("", null),
+                attachment: Joi.string().optional().allow(null)
+            }).validateAsync(req.body);
+            next();
+        } catch (error) {
+            return BadRequest(res, error.message)
+        }
+    },
+    changeDepartment: async (req, res, next) => {
+        try {
+            await Joi.object({
+                employee: Joi.string().required().messages({
+                    'any.required': "employeeRequired",
+                }),
+                department: Joi.string().required().messages({
+                    'any.required': "departmentRequired",
+                }),
+                effectiveDate: Joi.date().required().messages({
+                    'any.required': "effectiveDateRequired",
+                }),
+                reason: Joi.string().required().messages({
+                    'any.required': "reasonRequired",
+                }),
+                detail: Joi.string().optional().allow("", null),
+                attachment: Joi.string().optional().allow(null)
+            }).validateAsync(req.body);
+            next();
+        } catch (error) {
+            return BadRequest(res, error.message)
+        }
+    },
+    changeEmployeeCode: async (req, res, next) => {
+        try {
+            await Joi.object({
+                employee: Joi.string().required().messages({
+                    'any.required': "employeeRequired",
+                }),
+                employeeCode: Joi.string().required().messages({
+                    'any.required': "employeeCodeRequired",
+                }),
+                effectiveDate: Joi.date().required().messages({
+                    'any.required': "effectiveDateRequired",
+                }),
+                reason: Joi.string().required().messages({
+                    'any.required': "reasonRequired",
+                }),
+                detail: Joi.string().optional().allow("", null),
+                attachment: Joi.string().optional().allow(null)
+            }).validateAsync(req.body);
+            next();
+        } catch (error) {
+            return BadRequest(res, error.message)
+        }
+    },
+    changeSalary: async (req, res, next) => {
+        try {
+            await Joi.object({
+                employee: Joi.string().required().messages({
+                    'any.required': "employeeRequired",
+                }),
+                salary: Joi.number().required().messages({
+                    'any.required': "salaryRequired",
+                }),
+                effectiveDate: Joi.date().required().messages({
+                    'any.required': "effectiveDateRequired",
+                }),
+                reason: Joi.string().required().messages({
+                    'any.required': "reasonRequired",
+                }),
+                detail: Joi.string().optional().allow("", null),
+                attachment: Joi.string().optional().allow(null)
+            }).validateAsync(req.body);
+            next();
+        } catch (error) {
+            return BadRequest(res, error.message)
+        }
+    },
+    changeGrade: async (req, res, next) => {
+        try {
+            await Joi.object({
+                employee: Joi.string().required().messages({
+                    'any.required': "employeeRequired",
+                }),
+                grade: Joi.string().required().messages({
+                    'any.required': "gradeRequired",
+                }),
+                effectiveDate: Joi.date().required().messages({
+                    'any.required': "effectiveDateRequired",
+                }),
+                reason: Joi.string().required().messages({
+                    'any.required': "reasonRequired",
+                }),
+                detail: Joi.string().optional().allow("", null),
+                attachment: Joi.string().optional().allow(null)
+            }).validateAsync(req.body);
+            next();
+        } catch (error) {
+            return BadRequest(res, error.message)
+        }
+    },
+    changeLineManager: async (req, res, next) => {
+        try {
+            await Joi.object({
+                employee: Joi.string().required().messages({
+                    'any.required': "employeeRequired",
+                }),
+                lineManager: Joi.string().required().messages({
+                    'any.required': "lineManagerRequired",
                 }),
                 effectiveDate: Joi.date().required().messages({
                     'any.required': "effectiveDateRequired",

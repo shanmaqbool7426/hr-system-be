@@ -26,10 +26,10 @@ router.delete('/job-experience/delete/:id', [verifyToken], experienceController.
 // Change Requests
 router.get('/change-requests', [verifyToken], changeRequestController.list);
 router.post('/change-requests/designation', [verifyToken, validations.changeDesignation], changeRequestController.designation);
-// router.post('/change-requests/department', [verifyToken, validations.changeDepartment, multerMiddleware], changeRequestController.department);
-// router.post('/change-requests/employee-code', [verifyToken, validations.changeEmployeeCode, multerMiddleware], changeRequestController.employeeCode);
-// router.post('/change-requests/salary', [verifyToken, validations.changeSalary, multerMiddleware], changeRequestController.salary);
-// router.post('/change-requests/grade', [verifyToken, validations.changeGrade, multerMiddleware], changeRequestController.grade);
-// router.post('/change-requests/line-manager', [verifyToken, validations.changeLineManager, multerMiddleware], changeRequestController.lineManager);
+router.post('/change-requests/department', [verifyToken, validations.changeDepartment], changeRequestController.department);
+router.post('/change-requests/employee-code', [verifyToken, validations.changeEmployeeCode ], changeRequestController.employeeCode);
+router.post('/change-requests/salary', [verifyToken, validations.changeSalary], changeRequestController.salary);
+router.post('/change-requests/grade', [verifyToken, validations.changeGrade], changeRequestController.grade);
+router.post('/change-requests/line-manager', [verifyToken, validations.changeLineManager ], changeRequestController.lineManager);
 
 module.exports = router;

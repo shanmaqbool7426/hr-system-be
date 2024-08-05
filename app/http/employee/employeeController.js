@@ -1,6 +1,7 @@
 const { Response, BadRequest, serverError } = require('../../util/helpers')
 const User = require("../../models/user")
 const Company = require("../../models/company")
+const Project = require("../../models/project")
 const bcrypt = require("bcryptjs");
 const Mailer = require('../../util/mailer')
 const UserCredentialsEmail = require('../../emails/userCredentials')
@@ -27,7 +28,6 @@ class EmployeeController {
 
             let data = await User.find(_filters)
                 .populate('department')
-                .populate('project')
                 .populate('designation')
                 .populate('status')
                 .populate('workMode')
@@ -57,12 +57,25 @@ class EmployeeController {
                 .populate('workMode')
                 .populate('grade')
                 .populate('station')
-                .populate('project')
                 .populate('gender')
                 .populate('maritalStatus')
                 .populate('lineManager')
+               
+                let projects = await Project.find({
+                    $or: [
+                        { leads: id },
+                        { members: id }
+                    ],
+                    company: user.company._id
+                }).populate('boards')
+                  .populate('createdBy', "_id firstName lastName avatar email")
+                  .populate('leads', "_id firstName lastName avatar email")
+                  .populate('members', "_id firstName lastName avatar email")
 
-                console.log('Created Employee Projects:', employee.project);
+                   employee = employee.toObject();
+                   employee.projects = projects; 
+                   
+
             return Response(res, {
                 employee
             })
@@ -114,7 +127,6 @@ class EmployeeController {
                 .populate('maritalStatus')
                 .populate('gender')
                 .populate('status')
-                .populate('project')
                 .populate('workMode')
                 .populate('lineManager')
                 .populate('grade')
@@ -189,7 +201,6 @@ class EmployeeController {
             .populate('grade')
             .populate('station')
             .populate('designation')
-            .populate('project')
             .populate('status')
             .populate('workMode')
             .populate('lineManager')
