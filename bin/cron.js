@@ -10,6 +10,11 @@ const everyMinute = cron.schedule('* * * * *', async () => {
 
 // *TO DO*
 // change request --> designation 
+// change request --> department
+// change request --> salary 
+// change request --> grade 
+// change request --> line manager
+// change request --> employeeCode 
 
 module.exports = () => {
     everyMinute.start()

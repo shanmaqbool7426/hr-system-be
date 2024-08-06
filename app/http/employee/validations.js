@@ -166,6 +166,44 @@ module.exports = {
             return BadRequest(res, error.message)
         }
     },
+    documents: async (req, res, next) => {
+        try {
+            await Joi.object({
+                documentType: Joi.string().required().messages({
+                    'any.required': "documentTypeRequired",
+                }),
+                attachment: Joi.string().required().messages({
+                    'any.required': "attachmentRequired",
+                }),
+                documentPath: Joi.string().required().messages({
+                    'any.required': "documentPathRequired",
+                }),
+                uploadedDate: Joi.date().required().messages({
+                    'any.required': "uploadedDateRequired",
+                }),
+                user: Joi.string(),
+            }).validateAsync(req.body);
+            next();
+        } catch (error) {
+            return BadRequest(res, error.message)
+        }
+    },
+    warnings: async (req, res, next) => {
+        try {
+            await Joi.object({
+                name: Joi.string().required().messages({
+                    'any.required': "nameRequired",
+                }),
+                description: Joi.string().required().messages({
+                    'any.required': "descriptionRequired",
+                }),
+                user: Joi.string(),
+            }).validateAsync(req.body);
+            next();
+        } catch (error) {
+            return BadRequest(res, error.message)
+        }
+    },
     changeDesignation: async (req, res, next) => {
         try {
             await Joi.object({

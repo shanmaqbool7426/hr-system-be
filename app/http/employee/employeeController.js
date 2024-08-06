@@ -1,7 +1,10 @@
 const { Response, BadRequest, serverError } = require('../../util/helpers')
 const User = require("../../models/user")
 const Company = require("../../models/company")
+const Asset = require("../../models/asset")
 const Project = require("../../models/project")
+const UserDocument = require("../../models/user_documents")
+const UserWarning = require("../../models/user_warning")
 const bcrypt = require("bcryptjs");
 const Mailer = require('../../util/mailer')
 const UserCredentialsEmail = require('../../emails/userCredentials')
@@ -51,6 +54,7 @@ class EmployeeController {
             }).select("-password -devices")
                 .populate('department')
                 .populate('academicsHistory')
+                // .populate('documents')
                 .populate('jobExperiences')
                 .populate('designation')
                 .populate('status')
@@ -72,9 +76,31 @@ class EmployeeController {
                   .populate('leads', "_id firstName lastName avatar email")
                   .populate('members', "_id firstName lastName avatar email")
 
-                   employee = employee.toObject();
-                   employee.projects = projects; 
-                   
+                let warnings= await UserWarning.find({
+                    user: id ,
+                    company: user.company._id
+                })
+                .populate('createdBy', "_id firstName lastName avatar email")
+
+                let documents = await UserDocument.find({
+                    user: id ,
+                    company: user.company._id
+                })
+                .populate('documentType')
+                console.log('documents', documents)
+                
+                let assets = await Asset.find({
+                    user: id,
+                    company: user.company._id
+                })
+                .populate('assetType')
+                .populate('user')
+               
+                employee = employee.toObject();
+                employee.projects = projects; 
+                employee.warnings= warnings;
+                employee.assets = assets;
+                employee.documents= documents;
 
             return Response(res, {
                 employee

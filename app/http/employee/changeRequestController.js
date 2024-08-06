@@ -13,7 +13,7 @@ class ChangeRequestController {
                 .populate('designation')
                 .populate('department')
                 .populate('lineManager')
-                .populate('grade' , "name")
+                .populate('grade')
                 .populate('user')
 
             return Response(res, { list })

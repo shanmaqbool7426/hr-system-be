@@ -85,6 +85,10 @@ module.exports = mongoose.model("user", new Schema({
     },
     academicsHistory: [{ type: mongoose.Types.ObjectId, ref: 'user_acadamic' }],
     jobExperiences: [{ type: mongoose.Types.ObjectId, ref: 'user_job_experience' }],
+    documents: [{ type: mongoose.Types.ObjectId, ref: 'user_document' }],
+    // warnings: [{ type: mongoose.Types.ObjectId, ref: 'user_warning' }],
+    // assets: [{ type: mongoose.Types.ObjectId, ref: 'asset' }],
+
 }, {
     timestamps: true,
 }));

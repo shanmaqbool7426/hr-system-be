@@ -4,6 +4,8 @@ const router = express.Router();
 const employeeController = require('./employeeController')
 const academicsController = require('./academicsController')
 const experienceController = require('./experienceController')
+const documentController = require('./documentController')
+const warningController = require('./warningController')
 const changeRequestController = require('./changeRequestController')
 
 const validations = require('./validations')
@@ -22,6 +24,14 @@ router.delete('/academic-history/delete/:id', [verifyToken], academicsController
 router.post('/job-experience/create', [verifyToken, validations.experience], experienceController.create);
 router.patch('/job-experience/update/:id', [verifyToken, validations.experience], experienceController.update);
 router.delete('/job-experience/delete/:id', [verifyToken], experienceController.delete);
+
+router.post('/document/create', [verifyToken, validations.documents], documentController.create);
+router.patch('/document/update/:id', [verifyToken, validations.documents], documentController.update);
+router.delete('/document/delete/:id', [verifyToken], documentController.delete);
+
+router.post('/warning/create', [verifyToken, validations.warnings], warningController.create);
+router.patch('/warning/update/:id', [verifyToken, validations.warnings], warningController.update);
+router.delete('/warning/delete/:id', [verifyToken], warningController.delete);
 
 // Change Requests
 router.get('/change-requests', [verifyToken], changeRequestController.list);
