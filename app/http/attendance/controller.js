@@ -5,12 +5,20 @@ const moment = require('moment')
 class AttendanceController {
 
   async todaysAttendance(req, res) {
+    console.log("trigger", req.payload) 
+
+    const startOfDay = new Date();
+    startOfDay.setUTCHours(0, 0, 0, 0);  
+
+    const endOfDay = new Date();
+    endOfDay.setUTCHours(23, 59, 59, 999);  
+
     try {
       const { user } = req.payload
       const attendace = await Attendance.findOne({
         checkInAt: {
-          $gte: new Date,
-          $lt: new Date,
+          $gte: startOfDay,
+          $lt: endOfDay,
         },
         user: user._id
       })
@@ -85,6 +93,4 @@ class AttendanceController {
   }
 
 }
-
-
 module.exports = new AttendanceController

@@ -9,7 +9,7 @@ const { USER_FIELDS } = require('../../util/config')
 class AuthController {
   async signin(req, res) {
     try {
-      const { email, password, is_remote } = req.body
+      const { email, password, is_remote } = req.body 
       let user = await User.findOne({ email }, 'password')
       if (user && bcrypt.compareSync(password, user.password)) {
         const access_token = await jwt(user._id)
