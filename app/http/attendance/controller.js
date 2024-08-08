@@ -97,7 +97,6 @@ class AttendanceController {
     try { 
       const { id } = req.params
       const attendance = await AttendanceBreak.find({attendance:id})
-      console.log('hh',id,attendance);
       if (!attendance) {
         return BadRequest('res', 'invalid attendance')
       }  
