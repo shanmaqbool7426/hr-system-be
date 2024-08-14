@@ -7,6 +7,5 @@ const controller = require("./controller");
 router.post("/create", [verifyToken], controller.create);
 router.get("/list" , [verifyToken], controller.list);
 router.delete("/delete/:id", [verifyToken], controller.delete);
-router.put("/update/:id" ,  controller.update);
-
+router.put("/update/:id" , [verifyToken] ,  controller.update); 
 module.exports = router;
