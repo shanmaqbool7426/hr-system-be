@@ -10,6 +10,7 @@ module.exports = mongoose.model("asset", new Schema({
     vendor: { type: String },
     fields: { type: Object },
     assetType: { type: mongoose.Types.ObjectId, ref: 'custom_field' },
+    assetHistory: { type: mongoose.Types.ObjectId, ref: 'asset_history' },
     company: { type: mongoose.Types.ObjectId, ref: 'company' },
     user: { type: mongoose.Types.ObjectId, ref: 'user' },
     deletedAt: { type: Date, default: null },

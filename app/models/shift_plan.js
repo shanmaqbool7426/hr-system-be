@@ -38,8 +38,7 @@ module.exports = mongoose.model(
   new Schema(
     {
       shiftName: { type: String, required: true },
-      shiftCode: { type: String },
-      workingHours: { type: String },
+      shiftCode: { type: String }, 
       radioStatus: {
         type: String,
         enum: ["flexibleSchedule", "clockBased"],

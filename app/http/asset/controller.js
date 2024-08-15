@@ -148,6 +148,7 @@ class AssetController {
             asset.user = data.assignTo
             asset.status = "assigned"
             await asset.save()
+            
             await AssetHistory.create({
                 asset: asset._id,
                 issueDate: data.assignDate,

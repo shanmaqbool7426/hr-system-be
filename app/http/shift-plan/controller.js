@@ -19,8 +19,7 @@ class ShiftPlanController {
       const data = req.body;
       let insert = {
         shiftName: data.shiftName,
-        shiftCode: data.shiftCode,
-        workingHours: data.reqiuredHours,
+        shiftCode: data.shiftCode, 
         scheduleType: data.scheduleType,
         minStartTime: data.minStartTime,
         radioStatus: data.radioStatus,
@@ -60,8 +59,7 @@ class ShiftPlanController {
       }
       if (Shift)
         (Shift.shiftName = data.shiftName),
-          (Shift.shiftCode = data.shiftCode),
-          (Shift.workingHours = data.reqiuredHours),
+          (Shift.shiftCode = data.shiftCode), 
           (Shift.scheduleType = data.scheduleType),
           (Shift.minStartTime = data.minStartTime),
           (Shift.radioStatus = data.radioStatus),

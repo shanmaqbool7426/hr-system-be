@@ -5,12 +5,11 @@ const moment = require('moment')
 class AttendanceController {
 
   async todaysAttendance(req, res) {
+    console.log("trigger api"); 
     const startOfDay = new Date();
-    startOfDay.setUTCHours(0, 0, 0, 0);
-
+    startOfDay.setUTCHours(0, 0, 0, 0); 
     const endOfDay = new Date();
-    endOfDay.setUTCHours(23, 59, 59, 999);
-
+    endOfDay.setUTCHours(23, 59, 59, 999); 
     try {
       const { user } = req.payload
       const attendace = await Attendance.findOne({
@@ -35,6 +34,8 @@ class AttendanceController {
     }
   }
   async checkIn(req, res) {
+    console.log("api trigger");
+    
     try {
       const { user } = req.payload; 
       const attendance = await Attendance.create({

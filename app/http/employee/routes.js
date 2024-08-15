@@ -4,6 +4,8 @@ const router = express.Router();
 const employeeController = require('./employeeController')
 const academicsController = require('./academicsController')
 const experienceController = require('./experienceController')
+const documentController = require('./documentController')
+const warningController = require('./warningController')
 const changeRequestController = require('./changeRequestController')
 
 const validations = require('./validations')
@@ -23,13 +25,21 @@ router.post('/job-experience/create', [verifyToken, validations.experience], exp
 router.patch('/job-experience/update/:id', [verifyToken, validations.experience], experienceController.update);
 router.delete('/job-experience/delete/:id', [verifyToken], experienceController.delete);
 
+router.post('/document/create', [verifyToken, validations.documents], documentController.create);
+router.patch('/document/update/:id', [verifyToken, validations.documents], documentController.update);
+router.delete('/document/delete/:id', [verifyToken], documentController.delete);
+
+router.post('/warning/create', [verifyToken, validations.warnings], warningController.create);
+router.patch('/warning/update/:id', [verifyToken, validations.warnings], warningController.update);
+router.delete('/warning/delete/:id', [verifyToken], warningController.delete);
+
 // Change Requests
 router.get('/change-requests', [verifyToken], changeRequestController.list);
 router.post('/change-requests/designation', [verifyToken, validations.changeDesignation], changeRequestController.designation);
-// router.post('/change-requests/department', [verifyToken, validations.changeDepartment, multerMiddleware], changeRequestController.department);
-// router.post('/change-requests/employee-code', [verifyToken, validations.changeEmployeeCode, multerMiddleware], changeRequestController.employeeCode);
-// router.post('/change-requests/salary', [verifyToken, validations.changeSalary, multerMiddleware], changeRequestController.salary);
-// router.post('/change-requests/grade', [verifyToken, validations.changeGrade, multerMiddleware], changeRequestController.grade);
-// router.post('/change-requests/line-manager', [verifyToken, validations.changeLineManager, multerMiddleware], changeRequestController.lineManager);
+router.post('/change-requests/department', [verifyToken, validations.changeDepartment], changeRequestController.department);
+router.post('/change-requests/employee-code', [verifyToken, validations.changeEmployeeCode ], changeRequestController.employeeCode);
+router.post('/change-requests/salary', [verifyToken, validations.changeSalary], changeRequestController.salary);
+router.post('/change-requests/grade', [verifyToken, validations.changeGrade], changeRequestController.grade);
+router.post('/change-requests/line-manager', [verifyToken, validations.changeLineManager ], changeRequestController.lineManager);
 
 module.exports = router;

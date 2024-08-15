@@ -21,8 +21,12 @@ module.exports = mongoose.model("user", new Schema({
     religion: { type: String },
     emailVerifiedAt: { type: Date },
     joiningDate: { type: Date },
+    confirmationDate : { type: Date },
+    lastWorkingDate : { type: Date },
+    resignDate : { type: Date },
     canLogin: { type: Boolean, default: false },
     lineManager: { type: mongoose.Types.ObjectId, ref: 'user' },
+    shiftplan:{type: mongoose.Types.ObjectId, ref: 'shiftplan'},
     mobileAttendance: { type: Boolean, default: false },
     webAttendance: { type: Boolean, default: false },
     role: { type: mongoose.Types.ObjectId, ref: 'role' },
@@ -82,6 +86,10 @@ module.exports = mongoose.model("user", new Schema({
     },
     academicsHistory: [{ type: mongoose.Types.ObjectId, ref: 'user_acadamic' }],
     jobExperiences: [{ type: mongoose.Types.ObjectId, ref: 'user_job_experience' }],
+    documents: [{ type: mongoose.Types.ObjectId, ref: 'user_document' }],
+    // warnings: [{ type: mongoose.Types.ObjectId, ref: 'user_warning' }],
+    // assets: [{ type: mongoose.Types.ObjectId, ref: 'asset' }],
+
 }, {
     timestamps: true,
 }));
