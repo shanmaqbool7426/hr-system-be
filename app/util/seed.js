@@ -64,7 +64,8 @@ const Seed = async () => {
   await CustomField.deleteMany({})
 
   const company = await Company.create({
-    name: "Zaffre"
+    name: "Zaffre",
+    currentEmployeeCode: "100002"
   })
   const role = await Role.create({
     name: "Admin",
@@ -93,17 +94,6 @@ const Seed = async () => {
     role: role._id,
     department: department._id,
     employeeCode: "100001"
-  })
-  await User.create({
-    firstName: 'Muhammad',
-    lastName: 'Waqar',
-    email: 'waqar@zaffretech.co',
-    emailVerifiedAt: new Date,
-    password: bcrypt.hashSync('Admin@123', bcrypt.genSaltSync(10)),
-    company: company._id,
-    role: role2._id,
-    department: department._id,
-    employeeCode: "100002"
   })
   for (let index in custom_fields) {
     await CustomField.create(custom_fields[index])
