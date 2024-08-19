@@ -216,6 +216,7 @@ module.exports = {
                 effectiveDate: Joi.date().required().messages({
                     'any.required': "effectiveDateRequired",
                 }),
+                currentValue: Joi.string().optional().allow("", null),
                 reason: Joi.string().required().messages({
                     'any.required': "reasonRequired",
                 }),
@@ -242,6 +243,7 @@ module.exports = {
                 reason: Joi.string().required().messages({
                     'any.required': "reasonRequired",
                 }),
+                currentValue: Joi.string().optional().allow("", null),
                 detail: Joi.string().optional().allow("", null),
                 attachment: Joi.string().optional().allow(null)
             }).validateAsync(req.body);
@@ -265,6 +267,7 @@ module.exports = {
                 reason: Joi.string().required().messages({
                     'any.required': "reasonRequired",
                 }),
+                currentValue: Joi.string().optional().allow("", null),
                 detail: Joi.string().optional().allow("", null),
                 attachment: Joi.string().optional().allow(null)
             }).validateAsync(req.body);
@@ -288,6 +291,7 @@ module.exports = {
                 reason: Joi.string().required().messages({
                     'any.required': "reasonRequired",
                 }),
+                currentValue: Joi.string().optional().allow("", null),
                 detail: Joi.string().optional().allow("", null),
                 attachment: Joi.string().optional().allow(null)
             }).validateAsync(req.body);
@@ -311,6 +315,7 @@ module.exports = {
                 reason: Joi.string().required().messages({
                     'any.required': "reasonRequired",
                 }),
+                currentValue: Joi.string().optional().allow("", null),
                 detail: Joi.string().optional().allow("", null),
                 attachment: Joi.string().optional().allow(null)
             }).validateAsync(req.body);
@@ -334,6 +339,7 @@ module.exports = {
                 reason: Joi.string().required().messages({
                     'any.required': "reasonRequired",
                 }),
+                currentValue: Joi.string().optional().allow("", null),
                 detail: Joi.string().optional().allow("", null),
                 attachment: Joi.string().optional().allow(null)
             }).validateAsync(req.body);

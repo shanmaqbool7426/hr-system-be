@@ -34,6 +34,7 @@ class ChangeRequestController {
                 designation: data.designation,
                 effectiveDate: data.effectiveDate,
                 reason: data.reason,
+                currentValue: data.currentValue,
                 type: "designation",
                 user: user._id,
                 company: user.company._id
@@ -67,6 +68,7 @@ class ChangeRequestController {
                 department: data.department,
                 effectiveDate: data.effectiveDate,
                 reason: data.reason,
+                currentValue: data.currentValue,
                 type: "department",
                 user: user._id,
                 company: user.company._id
@@ -100,6 +102,7 @@ class ChangeRequestController {
                 employeeCode: data.employeeCode,
                 effectiveDate: data.effectiveDate,
                 reason: data.reason,
+                currentValue: data.currentValue,
                 type: "employeeCode",
                 user: user._id,
                 company: user.company._id
@@ -133,6 +136,7 @@ class ChangeRequestController {
                 salary: data.salary,
                 effectiveDate: data.effectiveDate,
                 reason: data.reason,
+                currentValue: data.currentValue,
                 type: "salary",
                 user: user._id,
                 company: user.company._id
@@ -166,6 +170,7 @@ class ChangeRequestController {
                 grade: data.grade,
                 effectiveDate: data.effectiveDate,
                 reason: data.reason,
+                currentValue: data.currentValue,
                 type: "grade",
                 user: user._id,
                 company: user.company._id
@@ -199,6 +204,7 @@ class ChangeRequestController {
                 lineManager: data.lineManager,
                 effectiveDate: data.effectiveDate,
                 reason: data.reason,
+                currentValue: data.currentValue,
                 type: "lineManager",
                 user: user._id,
                 company: user.company._id

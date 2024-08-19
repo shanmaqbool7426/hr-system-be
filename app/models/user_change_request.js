@@ -5,6 +5,7 @@ module.exports = mongoose.model("user_change_request", new Schema({
     employee: { type: mongoose.Types.ObjectId, ref: 'user' },
     effectiveDate: { type: Date },
     type: { type: String },
+    currentValue: { type: String },
     reason: { type: String },
     detail : {type:String},
     employeeCode: { type: String },
