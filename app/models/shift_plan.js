@@ -4,33 +4,27 @@ const Schema = mongoose.Schema;
 const workingDaySchema = new Schema({
   day: {
     type: String,
-    enum: [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday",
-    ],
-    required: true,
+    enum: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
+    required: function(){
+      return this.radioStatus === "clockBased";
+    },
   },
   from: {
     type: String,
     required: function () {
-      return this.scheduleType === "Clock Based";
+      return this.radioStatus === "clockBased";
     },
   },
   to: {
     type: String,
     required: function () {
-      return this.scheduleType === "Clock Based";
+      return this.radioStatus === "clockBased";
     },
   },
-  workingHours: {
+  hours: {
     type: String,
     required: function () {
-      return this.scheduleType === "Flexible";
+      return this.radioStatus === "flexibleSchedule";
     },
   },
   enabled: {
@@ -44,50 +38,48 @@ module.exports = mongoose.model(
   new Schema(
     {
       shiftName: { type: String, required: true },
-      shiftCode: { type: String },
-      workingHours: { type: String },
-      scheduleType: {
+      shiftCode: { type: String }, 
+      radioStatus: {
         type: String,
-        enum: ["Flexible", "Clock Based"],
+        enum: ["flexibleSchedule", "clockBased"],
         required: true,
       },
       minStartTime: {
         type: String,
-        required: function () {
-          return this.scheduleType === "Flexible" || "Clock Based";
-        },
+        required: true,
       },
       maxStartTime: {
         type: String,
         required: function () {
-          return this.scheduleType === "Flexible";
+          return this.radioStatus === "flexibleSchedule";
         },
       },
       startTime: {
         type: String,
         required: function () {
-          return this.scheduleType === "Clock Based";
+          return this.radioStatus === "clockBased";
         },
       },
       endTime: {
         type: String,
         required: function () {
-          return this.scheduleType === "Clock Based";
+          return this.radioStatus === "clockBased";
         },
       },
       maxEndTime: {
         type: String,
         required: function () {
-          return this.scheduleType === "Clock Based";
+          return this.radioStatus === "clockBased";
         },
       },
-      shiftEndsNextDay: { type: Boolean, default: false },
-      breakEnabled: { type: Boolean, default: false },
+      shiftEndNextDay: { type: Boolean, default: false },
+      break: { type: Boolean, default: false },
+      breakCountable: { type: Boolean, default: false },
       breakStartTime: { type: String },
-      breakEndTime: { type: String },
-      workingDays: [workingDaySchema],
+      breakEndTime: { type: String }, 
       company: { type: mongoose.Types.ObjectId, ref: "company" },
       user: { type: mongoose.Types.ObjectId, ref: "user" },
+      scheduleType:[workingDaySchema]
     },
     {
       timestamps: true,
