@@ -42,12 +42,15 @@ class ChangeRequestController {
             if (data.detail) insert.detail = data.detail
             if (data.attachment) insert.attachment = data.attachment
 
-            const changeRequest = await UserChangeRequest.create(insert)
+            let changeRequest = await UserChangeRequest.create(insert)
             if (new Date(data.effectiveDate) <= new Date) {
                 employee.designation = data.designation
                 await employee.save()
             }
-
+            changeRequest = await UserChangeRequest.findById(changeRequest._id)
+                .populate('employee')
+                .populate('designation')
+                .populate('user')
             return Response(res, {
                 changeRequest
             })
@@ -76,11 +79,15 @@ class ChangeRequestController {
             if (data.detail) insert.detail = data.detail
             if (data.attachment) insert.attachment = data.attachment
 
-            const changeRequest = await UserChangeRequest.create(insert)
+            let changeRequest = await UserChangeRequest.create(insert)
             if (new Date(data.effectiveDate) <= new Date) {
                 employee.department = data.department
                 await employee.save()
             }
+            changeRequest = await UserChangeRequest.findById(changeRequest._id)
+                .populate('employee')
+                .populate('department')
+                .populate('user')
 
             return Response(res, {
                 changeRequest
@@ -110,11 +117,14 @@ class ChangeRequestController {
             if (data.detail) insert.detail = data.detail
             if (data.attachment) insert.attachment = data.attachment
 
-            const changeRequest = await UserChangeRequest.create(insert)
+            let changeRequest = await UserChangeRequest.create(insert)
             if (new Date(data.effectiveDate) <= new Date) {
                 employee.employeeCode = data.employeeCode
                 await employee.save()
             }
+            changeRequest = await UserChangeRequest.findById(changeRequest._id)
+                .populate('employee')
+                .populate('user')
 
             return Response(res, {
                 changeRequest
@@ -144,12 +154,14 @@ class ChangeRequestController {
             if (data.detail) insert.detail = data.detail
             if (data.attachment) insert.attachment = data.attachment
 
-            const changeRequest = await UserChangeRequest.create(insert)
+            let changeRequest = await UserChangeRequest.create(insert)
             if (new Date(data.effectiveDate) <= new Date) {
                 employee.salary = data.salary
                 await employee.save()
             }
-
+            changeRequest = await UserChangeRequest.findById(changeRequest._id)
+                .populate('employee')
+                .populate('user')
             return Response(res, {
                 changeRequest
             })
@@ -178,12 +190,15 @@ class ChangeRequestController {
             if (data.detail) insert.detail = data.detail
             if (data.attachment) insert.attachment = data.attachment
 
-            const changeRequest = await UserChangeRequest.create(insert)
+            let changeRequest = await UserChangeRequest.create(insert)
             if (new Date(data.effectiveDate) <= new Date) {
                 employee.grade = data.grade
                 await employee.save()
             }
-
+            changeRequest = await UserChangeRequest.findById(changeRequest._id)
+                .populate('employee')
+                .populate('grade')
+                .populate('user')
             return Response(res, {
                 changeRequest
             })
@@ -212,12 +227,15 @@ class ChangeRequestController {
             if (data.detail) insert.detail = data.detail
             if (data.attachment) insert.attachment = data.attachment
 
-            const changeRequest = await UserChangeRequest.create(insert)
+            let changeRequest = await UserChangeRequest.create(insert)
             if (new Date(data.effectiveDate) <= new Date) {
                 employee.lineManager = data.lineManager
                 await employee.save()
             }
-
+            changeRequest = await UserChangeRequest.findById(changeRequest._id)
+                .populate('employee')
+                .populate('lineManager')
+                .populate('user')
             return Response(res, {
                 changeRequest
             })

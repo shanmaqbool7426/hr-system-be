@@ -38,7 +38,7 @@ class EmployeeController {
         .populate("lineManager")
         .populate("maritalStatus")
         .populate("gender")
-        .populate("shiftPlan");
+        .populate("shiftplan");
 
       return Response(res, { list: data });
     } catch (error) {
