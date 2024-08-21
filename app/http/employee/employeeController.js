@@ -125,7 +125,6 @@ class EmployeeController {
         status: data.status,
         employeeCode: user.company.currentEmployeeCode,
         company: user.company._id,
-        shiftPlan: data.shiftPlan,
       };
 
       insert.mobileAttendance = !!data?.mobileAttendance;
@@ -140,6 +139,8 @@ class EmployeeController {
       if (data?.role) insert.role = data.role;
       if (data?.cnic) insert.cnic = data.cnic;
       if (data?.fatherCnic) insert.fatherCnic = data.fatherCnic;
+      if (data?.shiftplan) insert.shiftplan = data.shiftplan;
+      
       if (data?.canLogin) {
         insert.canLogin = data.canLogin;
         Mailer.sendEmail(

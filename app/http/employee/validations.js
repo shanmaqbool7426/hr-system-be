@@ -50,6 +50,7 @@ module.exports = {
                     'any.required': "contactRequired",
                 }),
                 lineManager: Joi.string().optional().allow(null, ""),
+                shiftplan: Joi.string().optional().allow(null, ""),
                 mobileAttendance: Joi.boolean(),
                 webAttendance: Joi.boolean(),
                 sendEmail: Joi.boolean(),
