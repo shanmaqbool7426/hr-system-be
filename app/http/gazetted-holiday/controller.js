@@ -5,9 +5,15 @@ class GazettedHolidayController {
   async list(req, res) {
     try {
       const { user } = req.payload;
-      let list = await Holiday.find({ company: user.company._id }).populate(
-        "exemptedEmployees"
-      );
+      let list = await Holiday.find({ company: user.company._id })
+        .populate("exemptedEmployees")
+        .populate("countries")
+        .populate("provinces")
+        .populate("cities")
+        .populate("areas")
+        .populate("stations")
+        .populate("grades")
+        .populate("modifiedBy");
       return Response(res, { list });
     } catch (error) {
       return serverError(res, error);
@@ -39,9 +45,15 @@ class GazettedHolidayController {
       }
 
       let holiday = await Holiday.create(insert);
-      holiday = await Holiday.findById(holiday._id).populate(
-        "exemptedEmployees"
-      );
+      holiday = await Holiday.findById(holiday._id)
+        .populate("exemptedEmployees")
+        .populate("countries")
+        .populate("provinces")
+        .populate("cities")
+        .populate("areas")
+        .populate("stations")
+        .populate("grades")
+        .populate("modifiedBy");
       return Response(res, { holiday });
     } catch (error) {
       return serverError(res, error);
@@ -82,9 +94,15 @@ class GazettedHolidayController {
         // TODO : notify all the relevent employees
       }
       await holiday.save();
-      holiday = await Holiday.findById(holiday._id).populate(
-        "exemptedEmployees"
-      );
+      holiday = await Holiday.findById(holiday._id)
+        .populate("exemptedEmployees")
+        .populate("countries")
+        .populate("provinces")
+        .populate("cities")
+        .populate("areas")
+        .populate("stations")
+        .populate("grades")
+        .populate("modifiedBy");
       return Response(res, { holiday });
     } catch (error) {
       return serverError(res, error);
