@@ -66,7 +66,7 @@ class EmployeeController {
         .populate("gender")
         .populate("maritalStatus")
         .populate("lineManager")
-        .populate("shiftPlan");
+        .populate("shiftplan");
 
       let projects = await Project.find({
         $or: [{ leads: id }, { members: id }],
@@ -200,7 +200,7 @@ class EmployeeController {
       if (data?.lineManager && data?.lineManager !== "") employee.lineManager = data.lineManager;
       else if (data?.lineManager === "") employee.lineManager = null;
       if (data?.avatar) employee.avatar = data.avatar;
-      if (data?.shiftPlan) employee.shiftPlan = data.shiftPlan;
+      if (data?.shiftplan) employee.shiftplan = data.shiftplan;
       if (data?.role) employee.role = data.role;
       if (data?.status) employee.status = data.status;
       if (data?.cnic) employee.cnic = data.cnic;
