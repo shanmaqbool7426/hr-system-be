@@ -122,6 +122,7 @@ class EmployeeController {
         employeeCode: data.employeeCode,
         designation: data.designation,
         joiningDate: data.joiningDate,
+        workMode: data.workMode,
         status: data.status,
         employeeCode: user.company.currentEmployeeCode,
         company: user.company._id,
@@ -207,6 +208,7 @@ class EmployeeController {
       if (data?.fatherCnic) employee.fatherCnic = data.fatherCnic;
       if (data?.employeeCode) employee.employeeCode = data.employeeCode;
       if (data?.joiningDate) employee.joiningDate = data.joiningDate;
+      if (data?.workMode) employee.workMode = data.workMode;
       if (data?.confirmationDate) employee.confirmationDate = data.confirmationDate;
       if (data?.resignDate) employee.resignDate = data.resignDate;
       if (data?.lastWorkingDate) employee.lastWorkingDate = data.lastWorkingDate;

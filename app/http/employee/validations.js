@@ -49,6 +49,9 @@ module.exports = {
                 contact: Joi.string().required().messages({
                     'any.required': "contactRequired",
                 }),
+                workMode: Joi.string().required().messages({
+                    'any.required': "workModeRequired",
+                }),
                 lineManager: Joi.string().optional().allow(null, ""),
                 shiftplan: Joi.string().optional().allow(null, ""),
                 mobileAttendance: Joi.boolean(),
@@ -92,6 +95,7 @@ module.exports = {
                 cnic: Joi.string().optional().allow(null, ""),
                 fatherCnic: Joi.string().optional().allow(null, ""),
                 contact: Joi.string().optional().allow(null, ""),
+                workMode: Joi.string().optional().allow(null, ""),
                 employeeCode: Joi.string().optional().allow(null, ""),
                 passportNumber: Joi.string().optional().allow(null, ""),
                 gender: Joi.string().optional().allow(null, ""),
@@ -116,6 +120,7 @@ module.exports = {
                 mobileAttendance: Joi.boolean().optional().allow(null, ""),
                 webAttendance: Joi.boolean().optional().allow(null, ""),
                 address: Joi.string().optional().allow(null, ""),
+                shiftplan: Joi.string().optional().allow(null, ""),
             }).validateAsync(req.body);
             next();
         } catch (error) {

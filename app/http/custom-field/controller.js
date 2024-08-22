@@ -42,7 +42,7 @@ class CustomFieldController {
             custom_field.name = name
             if (icon) custom_field.icon = icon
             if (prefix) custom_field.prefix = prefix
-            if (fields) insert.fields = fields
+            if (fields) custom_field.fields = fields
             await custom_field.save()
             return Response(res, { custom_field })
         } catch (error) {
