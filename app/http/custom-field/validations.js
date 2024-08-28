@@ -15,6 +15,8 @@ module.exports = {
                 }),
                 icon: Joi.string().optional().allow('', null),
                 prefix: Joi.string().optional().allow('', null),
+                parent: Joi.string().optional().allow('', null),
+                category: Joi.string().optional().allow('', null),
                 fields: Joi.array().optional().allow('', null),
             }).validateAsync(req.body);
             next();
@@ -31,6 +33,8 @@ module.exports = {
                 type: Joi.string().optional().allow('', null),
                 icon: Joi.string().optional().allow('', null),
                 prefix: Joi.string().optional().allow('', null),
+                parent: Joi.string().optional().allow('', null),
+                category: Joi.string().optional().allow('', null),
                 fields: Joi.array().optional().allow('', null),
             }).validateAsync(req.body);
             next();
