@@ -87,7 +87,7 @@ const Seed = async () => {
   await User.create({
     firstName: 'Syed',
     lastName: 'Shujjat',
-    email: 'shujjat@zaffretech.co',
+    email: 'shujaat@zaffretech.co',
     emailVerifiedAt: new Date,
     password: bcrypt.hashSync('Admin@123', bcrypt.genSaltSync(10)),
     company: company._id,

@@ -9,7 +9,7 @@ const { USER_FIELDS } = require('../../util/config')
 class AuthController {
   async signin(req, res) {
     try {
-      const { email, password, is_remote } = req.body 
+      const { email, password, is_remote } = req.body
       let user = await User.findOne({ email }, 'password')
       if (user && bcrypt.compareSync(password, user.password)) {
         const access_token = await jwt(user._id)
@@ -35,10 +35,11 @@ class AuthController {
     try {
       const { user, device } = req.payload
       const token = await jwt(user?._id?.toString())
+      const refreshToken = await jwt(user._id, true, is_remote)
       await UserDevice.updateOne({ _id: device._id }, {
-        $set: { token }
+        $set: { token, refreshToken }
       })
-      return Response(res, { access_token: token })
+      return Response(res, { access_token: token, refresh_token: refreshToken })
     } catch (error) {
       return serverError(res, error)
     }
