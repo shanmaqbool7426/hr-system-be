@@ -35,7 +35,7 @@ class AuthController {
     try {
       const { user, device } = req.payload
       const token = await jwt(user?._id?.toString())
-      const refreshToken = await jwt(user._id, true, is_remote)
+      const refreshToken = await jwt(user?._id?.toString(), true)
       await UserDevice.updateOne({ _id: device._id }, {
         $set: { token, refreshToken }
       })
