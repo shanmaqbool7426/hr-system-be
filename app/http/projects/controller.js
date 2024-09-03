@@ -1,5 +1,6 @@
 const { Response, BadRequest, serverError, NotFound } = require('../../util/helpers')
 const Project = require("../../models/project")
+const ProjectAttachment = require("../../models/project_attachment")
 const TaskBoard = require("../../models/task_board");
 const Task = require("../../models/task");
 const moment = require("moment")
@@ -43,14 +44,15 @@ class ProjectController {
             const { id } = req.params
             const { user } = req.payload
             let project = await Project.findOne({ _id: id, deletedAt: null, $or: [{ company: user.company._id }, { company: null }] })
-            .populate('boards')
-            .populate('createdBy', "_id firstName lastName avatar email")
-            .populate('leads', "_id firstName lastName avatar email")
-            .populate('members', "_id firstName lastName avatar email")
-            const total_tasks = await Task.countDocuments({project: id})
-            const completed_tasks = await Task.countDocuments({project: id , status: "completed"})
+                .populate('boards')
+                .populate('attachments')
+                .populate('createdBy', "_id firstName lastName avatar email")
+                .populate('leads', "_id firstName lastName avatar email")
+                .populate('members', "_id firstName lastName avatar email")
+            const total_tasks = await Task.countDocuments({ project: id })
+            const completed_tasks = await Task.countDocuments({ project: id, status: "completed" })
 
-            return Response(res, { project ,  total_tasks, completed_tasks })
+            return Response(res, { project, total_tasks, completed_tasks })
         } catch (error) {
             return serverError(res, error)
         }
@@ -73,7 +75,7 @@ class ProjectController {
             let insert = {
                 company: user.company._id,
                 createdBy: user._id,
-                projectId:projectId,
+                projectId: projectId,
                 name: data.name,
                 client: data.client,
                 description: data.description,
@@ -87,14 +89,14 @@ class ProjectController {
             if (data?.paymentCycle) insert.paymentCycle = data.paymentCycle
             if (data?.attachments) insert.attachments = data.attachments
             let project = await Project.create(insert)
-            
+
             project = await Project.findById(project._id)
                 .populate('boards')
                 .populate('createdBy', "_id firstName lastName avatar email ")
                 .populate('leads', "_id firstName lastName avatar email ")
                 .populate('members', "_id firstName lastName avatar email ")
-              
-            return Response(res, { project  })
+
+            return Response(res, { project })
         } catch (error) {
             return serverError(res, error)
         }
@@ -157,15 +159,51 @@ class ProjectController {
             if (!project) {
                 return NotFound(res)
             }
-          
-             await TaskBoard.deleteMany({ project: id });
-             await Project.deleteOne({ _id: id });
+
+            await TaskBoard.deleteMany({ project: id });
+            await Project.deleteOne({ _id: id });
             return Response(res)
         } catch (error) {
             return serverError(res, error)
         }
     }
-
+    async createAttachment(req, res) {
+        try {
+            const { user } = req.payload
+            const data = req.body
+            let attachment = await ProjectAttachment.create({
+                name: data.name,
+                size: data.size,
+                link: data.attachment,
+                project: data.project_id,
+                company: user.company
+            })
+            await Project.updateOne({ _id: data.project_id, company: user.company },
+                { $addToSet: { attachments: attachment._id } })
+            return Response(res, { attachment })
+        } catch (error) {
+            return serverError(res, error)
+        }
+    }
+    async deleteAttachment(req, res) {
+        try {
+            const { user } = req.payload
+            const { id } = req.params
+            let attachment = await ProjectAttachment.findOne({
+                _id: id,
+                company: user.company
+            })
+            if (!attachment) {
+                return NotFound(res);
+            }
+            await ProjectAttachment.deleteOne({ _id: id });
+            await Project.updateOne({ _id: attachment.project, company: user.company },
+                { $pull: { attachments: attachment._id } })
+            return Response(res, {})
+        } catch (error) {
+            return serverError(res, error)
+        }
+    }
 }
 
 module.exports = new ProjectController

@@ -52,10 +52,6 @@ module.exports = {
                 paymentCycle: Joi.string().optional().empty(""),
                 leads: Joi.array().optional().empty(""),
                 members: Joi.array().optional().empty(""),
-                // attachments: Joi.array().optional().empty([]).items(Joi.object({
-                //     filename: Joi.string().optional().empty(""),
-                //     file: Joi.binary().optional().empty("")
-                // })),
                 status: Joi.string().optional().empty(""),
             }).validateAsync(req.body);
             next();
@@ -63,5 +59,25 @@ module.exports = {
             return BadRequest(res, error.message);
         }
     },
-
+    createAttachment: async (req, res, next) => {
+        try {
+            await Joi.object({
+                name: Joi.string().required().messages({
+                    'any.required': "nameRequired",
+                }),
+                size: Joi.number().required().messages({
+                    'any.required': "sizeRequired",
+                }),
+                attachment: Joi.string().required().messages({
+                    'any.required': "attachmentRequired",
+                }),
+                project_id: Joi.string().required().messages({
+                    'any.required': "projectRequired",
+                }),
+            }).validateAsync(req.body);
+            next();
+        } catch (error) {
+            return BadRequest(res, error.message);
+        }
+    },
 };

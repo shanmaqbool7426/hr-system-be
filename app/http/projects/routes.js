@@ -11,4 +11,7 @@ router.post('/create', [verifyToken  ,validations.create ], controller.create);
 router.patch('/update/:id', [verifyToken , validations.update], controller.update);
 router.delete('/delete/:id', [verifyToken], controller.delete);
 
+router.post('/attachments/create', [verifyToken , validations.createAttachment], controller.createAttachment);
+router.delete('/attachments/delete/:id', [verifyToken], controller.deleteAttachment);
+
 module.exports = router;

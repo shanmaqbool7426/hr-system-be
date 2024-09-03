@@ -17,7 +17,7 @@ module.exports = mongoose.model("project", new Schema({
     leads: [{ type: mongoose.Types.ObjectId, ref: 'user' }],
     members: [{ type: mongoose.Types.ObjectId, ref: 'user' }],
     boards: [{ type: mongoose.Types.ObjectId, ref: 'task_board' }],
-    attachments: [{ type: String }],
+    attachments: [{ type: mongoose.Types.ObjectId, ref: 'project_attachment' }],
     company: { type: mongoose.Types.ObjectId, ref: 'company' },
     createdBy: { type: mongoose.Types.ObjectId, ref: 'user' },
 }, {
