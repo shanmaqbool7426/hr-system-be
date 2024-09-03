@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8001"
+      "url": "https://dev-api.zaffretech.co/api"
     }
   ],
   "tags": [
@@ -5021,76 +5021,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/add-new-jobs/create": {
-      "post": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "jobTitle": {
-                    "example": "any"
-                  },
-                  "jobLocation": {
-                    "example": "any"
-                  },
-                  "noOfVacancies": {
-                    "example": "any"
-                  },
-                  "experience": {
-                    "example": "any"
-                  },
-                  "age": {
-                    "example": "any"
-                  },
-                  "salaryFrom": {
-                    "example": "any"
-                  },
-                  "salaryTo": {
-                    "example": "any"
-                  },
-                  "jobType": {
-                    "example": "any"
-                  },
-                  "status": {
-                    "example": "any"
-                  },
-                  "description": {
-                    "example": "any"
-                  },
-                  "department": {
-                    "example": "any"
-                  },
-                  "startDate": {
-                    "example": "any"
-                  },
-                  "expireDate": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/add-new-jobs/getJobs": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
           }
         }
       }
