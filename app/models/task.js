@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 module.exports = mongoose.model("task", new Schema({
     name: { type: String },
-    taskId:  { type: String },
+    taskId:  { type: String, index: true },
     parent: { type: mongoose.Types.ObjectId, ref: 'task', default:null},
     description: { type: String },
     status: { type: String  , default:"awaiting" },
@@ -11,6 +11,7 @@ module.exports = mongoose.model("task", new Schema({
     requiredTime: { type: String },
     dueDate: { type: Date },
     priority: { type: String },
+    attachment: { type: String },
     feedback: { type: mongoose.Types.ObjectId, ref: 'feedback' },
     assignedTo: { type: mongoose.Types.ObjectId, ref: 'user' },
     lead: { type: mongoose.Types.ObjectId, ref: 'user' },

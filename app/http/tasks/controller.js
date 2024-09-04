@@ -171,6 +171,7 @@ class TaskController {
         feedback: data.feedback,
         board: data.board,
         issueRaised: data.issueRaised,
+        attachment: data?.attachment || null,
       })
       await TaskBoard.updateOne(
         { _id: data.board, company: user.company },
@@ -212,6 +213,7 @@ class TaskController {
       if (data?.assignedTo) task.assignedTo = data.assignedTo
       if (data?.lead) task.lead = data.lead
       if (data?.status) task.status = data.status
+      if (data?.attachment) task.attachment = data.attachment
       await task.save()
 
       task = await Task.findById(task._id)

@@ -9,13 +9,13 @@ module.exports = {
                 name: Joi.string().required().messages({
                     'any.required': "nameRequired",
                 }),
-                parent: Joi.string().optional().allow(null,""),
-                issueRaised: Joi.array().optional().allow(null,""),
-                feedback: Joi.string().optional().allow(null,""),
+                parent: Joi.string().optional().allow(null, ""),
+                issueRaised: Joi.array().optional().allow(null, ""),
+                feedback: Joi.string().optional().allow(null, ""),
                 priority: Joi.string().required().messages({
                     'any.required': "priorityRequired",
                 }),
-                status : Joi.string().optional().allow(null,""),
+                status: Joi.string().optional().allow(null, ""),
                 description: Joi.string().required().messages({
                     'any.required': "descriptionRequired",
                 }),
@@ -37,6 +37,7 @@ module.exports = {
                 dueDate: Joi.date().required().messages({
                     'any.required': "dueDateRequired",
                 }),
+                attachment: Joi.string().optional().allow(null, ""),
             }).validateAsync(req.body);
             next();
         } catch (error) {
@@ -47,8 +48,8 @@ module.exports = {
         try {
             await Joi.object({
                 name: Joi.string().optional().allow("", null),
-                parent : Joi.string().optional().allow(null, ""),
-                issueRaised: Joi.array().optional().allow(null,""),
+                parent: Joi.string().optional().allow(null, ""),
+                issueRaised: Joi.array().optional().allow(null, ""),
                 description: Joi.string().optional().allow("", null),
                 priority: Joi.string().optional().allow("", null),
                 requiredTime: Joi.string().optional().allow("", null),
@@ -57,7 +58,8 @@ module.exports = {
                 lead: Joi.string().optional().allow("", null),
                 status: Joi.string().optional().allow(null, ""),
                 board: Joi.string().optional().allow(null, ""),
-                project :Joi.string().optional().allow(null, ""),
+                project: Joi.string().optional().allow(null, ""),
+                attachment :Joi.string().optional().allow(null, ""),
             }).validateAsync(req.body);
             next();
         } catch (error) {
