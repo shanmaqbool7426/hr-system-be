@@ -1,29 +1,36 @@
-const { Response, BadRequest, serverError, NotFound } = require('../../util/helpers')
+const { Response, serverError, NotFound } = require('../../util/helpers')
 const Project = require("../../models/project")
 const ProjectAttachment = require("../../models/project_attachment")
 const TaskBoard = require("../../models/task_board");
 const Task = require("../../models/task");
 const moment = require("moment")
 class ProjectController {
-
+    async getProject(project_id, company_id) {
+        return await Project.findOne({ _id: project_id, company: company_id })
+            .populate('boards')
+            .populate('attachments')
+            .populate('createdBy', "_id firstName lastName avatar email ")
+            .populate('leads', "_id firstName lastName avatar email ")
+            .populate('members', "_id firstName lastName avatar email ")
+            .populate({
+                path: 'feedback',
+                populate: {
+                    path: 'createdBy',
+                    select: "_id firstName lastName avatar email"
+                }
+            })
+    }
     async list(req, res) {
         try {
             const { user } = req.payload
-            const list = await Project.find({ company: user.company })
+            const { status } = req.query
+            let filters = { company: user.company }
+            if (status) filters.status = status
+            const list = await Project.find(filters)
                 .populate('boards')
                 .populate('createdBy', "_id firstName lastName avatar email ")
                 .populate('leads', "_id firstName lastName avatar email ")
                 .populate('members', "_id firstName lastName avatar email ")
-            return Response(res, { list })
-        } catch (error) {
-            return serverError(res, error)
-        }
-    }
-    async completedProjectList(req, res) {
-        try {
-            const { user } = req.payload;
-            const list = await Project.find({ company: user.company, status: "completed" })
-                .populate('boards')
                 .populate({
                     path: 'feedback',
                     populate: {
@@ -31,24 +38,16 @@ class ProjectController {
                         select: "_id firstName lastName avatar email"
                     }
                 })
-                .populate('createdBy', "_id firstName lastName avatar email")
-                .populate('leads', "_id firstName lastName avatar email")
-                .populate('members', "_id firstName lastName avatar email");
-            return Response(res, { list });
+            return Response(res, { list })
         } catch (error) {
-            return serverError(res, error);
+            return serverError(res, error)
         }
     }
     async details(req, res) {
         try {
             const { id } = req.params
             const { user } = req.payload
-            let project = await Project.findOne({ _id: id, deletedAt: null, $or: [{ company: user.company._id }, { company: null }] })
-                .populate('boards')
-                .populate('attachments')
-                .populate('createdBy', "_id firstName lastName avatar email")
-                .populate('leads', "_id firstName lastName avatar email")
-                .populate('members', "_id firstName lastName avatar email")
+            let project = await this.getProject(id, user.company._id)
             const total_tasks = await Task.countDocuments({ project: id })
             const completed_tasks = await Task.countDocuments({ project: id, status: "completed" })
 
@@ -87,14 +86,9 @@ class ProjectController {
             }
             if (data?.payment) insert.payment = data.payment
             if (data?.paymentCycle) insert.paymentCycle = data.paymentCycle
-            if (data?.attachments) insert.attachments = data.attachments
             let project = await Project.create(insert)
 
-            project = await Project.findById(project._id)
-                .populate('boards')
-                .populate('createdBy', "_id firstName lastName avatar email ")
-                .populate('leads', "_id firstName lastName avatar email ")
-                .populate('members', "_id firstName lastName avatar email ")
+            project = await this.getProject(id, user.company._id)
 
             return Response(res, { project })
         } catch (error) {
@@ -125,25 +119,7 @@ class ProjectController {
             if (data?.attachments) project.attachments = data.attachments
             if (data?.status) project.status = data.status
             await project.save()
-
-            if (data?.leads || data?.members) {
-                await TaskBoard.updateMany(
-                    { project: id },
-                    {
-                        $set: {
-                            leads: data.leads || project.leads,
-                            members: data.members || project.members,
-                        }
-                    }
-                );
-            }
-
-            project = await Project.findById(project._id)
-                .populate('boards')
-                .populate('feedback')
-                .populate('createdBy', "_id firstName lastName avatar email ")
-                .populate('leads', "_id firstName lastName avatar email ")
-                .populate('members', "_id firstName lastName avatar email ")
+            project = await this.getProject(id, user.company._id)
             return Response(res, { project })
         } catch (error) {
             return serverError(res, error)

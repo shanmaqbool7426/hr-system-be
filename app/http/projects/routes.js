@@ -5,7 +5,6 @@ const validations = require('./validations')
 const { verifyToken } = require('../../middlewares');
 
 router.get('/list', [verifyToken], controller.list);
-router.get('/list-completed', [verifyToken], controller.completedProjectList);
 router.get('/details/:id', [verifyToken], controller.details);
 router.post('/create', [verifyToken  ,validations.create ], controller.create);
 router.patch('/update/:id', [verifyToken , validations.update], controller.update);

@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 module.exports = mongoose.model("project", new Schema({
     projectId: { type: String, index: true },
     name: { type: String },
-    projectId:{type:String},
     client: { type: String },
     priority: { type: String },
     description: { type: String },

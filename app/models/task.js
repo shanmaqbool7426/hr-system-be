@@ -3,11 +3,11 @@ const Schema = mongoose.Schema;
 
 module.exports = mongoose.model("task", new Schema({
     name: { type: String },
-    taskId:  { type: String, index: true },
-    parent: { type: mongoose.Types.ObjectId, ref: 'task', default:null},
+    taskId: { type: String, index: true },
+    parent: { type: mongoose.Types.ObjectId, ref: 'task', default: null },
     description: { type: String },
-    status: { type: String  , default:"awaiting" },
-    issueRaised: [{ type: mongoose.Types.ObjectId, ref:'task_raise_issue' }],  
+    status: { type: String, default: "awaiting", index: true },
+    issueRaised: [{ type: mongoose.Types.ObjectId, ref: 'task_raise_issue' }],
     requiredTime: { type: String },
     dueDate: { type: Date },
     priority: { type: String },
