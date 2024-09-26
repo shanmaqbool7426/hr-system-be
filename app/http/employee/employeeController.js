@@ -86,7 +86,6 @@ class EmployeeController {
         user: id,
         company: user.company._id,
       }).populate("documentType");
-      console.log("documents", documents);
 
       let assets = await Asset.find({
         user: id,

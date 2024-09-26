@@ -25,7 +25,7 @@ module.exports = mongoose.model("user", new Schema({
     resignDate: { type: Date },
     canLogin: { type: Boolean, default: false },
     lineManager: { type: mongoose.Types.ObjectId, ref: 'user' },
-    shiftplan: { type: mongoose.Types.ObjectId, ref: 'shiftplan' },
+    shiftplan: { type: mongoose.Types.ObjectId, ref: 'shift_plan' },
     mobileAttendance: { type: Boolean, default: false },
     webAttendance: { type: Boolean, default: false },
     role: { type: mongoose.Types.ObjectId, ref: 'role' },
