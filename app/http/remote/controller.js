@@ -25,7 +25,7 @@ class RemoteController {
           process: remote_process._id,
           user: user._id,
           company: user.company._id,
-          createdAt: { $gte: moment().startOf('D').format() }
+          createdAt: { $gte: moment().utc().startOf('D').format() }
         })
 
         if (!exist) {
