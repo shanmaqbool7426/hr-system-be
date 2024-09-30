@@ -23,17 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '.../', 'public')));
 
-app.use(cors({
-  origin: function (origin, callback) {
-    callback(null, true);
-    // if (!origin || whitelist.indexOf(origin) !== -1) {
-    //   callback(null, true);
-    // } else {
-    //   callback(new Error("Not allowed by CORS"));
-    // }
-  },
-  credentials: true,
-}));
+app.use(cors());
 
 app.use((req, res, next) => {
   res.language = req.headers["Accept-Language"] || "en"
