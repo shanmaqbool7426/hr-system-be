@@ -14,6 +14,7 @@ router.get("/health", (req, res, next) => {
 
 //App routes
 router.use("/attendance", require("./http/attendance/routes"));
+router.use("/attendance-requests", require("./http/attendance-request/routes"));
 router.use("/assets", require("./http/asset/routes"));
 router.use("/auth", require("./http/auth/routes"));
 router.use("/biometric", require("./http/biometric/routes"));

@@ -18,15 +18,15 @@ const doc = {
   ],
   security: [
     {
-      bearerAuth: [],
+      JwtToken: "",
     },
   ],
   securityDefinitions: {
-    bearerAuth: {
-      type: "http",
-      scheme: "bearer",
-      bearerFormat: "JWT",
-    },
+    "JwtToken": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
   },
   tags: [
     {
