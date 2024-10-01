@@ -1,0 +1,14 @@
+const express = require("express");
+const router = express.Router();
+const controller = require('./controller')
+const validations = require('./validations')
+const { verifyToken } = require('../../middlewares')
+
+router.get('/list', [verifyToken], (req, res) => controller.list(req, res));
+router.post('/create', [verifyToken, validations.create], (req, res) => controller.create(req, res));
+router.patch('/update/:id', [verifyToken, validations.update], (req, res) => controller.update(req, res));
+router.patch('/approve/:id', [verifyToken], (req, res) => controller.approve(req, res));
+router.patch('/reject/:id', [verifyToken], (req, res) => controller.reject(req, res));
+router.delete('/delete/:id', [verifyToken], (req, res) => controller.delete(req, res));
+
+module.exports = router;

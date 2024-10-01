@@ -1,10 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-module.exports = mongoose.model("attendance_request", new Schema({
+module.exports = mongoose.model("exemption_request", new Schema({
   date: { type: String },
-  checkInAt: { type: Date },
-  checkOutAt: { type: Date },
   reason: { type: String },
   status: { type: String, default: "pending" },
   statusReason: { type: String },

@@ -7,16 +7,13 @@ module.exports = {
         try {
             await Joi.object({
                 employee: Joi.string().required().messages({
-                    'any.required': "employeeRequired",
+                    'any.required': "Employee is required",
                 }),
                 date: Joi.date().required().messages({
-                    'any.required': "dateRequired",
+                    'any.required': "Date is required",
                 }),
-                checkInAt: Joi.date().required().messages({
-                    'any.required': "checkInRequired",
-                }),
-                checkOutAt: Joi.date().required().messages({
-                    'any.required': "checkOutRequired",
+                exemptionType: Joi.string().required().messages({
+                    'any.required': "Exemption type is required",
                 }),
                 reason: Joi.string().optional().allow("", null),
             }).validateAsync(req.body);
@@ -28,9 +25,9 @@ module.exports = {
     update: async (req, res, next) => {
         try {
             await Joi.object({
+                employee: Joi.string().optional().allow("", null),
                 date: Joi.date().optional().allow("", null),
-                checkInAt: Joi.date().optional().allow("", null),
-                checkOutAt: Joi.date().optional().allow("", null),
+                exemptionType: Joi.string().optional().allow("", null),
                 reason: Joi.string().optional().allow("", null),
             }).validateAsync(req.body);
             next();
