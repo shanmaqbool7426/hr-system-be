@@ -25,7 +25,7 @@ module.exports = mongoose.model("user", new Schema({
     resignDate: { type: Date },
     canLogin: { type: Boolean, default: false },
     lineManager: { type: mongoose.Types.ObjectId, ref: 'user' },
-    shiftplan: { type: mongoose.Types.ObjectId, ref: 'shift_plan' },
+    shiftplan: { type: mongoose.Types.ObjectId, ref: 'shift_plan', default: null },
     mobileAttendance: { type: Boolean, default: false },
     webAttendance: { type: Boolean, default: false },
     role: { type: mongoose.Types.ObjectId, ref: 'role' },
@@ -45,6 +45,18 @@ module.exports = mongoose.model("user", new Schema({
     status: { type: mongoose.Types.ObjectId, ref: 'custom_field' },
     grade: { type: mongoose.Types.ObjectId, ref: 'custom_field' },
     station: { type: mongoose.Types.ObjectId, ref: 'custom_field' },
+
+    // Remote settings
+    remoteSetting: {
+        idleTime: { type: Number, default: 3 },
+        storeOfflineData: { type: Boolean, default: true },
+        screenShotEnabled: { type: Boolean, default: true },
+        screenShotInterval: { type: Number, default: 3 },
+        screenShotPerInterval: { type: Number, default: 3 },
+        blurScreenShot: { type: Boolean, default: false },
+        canQuite: { type: Boolean, default: true },
+        ignoreIdleWhenInactive: { type: Boolean, default: false },
+    },
 
     emergencyContact: {
         fullname: { type: String },
