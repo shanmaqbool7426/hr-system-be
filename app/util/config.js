@@ -11,7 +11,7 @@ module.exports.MAILER_PORT = process.env.MAILER_PORT
 module.exports.MAILER_USERNAME = process.env.MAILER_USERNAME
 module.exports.MAILER_SECRET = process.env.MAILER_SECRET
 module.exports.MAILER_SENDER = process.env.MAILER_SENDER
-module.exports.USER_FIELDS = "_id firstName lastName email avatar role company";
+module.exports.USER_FIELDS = "_id firstName lastName email avatar employeeCode company";
 module.exports.whitelist = [
     "https://zaffretech.co",
     "https://dev.zaffretech.co",

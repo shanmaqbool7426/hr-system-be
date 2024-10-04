@@ -43,7 +43,7 @@ class CustomFieldController {
                 _id: id, company: user.company._id
             })
             if (!custom_field) {
-                return BadRequest(res, 'notFound')
+                return BadRequest(res)
             }
             custom_field.name = name
             if (icon) custom_field.icon = icon
@@ -68,7 +68,7 @@ class CustomFieldController {
                 _id: id, company: user.company._id
             })
             if (!exists) {
-                return BadRequest(res, 'notFound')
+                return BadRequest(res)
             }
             await CustomField.deleteOne({
                 _id: id, company: user.company._id

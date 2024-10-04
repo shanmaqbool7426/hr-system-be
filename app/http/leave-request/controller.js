@@ -41,7 +41,7 @@ class LeaveRequestController {
                 _id: id, company: user.company._id
             })
             if (!leave_request) {
-                return BadRequest(res, 'notFound')
+                return BadRequest(res)
             }
             if (leave_request.duration) leave_request.duration = data.duration
             if (leave_request.formDate) leave_request.formDate = data.formDate
@@ -64,7 +64,7 @@ class LeaveRequestController {
                 _id: id, company: user.company._id
             })
             if (!exists) {
-                return BadRequest(res, 'notFound')
+                return BadRequest(res)
             }
             await LeaveRequest.deleteOne({
                 _id: id, company: user.company._id

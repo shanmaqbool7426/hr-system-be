@@ -56,7 +56,7 @@ class ExemptionRequestController {
         _id: id, company: user.company._id
       })
       if (!request) {
-        return BadRequest(res, 'notFound')
+        return BadRequest(res)
       }
       if (data?.employee) request.user = data.employee
       if (data?.date) request.date = moment(data.date).utc().format()
@@ -79,7 +79,7 @@ class ExemptionRequestController {
       })
 
       if (!request) {
-        return BadRequest(res, 'notFound')
+        return BadRequest(res)
       }
 
       request.status = "approved"
@@ -102,7 +102,7 @@ class ExemptionRequestController {
       })
 
       if (!request) {
-        return BadRequest(res, 'notFound')
+        return BadRequest(res)
       }
 
       request.status = "rejected"
@@ -124,7 +124,7 @@ class ExemptionRequestController {
         _id: id, company: user.company._id
       })
       if (!exists) {
-        return BadRequest(res, 'notFound')
+        return BadRequest(res)
       }
       await Request.deleteOne({
         _id: id, company: user.company._id

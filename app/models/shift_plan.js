@@ -1,88 +1,136 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 
-const workingDaySchema = new Schema({
-  day: {
+const schema = new mongoose.Schema({
+  name: {
     type: String,
-    enum: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
-    required: function(){
-      return this.radioStatus === "clockBased";
-    },
+    required: true
   },
-  from: {
+  shiftCode: {
     type: String,
-    required: function () {
-      return this.radioStatus === "clockBased";
-    },
   },
-  to: {
+  shiftType: {
     type: String,
-    required: function () {
-      return this.radioStatus === "clockBased";
-    },
+    enum: ['flexible', 'fixed'],
+    required: true
   },
-  hours: {
-    type: String,
-    required: function () {
-      return this.radioStatus === "flexibleSchedule";
-    },
+  startTime: {
+    type: Date,
   },
-  enabled: {
+  endTime: {
+    type: Date,
+  },
+  minStartTime: {
+    type: Date,
+  },
+  maxStartTime: {
+    type: Date,
+  },
+  maxEndTime: {
+    type: Date,
+  },
+  shiftEndsOnNextDay: {
     type: Boolean,
-    default: false,
+    default: false
   },
-});
-
-module.exports = mongoose.model(
-  "shift_plan",
-  new Schema(
-    {
-      shiftName: { type: String, required: true },
-      shiftCode: { type: String }, 
-      radioStatus: {
-        type: String,
-        enum: ["flexibleSchedule", "clockBased"],
-        required: true,
+  breakStartTime: {
+    type: Date,
+  },
+  breakEndTime: {
+    type: Date,
+  },
+  isBreakCountable: {
+    type: Boolean,
+    default: false
+  },
+  workingDays: {
+    Monday: {
+      isWorkingDay: {
+        type: Boolean,
+        default: false
       },
-      minStartTime: {
-        type: String,
-        required: true,
-      },
-      maxStartTime: {
-        type: String,
-        required: function () {
-          return this.radioStatus === "flexibleSchedule";
-        },
-      },
-      startTime: {
-        type: String,
-        required: function () {
-          return this.radioStatus === "clockBased";
-        },
-      },
-      endTime: {
-        type: String,
-        required: function () {
-          return this.radioStatus === "clockBased";
-        },
-      },
-      maxEndTime: {
-        type: String,
-        required: function () {
-          return this.radioStatus === "clockBased";
-        },
-      },
-      shiftEndNextDay: { type: Boolean, default: false },
-      break: { type: Boolean, default: false },
-      breakCountable: { type: Boolean, default: false },
-      breakStartTime: { type: String },
-      breakEndTime: { type: String }, 
-      company: { type: mongoose.Types.ObjectId, ref: "company" },
-      user: { type: mongoose.Types.ObjectId, ref: "user" },
-      scheduleType:[workingDaySchema]
+      hours: String,
+      startTime: String,
+      endTime: String,
     },
-    {
-      timestamps: true,
+    Tuesday: {
+      isWorkingDay: {
+        type: Boolean,
+        default: false
+      },
+      hours: String,
+      startTime: String,
+      endTime: String,
+    },
+    Wednesday: {
+      isWorkingDay: {
+        type: Boolean,
+        default: false
+      },
+      hours: String,
+      startTime: String,
+      endTime: String,
+    },
+    Thursday: {
+      isWorkingDay: {
+        type: Boolean,
+        default: false
+      },
+      hours: String,
+      startTime: String,
+      endTime: String,
+    },
+    Friday: {
+      isWorkingDay: {
+        type: Boolean,
+        default: false
+      },
+      hours: String,
+      startTime: String,
+      endTime: String,
+    },
+    Saturday: {
+      isWorkingDay: {
+        type: Boolean,
+        default: false
+      },
+      hours: String,
+      startTime: String,
+      endTime: String,
+    },
+    Sunday: {
+      isWorkingDay: {
+        type: Boolean,
+        default: false
+      },
+      hours: String,
+      startTime: String,
+      endTime: String,
+    },
+  },
+  company: { type: mongoose.Types.ObjectId, ref: 'company' },
+  modifiedBy: { type: mongoose.Types.ObjectId, ref: 'user' },
+})
+
+schema.pre('save', async function (next) {
+  const shiftPlan = this;
+  const prefix = 'SF';
+  if (!shiftPlan.isNew) {
+    return next();
+  }
+  try {
+    const lastShiftPlan = await mongoose.model('shift_plan').findOne({ company: shiftPlan.company }).sort({ shiftCode: -1 });
+    let newShiftCode;
+    if (lastShiftPlan && lastShiftPlan.shiftCode) {
+      const lastShiftNumber = parseInt(lastShiftPlan.shiftCode.replace(prefix, ''), 10);
+      newShiftCode = `${prefix}-${String(lastShiftNumber + 1).padStart(3, '0')}`;
+    } else {
+      newShiftCode = `${prefix}-001`;
     }
-  )
-);
+    shiftPlan.shiftCode = newShiftCode;
+    next();
+  } catch (error) {
+    next(error);
+  }
+})
+const shift_plan = mongoose.model('shift_plan', schema);
+module.exports = shift_plan;

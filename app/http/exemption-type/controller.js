@@ -35,7 +35,7 @@ class ExemptionRequestTypeController {
                 _id: id, company: user.company._id
             })
             if (!request_type) {
-                return BadRequest(res, 'notFound')
+                return BadRequest(res)
             }
             request_type.title = title
             request_type.minHours = minHours
@@ -55,7 +55,7 @@ class ExemptionRequestTypeController {
                 _id: id, company: user.company._id
             })
             if (!exists) {
-                return BadRequest(res, 'notFound')
+                return BadRequest(res)
             }
             await RequestType.deleteOne({
                 _id: id, company: user.company._id

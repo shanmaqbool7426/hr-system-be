@@ -1,0 +1,22 @@
+{
+    "created": "created",
+    "success": "success",
+    "Something went wrong, we are tring our best to fix it": "Something went wrong, we are tring our best to fix it",
+    "Resource not found, invalid request": "Resource not found, invalid request",
+    "unauthorized": "Access denied. Please check your permissions and try again",
+    "forbidden": "Authorization failed. Access to this resource is restricted",
+    "invalidCredential": "The provided credentials are invalid",
+    "Email is requried": "Email is requried",
+    "Please enter a valid email": "Please enter a valid email",
+    "Password is required": "Password is required",
+    "Confirm password is required": "Confirm password is required",
+    "Confirm password don't match password": "Confirm password don't match password",
+    "OTP is required": "OTP is required",
+    "OTP is not valid": "OTP is not valid",
+    "Email already exists": "Email already exists",
+    "First name is required": "First name is required",
+    "Last name is required": "Last name is required",
+    "Father name is required": "Father name is required",
+    "Date of birth is required": "Date of birth is required",
+    "Joining date is required": "Joining date is required"
+}

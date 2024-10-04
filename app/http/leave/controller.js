@@ -41,7 +41,7 @@ class LeaveController {
                 _id: id, company: user.company._id
             })
             if (!leave) {
-                return BadRequest(res, 'notFound')
+                return BadRequest(res)
             }
             leave.name = data.name
             leave.entitled = data.entitled
@@ -63,7 +63,7 @@ class LeaveController {
                 _id: id, company: user.company._id
             })
             if (!exists) {
-                return BadRequest(res, 'notFound')
+                return BadRequest(res)
             }
             await Leave.deleteOne({
                 _id: id, company: user.company._id

@@ -83,7 +83,7 @@ class AssetController {
                 _id: id, deletedAt: null, company: user.company._id
             })
             if (!asset) {
-                return BadRequest(res, 'notFound')
+                return BadRequest(res)
             }
             asset.assetType = data.assetType
             asset.warrantyExpiry = data.warrantyExpiry
@@ -106,7 +106,7 @@ class AssetController {
                 _id: id, company: user.company._id
             })
             if (!exists) {
-                return BadRequest(res, 'notFound')
+                return BadRequest(res)
             }
             await Asset.updateOne({
                 _id: id, company: user.company._id
@@ -124,7 +124,7 @@ class AssetController {
                 _id: id, company: user.company._id
             })
             if (!exists) {
-                return BadRequest(res, 'notFound')
+                return BadRequest(res)
             }
             await Asset.updateOne({
                 _id: id, company: user.company._id
@@ -143,7 +143,7 @@ class AssetController {
                 _id: id, company: user.company._id
             })
             if (!asset) {
-                return BadRequest(res, 'notFound')
+                return BadRequest(res)
             }
             asset.user = data.assignTo
             asset.status = "assigned"
@@ -171,7 +171,7 @@ class AssetController {
                 _id: id, company: user.company._id
             })
             if (!asset) {
-                return BadRequest(res, 'notFound')
+                return BadRequest(res)
             }
 
             let history = await AssetHistory.findOne({

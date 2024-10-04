@@ -71,7 +71,7 @@ class GazettedHolidayController {
         company: user.company._id,
       });
       if (!holiday) {
-        return BadRequest(res, "notFound");
+        return BadRequest(res);
       }
 
       if (data?.title) holiday.title = data.title;
@@ -117,7 +117,7 @@ class GazettedHolidayController {
         company: user.company._id,
       });
       if (!exists) {
-        return BadRequest(res, "notFound");
+        return BadRequest(res);
       }
       await Holiday.deleteOne({
         _id: id,

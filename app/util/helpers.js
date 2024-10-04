@@ -23,14 +23,14 @@ module.exports.jwt = (userId, refresh = false, is_remote = false) => {
 }
 
 module.exports.Response = (res, data = null, status = 200, message = 'success') => res.status(status).json({ data, message: getMessage(res, message) })
-module.exports.BadRequest = (res, message) => this.Response(res, null, 400, message)
+module.exports.BadRequest = (res, message = "Resource not found, invalid request") => this.Response(res, null, 400, message)
 module.exports.NotFound = (res) => this.Response(res, null, 404, 'notFound')
 module.exports.UnAuthorized = (res) => this.Response(res, null, 401, 'unauthorized')
 module.exports.Forbidden = (res) => this.Response(res, null, 403, 'forbidden')
 
 module.exports.serverError = function (res, error) {
   let data;
-  let message = getMessage(res, 'serverError')
+  let message = getMessage(res, 'Something went wrong, we are tring our best to fix it')
   if (DEBUG === true) {
     console.error(error);
     data = error

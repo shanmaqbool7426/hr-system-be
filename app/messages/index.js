@@ -1,3 +1,3 @@
 module.exports = {
-    en: require('./en')
+    en: require('./en.json')
 }

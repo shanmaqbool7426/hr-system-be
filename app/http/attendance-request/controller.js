@@ -45,7 +45,7 @@ class AttendanceRequestController {
         _id: id, company: user.company._id
       })
       if (!request) {
-        return BadRequest(res, 'notFound')
+        return BadRequest(res)
       }
       if (data?.employee) request.user = data.employee
       if (data?.checkInAt) request.checkInAt = moment(data.checkInAt).utc().format()
@@ -68,7 +68,7 @@ class AttendanceRequestController {
       })
 
       if (!request) {
-        return BadRequest(res, 'notFound')
+        return BadRequest(res)
       }
 
       request.status = "approved"
@@ -101,7 +101,7 @@ class AttendanceRequestController {
       })
 
       if (!request) {
-        return BadRequest(res, 'notFound')
+        return BadRequest(res)
       }
 
       request.status = "rejected"
@@ -123,7 +123,7 @@ class AttendanceRequestController {
         _id: id, company: user.company._id
       })
       if (!exists) {
-        return BadRequest(res, 'notFound')
+        return BadRequest(res)
       }
       await Request.deleteOne({
         _id: id, company: user.company._id
