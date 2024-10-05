@@ -14,29 +14,29 @@ const schema = new mongoose.Schema({
     required: true
   },
   startTime: {
-    type: Date,
+    type: String,
   },
   endTime: {
-    type: Date,
+    type: String,
   },
   minStartTime: {
-    type: Date,
+    type: String,
   },
   maxStartTime: {
-    type: Date,
+    type: String,
   },
   maxEndTime: {
-    type: Date,
+    type: String,
   },
   shiftEndsOnNextDay: {
     type: Boolean,
     default: false
   },
   breakStartTime: {
-    type: Date,
+    type: String,
   },
   breakEndTime: {
-    type: Date,
+    type: String,
   },
   isBreakCountable: {
     type: Boolean,
@@ -113,7 +113,7 @@ const schema = new mongoose.Schema({
 
 schema.pre('save', async function (next) {
   const shiftPlan = this;
-  const prefix = 'SF';
+  const prefix = 'SF-';
   if (!shiftPlan.isNew) {
     return next();
   }
@@ -122,9 +122,9 @@ schema.pre('save', async function (next) {
     let newShiftCode;
     if (lastShiftPlan && lastShiftPlan.shiftCode) {
       const lastShiftNumber = parseInt(lastShiftPlan.shiftCode.replace(prefix, ''), 10);
-      newShiftCode = `${prefix}-${String(lastShiftNumber + 1).padStart(3, '0')}`;
+      newShiftCode = `${prefix}${String(lastShiftNumber + 1).padStart(3, '0')}`;
     } else {
-      newShiftCode = `${prefix}-001`;
+      newShiftCode = `${prefix}001`;
     }
     shiftPlan.shiftCode = newShiftCode;
     next();

@@ -27,8 +27,8 @@ class ShiftPlanController {
         shiftType: data.shiftType,
         workingDays: data.workingDays,
         shiftEndsOnNextDay: data.shiftEndsOnNextDay,
-        breakStartTime: data.breakStartTime,
-        breakEndTime: data.breakEndTime,
+        breakStartTime: data?.breakStartTime,
+        breakEndTime: data?.breakEndTime,
         isBreakCountable: data.isBreakCountable,
         company: user.company._id,
         modifiedBy: user._id,
@@ -40,7 +40,7 @@ class ShiftPlanController {
       if (data?.maxEndTime) insert.maxEndTime = data.maxEndTime
 
       let shift = await ShiftPlan.create(insert);
-      shift = this.#getShift(shift._id)
+      shift = await this.#getShift(shift._id)
       return Response(res, { shift });
     } catch (error) {
       return serverError(res, error);
@@ -75,7 +75,7 @@ class ShiftPlanController {
 
 
       await shift.save();
-      shift = this.#getShift(shift._id)
+      shift = await this.#getShift(shift._id)
       return Response(res, { shift });
     } catch (error) {
       return serverError(res, error);

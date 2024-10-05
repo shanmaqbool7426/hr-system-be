@@ -10,7 +10,7 @@ module.exports = {
             shiftType: Joi.string().required().messages({
                 'any.required': "Shift Type is required",
             }),
-            workingDays: Joi.array().required().messages({
+            workingDays: Joi.any().required().messages({
                 'any.required': "Working Days are required",
             }),
             shiftEndsOnNextDay: Joi.boolean().required().messages({
