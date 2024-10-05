@@ -22,11 +22,11 @@ class AuthController {
         })
         await User.updateOne({ _id: user._id },
           { $push: { devices: device._id } })
-        user = await User.findById(user._id, "firstName lastName email avatar shiftplan remoteSetting")
+        user = await User.findById(user._id, "firstName lastName email avatar shiftplan workMode remoteSetting")
           .populate('company', '_id name')
           .populate('role')
           .populate('shiftplan')
-        
+
         return Response(res, { user, access_token, refresh_token })
       }
       return BadRequest(res, 'invalidCredential')
