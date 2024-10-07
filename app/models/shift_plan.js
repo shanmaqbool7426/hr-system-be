@@ -32,6 +32,10 @@ const schema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  break: {
+    type: Boolean,
+    default: false
+  },
   breakStartTime: {
     type: String,
   },

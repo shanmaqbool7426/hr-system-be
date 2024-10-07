@@ -27,7 +27,9 @@ class ShiftPlanController {
         shiftType: data.shiftType,
         workingDays: data.workingDays,
         shiftEndsOnNextDay: data.shiftEndsOnNextDay,
+        break: Boolean(data?.break),
         breakStartTime: data?.breakStartTime,
+        breakEndTime: data?.breakEndTime,
         breakEndTime: data?.breakEndTime,
         isBreakCountable: data.isBreakCountable,
         company: user.company._id,
@@ -66,6 +68,7 @@ class ShiftPlanController {
       if (data.breakStartTime) shift.breakStartTime = data.breakStartTime
       if (data.breakEndTime) shift.breakEndTime = data.breakEndTime
       if (Object.keys(data).includes('shiftEndsOnNextDay')) shift.shiftEndsOnNextDay = data.shiftEndsOnNextDay
+      if (Object.keys(data).includes('break')) shift.break = Boolean(data.break)
       if (Object.keys(data).includes('isBreakCountable')) shift.isBreakCountable = data.isBreakCountable
       if (data?.startTime) shift.startTime = data.startTime
       if (data?.endTime) shift.endTime = data.endTime

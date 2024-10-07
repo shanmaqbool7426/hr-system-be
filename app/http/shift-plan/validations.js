@@ -16,6 +16,7 @@ module.exports = {
             shiftEndsOnNextDay: Joi.boolean().required().messages({
                 'any.required': "Shift Ends On Next Day is required",
             }),
+            break: Joi.boolean().allow(null, ''),
             breakStartTime: Joi.string().allow(null, '').messages({
                 'string.base': "Break Start Time must be a string"
             }),
@@ -63,6 +64,7 @@ module.exports = {
             shiftEndsOnNextDay: Joi.boolean().messages({
                 'boolean.base': "Shift Ends On Next Day must be a boolean"
             }),
+            break: Joi.boolean().allow(null, ''),
             breakStartTime: Joi.string().allow(null, '').messages({
                 'string.base': "Break Start Time must be a string"
             }),
