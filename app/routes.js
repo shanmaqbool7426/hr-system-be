@@ -36,7 +36,7 @@ router.use("/shift-plans", require("./http/shift-plan/routes"));
 router.use("/tasks", require("./http/tasks/routes"));
 router.use("/task-boards", require("./http/task-boards/routes"));
 router.use("/task-raise-issue", require("./http/task-raise-issue/routes"));
-
+router.use("/remote-teams", require("./http/remote-team/routes"));
 router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput, swaggerUiOptions));
 
 module.exports = router;

@@ -27,7 +27,8 @@ class AuthController {
           .populate('role')
           .populate('shiftplan')
 
-        return Response(res, { user, access_token, refresh_token })
+        // sync_data_interval is in minutes
+        return Response(res, { user, access_token, refresh_token, sync_data_interval: 30 })
       }
       return BadRequest(res, 'invalidCredential')
     } catch (error) {
@@ -54,7 +55,7 @@ class AuthController {
       const { email } = req.body
       const user = await User.findOne({ email })
       if (!user) {
-        return BadRequest(res, 'invalidEmail')
+        return BadRequest(res, 'Email is not valid')
       }
       const otp = Math.floor(1000 + Math.random() * 9000);
       await ResetPassword.deleteMany({ email })
@@ -73,7 +74,7 @@ class AuthController {
       const { email, otp } = req.body
       const exists = await ResetPassword.exists({ email, otp })
       if (!exists && otp !== "0000") {
-        return BadRequest(res, 'invalidOtp')
+        return BadRequest(res, 'OTP is not valid')
       }
       return Response(res, {})
     } catch (error) {
@@ -87,13 +88,10 @@ class AuthController {
       const exists = await ResetPassword.exists({ email, otp })
 
       if (!exists && otp !== "0000") {
-        return BadRequest(res, 'invalidOtp')
+        return BadRequest(res, 'OTP is not valid')
       }
       const user = await User.findOne({ email })
-      if (!user) {
-        return BadRequest(res, 'invalidOtp')
-      }
-
+      
       user.password = bcrypt.hashSync(password, bcrypt.genSaltSync(10))
       await user.save()
       return Response(res, {})
