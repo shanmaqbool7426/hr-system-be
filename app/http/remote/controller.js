@@ -74,11 +74,19 @@ class RemoteController {
 
       if (idleIntervals && todaysAttendance) {
         for (let index in idleIntervals) {
-          await AttendanceBreak.create({
+          let interval = idleIntervals[index]
+          let exist = await AttendanceBreak.findOne({
             attendance: todaysAttendance._id,
-            startAt: idleIntervals[index].start_at,
-            endAt: idleIntervals[index].end_at
+            startAt: moment(interval.start_at).utc().format(),
+            endAt: moment(interval.end_at).utc().format()
           })
+          if (!exist) {
+            await AttendanceBreak.create({
+              attendance: todaysAttendance._id,
+              startAt: moment(interval.start_at).utc().format(),
+              endAt: moment(interval.end_at).utc().format()
+            })
+          }
         }
       }
 

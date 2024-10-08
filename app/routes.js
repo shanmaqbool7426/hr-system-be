@@ -30,13 +30,14 @@ router.use("/leaves", require("./http/leave/routes"));
 router.use("/leave-requests", require("./http/leave-request/routes"));
 router.use("/projects", require("./http/projects/routes"));
 router.use("/remote", require("./http/remote/routes"));
+router.use("/remote-categories", require("./http/remote-category/routes"));
+router.use("/remote-teams", require("./http/remote-team/routes"));
 router.use("/roles", require("./http/role/routes"));
 router.use("/shift-flag", require("./http/shift-flag/routes"));
 router.use("/shift-plans", require("./http/shift-plan/routes"));
 router.use("/tasks", require("./http/tasks/routes"));
 router.use("/task-boards", require("./http/task-boards/routes"));
 router.use("/task-raise-issue", require("./http/task-raise-issue/routes"));
-router.use("/remote-teams", require("./http/remote-team/routes"));
 router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput, swaggerUiOptions));
 
 module.exports = router;

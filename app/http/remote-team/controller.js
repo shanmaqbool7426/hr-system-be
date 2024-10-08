@@ -40,7 +40,8 @@ class RemoteTeamController {
       let team = await RemoteTeam.findOne({ _id: req.params.id, company: user.company._id })
       if (!team) return BadRequest(res)
 
-      team.name = data.name
+      if (data?.name) team.name = data.name
+      team.modifiedBy = user._id
       await team.save()
       team = await this.#getTeam(team._id)
       return Response(res, { team })
