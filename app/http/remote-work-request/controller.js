@@ -1,0 +1,96 @@
+const { Response, BadRequest, serverError } = require('../../util/helpers')
+const RemoteWorkRequest = require('../../models/remote_work_request')
+const { USER_FIELDS } = require('../../util/config')
+class RemoteWorkRequestController {
+  async #getWorkRequest(id) {
+    return await RemoteWorkRequest.findById(id)
+      .populate('user', USER_FIELDS)
+      .populate('modifiedBy', USER_FIELDS)
+  }
+  async list(req, res) {
+    try {
+      const { user } = req.payload
+      const list = await RemoteWorkRequest.find({ company: user.company._id })
+        .populate('user', USER_FIELDS)
+        .populate('modifiedBy', USER_FIELDS)
+      return Response(res, { list })
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
+  async create(req, res) {
+    try {
+      const { user } = req.payload
+      const data = req.body
+
+      let request = await RemoteWorkRequest.create({
+        user: data.employee,
+        startDate: moment(data.startDate).toDate(),
+        endDate: data?.endDate ? moment(data.endDate).toDate() : null,
+        reason: data.reason,
+        company: user.company._id,
+        modifiedBy: user._id
+      })
+      request = await this.#getWorkRequest(request._id)
+      return Response(res, { request })
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
+  async update(req, res) {
+    try {
+      const { user } = req.payload
+      const data = req.body
+
+      let request = await RemoteWorkRequest.findOne({ _id: req.params.id, company: user.company._id })
+      if (!request) return BadRequest(res)
+
+      if (data?.startDate) request.startDate = moment(data.startDate).toDate()
+      if (data?.endDate) request.endDate = moment(data.endDate).toDate()
+      if (data?.reason) request.reason = data.reason
+      request.modifiedBy = user._id
+      await request.save()
+      request = await this.#getWorkRequest(request._id)
+      return Response(res, { request })
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
+  async delete(req, res) {
+    try {
+      const { user } = req.payload
+      const { id } = req.params
+      const request = await RemoteWorkRequest.findOne({ _id: id, company: user.company._id })
+      if (!request) return BadRequest(res)
+
+      await request.deleteOne({ _id: id })
+
+      return Response(res)
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
+  async updateStatus(req, res) {
+    try {
+      const { user } = req.payload
+      const data = req.body
+      const { id } = req.params
+
+      let request = await RemoteWorkRequest.findOne({ _id: id, company: user.company._id })
+      if (!request) return BadRequest(res)
+
+      if (data?.status) request.status = data.status
+      if (data?.reason) request.statusReason = data.reason
+      await request.save()
+      request = await this.#getWorkRequest(request._id)
+      if (data.status === "approved" && request.startDate <= new Date() && request.endDate >= new Date()) {
+        await user.updateOne({ $set: { workMode: "remote" } })
+      }
+      return Response(res, { request })
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
+}
+
+module.exports = new RemoteWorkRequestController

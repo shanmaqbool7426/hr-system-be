@@ -44,6 +44,7 @@ class RemoteController {
       for (let index in screenshots) {
         await RemoteUserScreenshot.create({
           url: screenshots[index].url,
+          processName: screenshots[index].process_name,
           takenAt: screenshots[index].taken_at,
           user: user._id,
           company: user.company._id

@@ -10,7 +10,10 @@ class AuthController {
   async signin(req, res) {
     try {
       const { email, password, is_remote } = req.body
-      let user = await User.findOne({ email }, 'password')
+      let user = await User.findOne({ email }, 'password workMode')
+      if(is_remote && user.workMode !== "remote") {
+        return BadRequest(res, 'You are not allowed on remote work')
+      }
       if (user && bcrypt.compareSync(password, user.password)) {
         const access_token = await jwt(user._id)
         const refresh_token = await jwt(user._id, true, is_remote)
