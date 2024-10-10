@@ -1,5 +1,6 @@
 const { Response, BadRequest, serverError } = require('../../util/helpers')
 const RemoteWorkRequest = require('../../models/remote_work_request')
+const User = require('../../models/user')
 const { USER_FIELDS } = require('../../util/config')
 const moment = require('moment')
 class RemoteWorkRequestController {
@@ -89,7 +90,9 @@ class RemoteWorkRequestController {
       await request.save()
       request = await this.#getWorkRequest(request._id)
       if (data.status === "approved" && request.startDate <= new Date() && request.endDate >= new Date()) {
-        await user.updateOne({ $set: { workMode: "remote" } })
+        let updateData = { workMode: "remote" }
+        if (request.team) updateData.team = request.team
+        await User.updateOne({ _id: request.user }, { $set: updateData })
       }
       return Response(res, { request })
     } catch (error) {

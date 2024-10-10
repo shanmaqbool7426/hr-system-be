@@ -29,7 +29,7 @@ module.exports = mongoose.model("user", new Schema({
     mobileAttendance: { type: Boolean, default: false },
     webAttendance: { type: Boolean, default: false },
     role: { type: mongoose.Types.ObjectId, ref: 'role' },
-
+    team: { type: mongoose.Types.ObjectId, ref: 'remote_team' },
     department: { type: mongoose.Types.ObjectId, ref: 'department' },
     company: { type: mongoose.Types.ObjectId, ref: 'company' },
     devices: [{ type: mongoose.Types.ObjectId, ref: 'userdevice' }],
