@@ -8,6 +8,7 @@ module.exports = {
         employee: Joi.string().required().messages({
           'any.required': "Employee is required",
         }),
+        team: Joi.string().optional().allow(null, ""),
         startDate: Joi.date().required().messages({
           'any.required': "Start date is required",
         }),
@@ -27,7 +28,7 @@ module.exports = {
         status: Joi.string().required().messages({
           'any.required': "Status is required",
         }),
-        reason: Joi.string().optional().allow(null),
+        reason: Joi.string().optional().allow(null, ""),
       }).validateAsync(req.body);
       next();
     } catch (error) {

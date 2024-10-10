@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 module.exports = mongoose.model("remote_work_request", new Schema({
   user: { type: mongoose.Types.ObjectId, ref: 'user' },
+  team: { type: mongoose.Types.ObjectId, ref: 'remote_team' },
   startDate: { type: Date },
   endDate: { type: Date },
   reason: { type: String },

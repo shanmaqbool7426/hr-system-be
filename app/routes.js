@@ -31,6 +31,7 @@ router.use("/leave-requests", require("./http/leave-request/routes"));
 router.use("/projects", require("./http/projects/routes"));
 router.use("/remote", require("./http/remote/routes"));
 router.use("/remote-categories", require("./http/remote-category/routes"));
+router.use("/remote-work-requests", require("./http/remote-work-request/routes"));
 router.use("/remote-teams", require("./http/remote-team/routes"));
 router.use("/roles", require("./http/role/routes"));
 router.use("/shift-flag", require("./http/shift-flag/routes"));

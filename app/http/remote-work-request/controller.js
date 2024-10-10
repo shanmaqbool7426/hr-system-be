@@ -1,11 +1,13 @@
 const { Response, BadRequest, serverError } = require('../../util/helpers')
 const RemoteWorkRequest = require('../../models/remote_work_request')
 const { USER_FIELDS } = require('../../util/config')
+const moment = require('moment')
 class RemoteWorkRequestController {
   async #getWorkRequest(id) {
     return await RemoteWorkRequest.findById(id)
       .populate('user', USER_FIELDS)
       .populate('modifiedBy', USER_FIELDS)
+      .populate('team')
   }
   async list(req, res) {
     try {
@@ -13,6 +15,7 @@ class RemoteWorkRequestController {
       const list = await RemoteWorkRequest.find({ company: user.company._id })
         .populate('user', USER_FIELDS)
         .populate('modifiedBy', USER_FIELDS)
+        .populate('team')
       return Response(res, { list })
     } catch (error) {
       return serverError(res, error)
@@ -29,6 +32,7 @@ class RemoteWorkRequestController {
         endDate: data?.endDate ? moment(data.endDate).toDate() : null,
         reason: data.reason,
         company: user.company._id,
+        team: data?.team ? data.team : null,
         modifiedBy: user._id
       })
       request = await this.#getWorkRequest(request._id)
@@ -47,6 +51,7 @@ class RemoteWorkRequestController {
 
       if (data?.startDate) request.startDate = moment(data.startDate).toDate()
       if (data?.endDate) request.endDate = moment(data.endDate).toDate()
+      if (data?.team) request.team = data.team
       if (data?.reason) request.reason = data.reason
       request.modifiedBy = user._id
       await request.save()
