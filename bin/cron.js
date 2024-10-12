@@ -9,10 +9,10 @@ const RemoveExpiredOTP = async () => {
 }
 
 const CheckRemoteWork = async () => {
-    const requests = await RemoteWorkRequest.find({ status: "approved" })
+    const requests = await RemoteWorkRequest.find({ status: "approved", isRevoked: false })
     for (const request of requests) {
         if (moment(request.startDate).isSameOrBefore(moment()) && moment(request.endDate).isSameOrAfter(moment())) {
-            await User.updateOne({ _id: request.user }, { $set: { workMode: "remote" } })
+            await User.updateOne({ _id: request.user }, { $set: { workMode: "remote", remoteWork: { from: moment(request.startDate).toDate(), to: moment(request.endDate).toDate() } } })
         }
         if (moment(request.endDate).isBefore(moment())) {
             await User.updateOne({ _id: request.user }, { $set: { workMode: "onsite" } })

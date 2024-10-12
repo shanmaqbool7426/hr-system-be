@@ -3,6 +3,7 @@ const RemoteWorkRequest = require('../../models/remote_work_request')
 const User = require('../../models/user')
 const { USER_FIELDS } = require('../../util/config')
 const moment = require('moment')
+const { populateEmployee } = require('../employee/employeeController')
 class RemoteWorkRequestController {
   async #getWorkRequest(id) {
     return await RemoteWorkRequest.findById(id)
@@ -89,12 +90,30 @@ class RemoteWorkRequestController {
       if (data?.reason) request.statusReason = data.reason
       await request.save()
       request = await this.#getWorkRequest(request._id)
-      if (data.status === "approved" && request.startDate <= new Date() && request.endDate >= new Date()) {
+      if (data.status === "approved" && moment(request.startDate).isSameOrBefore(new Date()) && moment(request.endDate).isSameOrAfter(new Date())) {
         let updateData = { workMode: "remote" }
         if (request.team) updateData.team = request.team
-        await User.updateOne({ _id: request.user }, { $set: updateData })
+        await User.updateOne({ _id: request.user }, { $set: updateData, remoteWork: { from: moment(request.startDate).toDate(), to: moment(request.endDate).toDate() } })
       }
       return Response(res, { request })
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
+
+  async revoke(req, res) {
+    try {
+      const { user } = req.payload
+      const { id } = req.params
+
+      let request = await RemoteWorkRequest.findOne({ _id: id, company: user.company._id })
+      if (!request) return BadRequest(res)
+
+      await User.updateOne({ _id: request.user }, { $set: { workMode: "onsite" } })
+      request.isRevoked = true
+      await request.save()
+      let employee = await populateEmployee(request.user)
+      return Response(res, { employee })
     } catch (error) {
       return serverError(res, error)
     }

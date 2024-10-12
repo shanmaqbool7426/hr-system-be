@@ -5,7 +5,94 @@ const RemoteUserScreenshot = require('../../models/remote_user_screenshot')
 const Attendance = require('../../models/attendance')
 const AttendanceBreak = require('../../models/attendance_break')
 const moment = require('moment')
+const getTimeInHoursAndMinutes = (seconds = 0) => {
+  const hours = Math.floor(seconds / 3600) || 0;
+  const minutes = Math.floor((seconds % 3600) / 60) || 0;
+  return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+}
 class RemoteController {
+  async dashboardStats(req, res) {
+    try {
+      const { user } = req.payload
+      let { startDate, endDate } = req.query
+
+      startDate = startDate ? moment(startDate).utc().format() : moment().utc().startOf('D').format()
+      endDate = endDate ? moment(endDate).utc().format() : moment().utc().endOf('D').format()
+
+
+      const differenceInDays = moment(endDate).diff(moment(startDate), 'days')
+      let attendance
+      if (differenceInDays > 0) {
+        attendance = await Attendance.aggregate([
+          {
+            $match: {
+              user: user._id, company: user.company._id,
+              checkInAt: { $gte: startDate, $lt: endDate },
+            }
+          },
+          {
+            $group: {
+              _id: null,
+              avgCheckInAt: { $avg: { $toDate: "$checkInAt" } },
+              avgCheckOutAt: { $avg: { $toDate: "$checkOutAt" } }
+            }
+          }
+        ])
+        attendance = attendance.length > 0 ? attendance[0] : {}
+      } else {
+        attendance = await Attendance.findOne({
+          checkInAt: { $gte: startDate },
+          user: user._id
+        })
+      }
+      let productiveTime = await RemoteUserProcess.aggregate([
+        {
+          $match: {
+            user: user._id, company: user.company._id,
+            createdAt: {
+              $gte: startDate,
+              $lt: endDate
+            },
+            "process.nature": "productive"
+          }
+        },
+        { $group: { _id: null, totalTime: { $sum: "$time_spent" } } }
+      ])
+      productiveTime = productiveTime.length > 0 ? productiveTime[0].totalTime : 0
+
+      let totalRemoteTime = await RemoteUserScreenshot.aggregate([
+        {
+          $match: {
+            user: user._id, company: user.company._id,
+            createdAt: {
+              $gte: startDate,
+              $lt: endDate
+            },
+          }
+        },
+        { $group: { _id: null, totalTime: { $sum: "$time_spent" } } }
+      ])
+      totalRemoteTime = totalRemoteTime.length > 0 ? totalRemoteTime[0].totalTime : 0
+      let process_list = await RemoteUserProcess.find({
+        createdAt: {
+          $gte: startDate,
+          $lt: endDate
+        },
+        user: user._id,
+        company: user.company._id
+      }).populate('process')
+
+      return Response(res, {
+        arrival_time: attendance?.checkInAt ? moment(attendance.checkInAt).format("h: mm A") : null,
+        left_time: attendance?.checkOutAt ? moment(attendance.checkOutAt).format("h: mm A") : null,
+        productive_time: getTimeInHoursAndMinutes(productiveTime),
+        total_remote_time: getTimeInHoursAndMinutes(totalRemoteTime),
+        process_list
+      })
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
   async syncRemoteData(req, res) {
     try {
       const { user } = req.payload
@@ -26,7 +113,6 @@ class RemoteController {
           process: remote_process._id,
           user: user._id,
           company: user.company._id,
-          createdAt: { $gte: moment().utc().startOf('D').format() }
         })
 
         if (!exist) {
@@ -117,7 +203,6 @@ class RemoteController {
           process: remote_process._id,
           user: user._id,
           company: user.company._id,
-          createdAt: { $gte: moment().utc().startOf('D').format() }
         })
 
         if (!exist) {

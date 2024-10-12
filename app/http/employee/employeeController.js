@@ -9,6 +9,21 @@ const bcrypt = require("bcryptjs");
 const Mailer = require("../../util/mailer");
 const UserCredentialsEmail = require("../../emails/userCredentials");
 class EmployeeController {
+  async populateEmployee(id) {
+    return await User.findById(id)
+      .select("-password -devices")
+      .populate("department")
+      .populate("team")
+      .populate("lineManager")
+      .populate("designation")
+      .populate("status")
+      .populate("workMode")
+      .populate("grade")
+      .populate("station")
+      .populate("maritalStatus")
+      .populate("gender")
+      .populate("shiftplan")
+  }
   async list(req, res) {
     try {
       let { filters } = req.query;
@@ -29,6 +44,7 @@ class EmployeeController {
         }
       }
       let data = await User.find(_filters)
+        .select("-password -devices")
         .populate("department")
         .populate("designation")
         .populate("status")
@@ -134,13 +150,13 @@ class EmployeeController {
       if (data?.confirmationDate) insert.confirmationDate = data.confirmationDate;
       if (data?.resignDate) insert.resignDate = data.resignDate;
       if (data?.lastWorkingDate) insert.lastWorkingDate = data.lastWorkingDate;
-      if (data?.lineManager && data?.lineManager !== "none") insert.lineManager = data.lineManager; 
+      if (data?.lineManager && data?.lineManager !== "none") insert.lineManager = data.lineManager;
       if (data?.avatar) insert.avatar = data.avatar;
       if (data?.role) insert.role = data.role;
       if (data?.cnic) insert.cnic = data.cnic;
       if (data?.fatherCnic) insert.fatherCnic = data.fatherCnic;
       if (data?.shiftplan) insert.shiftplan = data.shiftplan;
-      
+
       if (data?.canLogin) {
         insert.canLogin = data.canLogin;
         Mailer.sendEmail(
@@ -155,17 +171,7 @@ class EmployeeController {
         { _id: user.company._id },
         { $set: { currentEmployeeCode: (parseInt(user.company.currentEmployeeCode) + 1).toString() } }
       );
-      employee = await User.findById(employee._id)
-        .populate("department")
-        .populate("designation")
-        .populate("maritalStatus")
-        .populate("gender")
-        .populate("status")
-        .populate("workMode")
-        .populate("lineManager")
-        .populate("grade")
-        .populate("station")
-        .populate("shiftplan");
+      employee = await this.populateEmployee(employee._id);
       return Response(res, {
         employee,
       });
@@ -229,20 +235,10 @@ class EmployeeController {
       if (data?.grade) employee.grade = data.grade;
       if (data?.station) employee.station = data.station;
       if (data?.address) employee.address = data.address;
-
+      if (data?.team) employee.team = data.team;
       await employee.save();
 
-      employee = await User.findById(employee._id)
-        .populate("department")
-        .populate("maritalStatus")
-        .populate("gender")
-        .populate("grade")
-        .populate("station")
-        .populate("designation")
-        .populate("status")
-        .populate("workMode")
-        .populate("lineManager")
-        .populate("shiftplan");
+      employee = await this.populateEmployee(employee._id);
 
       return Response(res, {
         employee,

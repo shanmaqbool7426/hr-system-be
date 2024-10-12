@@ -11,4 +11,5 @@ router.post('/create', [verifyToken, validations.create], (req, res) => controll
 router.patch('/update/:id', [verifyToken, validations.create], (req, res) => controller.update(req, res));
 router.delete('/delete/:id', [verifyToken], (req, res) => controller.delete(req, res));
 router.patch('/update-status/:id', [verifyToken, validations.updateStatus], (req, res) => controller.updateStatus(req, res));
+router.post('/revoke/:id', [verifyToken], (req, res) => controller.revoke(req, res));
 module.exports = router;

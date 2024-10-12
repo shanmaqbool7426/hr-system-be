@@ -9,6 +9,7 @@ module.exports = mongoose.model("remote_work_request", new Schema({
   reason: { type: String },
   status: { type: String, enum: ['pending', 'approved', 'rejected'], default: "pending" },
   statusReason: { type: String },
+  isRevoked: { type: Boolean, default: false },
   company: { type: mongoose.Types.ObjectId, ref: 'company' },
   modifiedBy: { type: mongoose.Types.ObjectId, ref: 'user' },
 }, {

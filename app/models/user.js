@@ -16,6 +16,10 @@ module.exports = mongoose.model("user", new Schema({
     employeeCode: { type: String },
     passportNumber: { type: String },
     workMode: { type: String, enum: ["onsite", "remote", "hybrid"], default: "onsite" },
+    remoteWork: {
+        from: { type: Date },
+        to: { type: Date },
+    },
     nationality: { type: String },
     religion: { type: String },
     emailVerifiedAt: { type: Date },

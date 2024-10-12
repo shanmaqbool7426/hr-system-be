@@ -121,6 +121,7 @@ module.exports = {
                 webAttendance: Joi.boolean().optional().allow(null, ""),
                 address: Joi.string().optional().allow(null, ""),
                 shiftplan: Joi.string().optional().allow(null, ""),
+                team: Joi.string().optional().allow(null, ""),
             }).validateAsync(req.body);
             next();
         } catch (error) {
