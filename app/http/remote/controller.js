@@ -5,40 +5,47 @@ const RemoteUserScreenshot = require('../../models/remote_user_screenshot')
 const Attendance = require('../../models/attendance')
 const AttendanceBreak = require('../../models/attendance_break')
 const moment = require('moment')
+const { ObjectId } = require('mongoose').Types
+
 const getTimeInHoursAndMinutes = (seconds = 0) => {
   const hours = Math.floor(seconds / 3600) || 0;
   const minutes = Math.floor((seconds % 3600) / 60) || 0;
   return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
 }
+
 class RemoteController {
-  async dashboardStats(req, res) {
+  async myRemoteWork(req, res) {
     try {
       const { user } = req.payload
       let { startDate, endDate } = req.query
-
-      startDate = startDate ? moment(startDate).utc().format() : moment().utc().startOf('D').format()
-      endDate = endDate ? moment(endDate).utc().format() : moment().utc().endOf('D').format()
-
+      startDate = startDate || new Date()
+      endDate = endDate || new Date()
+      startDate = moment(startDate).utc().startOf('D').format()
+      endDate = moment(endDate).utc().endOf('D').format()
 
       const differenceInDays = moment(endDate).diff(moment(startDate), 'days')
       let attendance
       if (differenceInDays > 0) {
-        attendance = await Attendance.aggregate([
-          {
-            $match: {
-              user: user._id, company: user.company._id,
-              checkInAt: { $gte: startDate, $lt: endDate },
-            }
-          },
-          {
-            $group: {
-              _id: null,
-              avgCheckInAt: { $avg: { $toDate: "$checkInAt" } },
-              avgCheckOutAt: { $avg: { $toDate: "$checkOutAt" } }
-            }
-          }
-        ])
-        attendance = attendance.length > 0 ? attendance[0] : {}
+        const allAttendance = await Attendance.find({
+          user: user._id,
+          company: user.company._id,
+          checkInAt: { $gte: startDate, $lt: endDate }
+        });
+
+        if (allAttendance.length > 0) {
+          const totalCheckIns = allAttendance.reduce((sum, att) => sum + new Date(att.checkInAt).getTime(), 0);
+          const totalCheckOuts = allAttendance.reduce((sum, att) => sum + (att.checkOutAt ? new Date(att.checkOutAt).getTime() : 0), 0);
+
+          attendance = {
+            checkInAt: new Date(totalCheckIns / allAttendance.length),
+            checkOutAt: new Date(totalCheckOuts / allAttendance.length)
+          };
+        } else {
+          attendance = {
+            checkInAt: null,
+            checkOutAt: null
+          };
+        }
       } else {
         attendance = await Attendance.findOne({
           checkInAt: { $gte: startDate },
@@ -48,7 +55,8 @@ class RemoteController {
       let productiveTime = await RemoteUserProcess.aggregate([
         {
           $match: {
-            user: user._id, company: user.company._id,
+            user: new ObjectId(user._id),
+            company: new ObjectId(user.company._id),
             createdAt: {
               $gte: startDate,
               $lt: endDate
@@ -60,18 +68,20 @@ class RemoteController {
       ])
       productiveTime = productiveTime.length > 0 ? productiveTime[0].totalTime : 0
 
-      let totalRemoteTime = await RemoteUserScreenshot.aggregate([
+      let totalRemoteTime = await RemoteUserProcess.aggregate([
         {
           $match: {
-            user: user._id, company: user.company._id,
+            user: new ObjectId(user._id),
+            company: new ObjectId(user.company._id),
             createdAt: {
-              $gte: startDate,
-              $lt: endDate
+              $gte: new Date(startDate),
+              $lt: new Date(endDate)
             },
           }
         },
         { $group: { _id: null, totalTime: { $sum: "$time_spent" } } }
       ])
+  
       totalRemoteTime = totalRemoteTime.length > 0 ? totalRemoteTime[0].totalTime : 0
       let process_list = await RemoteUserProcess.find({
         createdAt: {
@@ -82,13 +92,41 @@ class RemoteController {
         company: user.company._id
       }).populate('process')
 
+      const screenshots = await RemoteUserScreenshot.find({
+        user: user._id,
+        company: user.company._id,
+        takenAt: { $gte: startDate, $lt: endDate }
+      })
+
       return Response(res, {
         arrival_time: attendance?.checkInAt ? moment(attendance.checkInAt).format("h: mm A") : null,
         left_time: attendance?.checkOutAt ? moment(attendance.checkOutAt).format("h: mm A") : null,
         productive_time: getTimeInHoursAndMinutes(productiveTime),
         total_remote_time: getTimeInHoursAndMinutes(totalRemoteTime),
-        process_list
+        process_list,
+        screenshots
       })
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
+
+  async getScreenShot(req, res) {
+    try {
+      const { user } = req.payload
+      let { startDate, endDate } = req.query
+      startDate = startDate || new Date()
+      endDate = endDate || new Date()
+      startDate = moment(startDate).utc().startOf('D').format()
+      endDate = moment(endDate).utc().endOf('D').format()
+
+      const screenshots = await RemoteUserScreenshot.find({
+        user: user._id,
+        company: user.company._id,
+        takenAt: { $gte: startDate, $lt: endDate }
+      })
+
+      return Response(res, { screenshots })
     } catch (error) {
       return serverError(res, error)
     }
