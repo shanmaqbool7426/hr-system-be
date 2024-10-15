@@ -11,7 +11,6 @@ function generateFilename() {
 }
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        console.log("Multer called");
         const directory = path.resolve(__dirname, '..', '..', 'public', 'uploads');
         cb(null, directory);
     },

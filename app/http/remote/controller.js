@@ -23,7 +23,6 @@ class RemoteController {
       endDate = endDate || new Date()
       startDate = moment(startDate).startOf('D').format()
       endDate = moment(endDate).endOf('D').format()
-      console.log(startDate, endDate)
       const differenceInDays = moment(endDate).diff(moment(startDate), 'days')
       let attendance
       if (differenceInDays > 0) {

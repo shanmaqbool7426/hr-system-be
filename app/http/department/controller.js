@@ -11,7 +11,6 @@ class DepartmentController {
             let _filters = { $or: [{ company: user.company._id }, { company: null }] }
             if (filters) {
                 filters = JSON.parse(filters)
-                console.log('filters', filters, Object.keys(filters));
                 if (Object.keys(filters).indexOf('search') !== -1 && filters.search.length > 0) {
                     _filters = {
                         ..._filters,
