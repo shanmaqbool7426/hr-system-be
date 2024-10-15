@@ -57,7 +57,7 @@ class TaskController {
       const { user } = req.payload;
       const query = {
         company: user.company,
-        dueDate: { $lt: moment().utc().toISOString() },
+        dueDate: { $lt: moment().format() },
         status: { $ne: 'awaiting' }
       };
       if (user?.role?.rights !== 'admin') {
@@ -164,7 +164,7 @@ class TaskController {
         priority: data.priority,
         status: status,
         requiredTime: data.requiredTime,
-        dueDate: moment(data.dueDate).utc().toISOString(),
+        dueDate: moment(data.dueDate).format(),
         assignedTo: data.assignedTo,
         lead: data.lead,
         project: data.project,
@@ -209,7 +209,7 @@ class TaskController {
       if (data?.parent) task.parent = data.parent
       if (data?.priority) task.priority = data.priority
       if (data?.requiredTime) task.requiredTime = data.requiredTime
-      if (data?.dueDate) task.dueDate = moment(data.dueDate).utc().toISOString()
+      if (data?.dueDate) task.dueDate = moment(data.dueDate).format()
       if (data?.assignedTo) task.assignedTo = data.assignedTo
       if (data?.lead) task.lead = data.lead
       if (data?.status) task.status = data.status

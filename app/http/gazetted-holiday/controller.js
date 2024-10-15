@@ -26,8 +26,8 @@ class GazettedHolidayController {
 
       let insert = {
         title: data.title,
-        fromDate: moment(data.fromDate).utc().format(),
-        toDate: moment(data.toDate).utc().format(),
+        fromDate: moment(data.fromDate).format(),
+        toDate: moment(data.toDate).format(),
         countries: data.countries,
         provinces: data.provinces,
         cities: data.cities,
@@ -76,8 +76,8 @@ class GazettedHolidayController {
 
       if (data?.title) holiday.title = data.title;
       if (data?.fromDate)
-        holiday.fromDate = moment(data.fromDate).utc().format();
-      if (data?.toDate) holiday.toDate = moment(data.toDate).utc().format();
+        holiday.fromDate = moment(data.fromDate).format();
+      if (data?.toDate) holiday.toDate = moment(data.toDate).format();
       if (data?.countries) holiday.countries = data.countries;
       if (data?.provinces) holiday.provinces = data.provinces;
       if (data?.cities) holiday.cities = data.cities;

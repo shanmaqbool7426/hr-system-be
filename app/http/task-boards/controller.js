@@ -57,7 +57,7 @@ class TaskBoardController {
         createdBy: user._id,
         name: data.name,
         sprintNumber: data.sprintNumber,
-        dueDate: moment(data.dueDate).utc().toISOString(),
+        dueDate: moment(data.dueDate).format(),
         leads: data.leads,
         members: data.members,
         project:data.project,
@@ -96,7 +96,7 @@ class TaskBoardController {
       if (data?.name) board.name = data.name;
       if (data?.sprintNumber) board.sprintNumber = data.sprintNumber;
       if (data?.dueDate)
-        board.dueDate = moment(data.dueDate).utc().toISOString();
+        board.dueDate = moment(data.dueDate).format();
       if (data?.leads) board.leads = data.leads;
       if (data?.members) board.members = data.members;
       if (data?.status) board.status = data.status;

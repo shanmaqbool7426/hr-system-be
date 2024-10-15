@@ -25,9 +25,9 @@ class AttendanceRequestController {
       const data = req.body
       const attendance = await Request.create({
         user: data.employee,
-        date: moment(data.date).utc().format(),
-        checkInAt: moment(data.checkInAt).utc().format(),
-        checkOutAt: moment(data.checkOutAt).utc().format(),
+        date: moment(data.date).format(),
+        checkInAt: moment(data.checkInAt).format(),
+        checkOutAt: moment(data.checkOutAt).format(),
         reason: data.reason,
         company: user.company,
       })
@@ -48,8 +48,8 @@ class AttendanceRequestController {
         return BadRequest(res)
       }
       if (data?.employee) request.user = data.employee
-      if (data?.checkInAt) request.checkInAt = moment(data.checkInAt).utc().format()
-      if (data?.checkOutAt) request.checkOutAt = moment(data.checkOutAt).utc().format()
+      if (data?.checkInAt) request.checkInAt = moment(data.checkInAt).format()
+      if (data?.checkOutAt) request.checkOutAt = moment(data.checkOutAt).format()
       if (data?.reason) request.reason = data.reason
       await request.save()
       request = this.#getRequest(request._id)

@@ -36,11 +36,11 @@ class BiometricService {
                                 let checkInAt = null
                                 let checkOutAt = null
                                 if (user_logs[date].length > 1) {
-                                    checkInAt = user_logs[date][0].utc().format()
-                                    checkOutAt = user_logs[date][1].utc().format()
+                                    checkInAt = user_logs[date][0].format()
+                                    checkOutAt = user_logs[date][1].format()
                                 } else {
                                     if (user_logs[date][0].format("H") > 12) checkOutAt = user_logs[date][0]
-                                    else checkInAt = user_logs[date][0].utc().format()
+                                    else checkInAt = user_logs[date][0].format()
                                 }
                                 await Attendance.create({
                                     date, checkInAt, checkOutAt, company, user: employee._id

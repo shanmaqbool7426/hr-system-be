@@ -28,7 +28,7 @@ class ExemptionRequestController {
       const exemptionType = await ExemptionType.findById(data.exemptionType)
       if (exemptionType?.minHours > 0) {
         const current_attendance = await Attendance.findOne({
-          date: { $gte: moment(data.date).utc().startOf('D').format() },
+          date: { $gte: moment(data.date).startOf('D').format() },
           user: data.employee,
           company: user.company
         })
@@ -38,7 +38,7 @@ class ExemptionRequestController {
       const attendance = await Request.create({
         user: data.employee,
         exemptionType: data.exemptionType,
-        date: moment(data.date).utc().format(),
+        date: moment(data.date).format(),
         reason: data.reason,
         company: user.company,
       })
@@ -59,7 +59,7 @@ class ExemptionRequestController {
         return BadRequest(res)
       }
       if (data?.employee) request.user = data.employee
-      if (data?.date) request.date = moment(data.date).utc().format()
+      if (data?.date) request.date = moment(data.date).format()
       if (data?.exemptionType) request.exemptionType = data.exemptionType
       if (data?.reason) request.reason = data.reason
       await request.save()

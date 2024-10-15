@@ -79,8 +79,8 @@ class ProjectController {
                 client: data.client,
                 description: data.description,
                 priority: data.priority,
-                startDate: moment(data.startDate).utc().toISOString(),
-                endDate: moment(data.endDate).utc().toISOString(),
+                startDate: moment(data.startDate).format(),
+                endDate: moment(data.endDate).format(),
                 leads: data.leads,
                 members: data.members,
             }
@@ -110,8 +110,8 @@ class ProjectController {
             if (data?.client) project.client = data.client
             if (data?.description) project.description = data.description
             if (data?.priority) project.priority = data.priority
-            if (data?.startDate) project.startDate = moment(data.startDate).utc().toISOString()
-            if (data?.endDate) project.endDate = moment(data.endDate).utc().toISOString()
+            if (data?.startDate) project.startDate = moment(data.startDate).format()
+            if (data?.endDate) project.endDate = moment(data.endDate).format()
             if (data?.leads) project.leads = data.leads
             if (data?.members) project.members = data.members
             if (data?.payment) project.payment = data.payment

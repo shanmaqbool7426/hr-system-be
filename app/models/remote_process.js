@@ -8,6 +8,7 @@ module.exports = mongoose.model("remote_process", new Schema({
     enum: ['productive', 'neutral', 'unproductive'],
     default: "unproductive"
   },
+  category: { type: mongoose.Types.ObjectId, ref: 'remote_category' },
   company: { type: mongoose.Types.ObjectId, ref: 'company' },
 }, {
   timestamps: true,
