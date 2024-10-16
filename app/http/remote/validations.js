@@ -50,5 +50,25 @@ module.exports = {
       return BadRequest(res, error.message)
     }
   },
-
+  collectiveSettings: async (req, res, next) => {
+    try {
+      await Joi.object({
+        allEmployees: Joi.boolean().required(),
+        team: Joi.string().optional().allow(null, ""),
+        screenShotEnabled: Joi.boolean().required(),
+        blurScreenShot: Joi.boolean().required(),
+        screenShotInterval: Joi.number().required(),
+        screenShotPerInterval: Joi.number().required(),
+        screenShotQuality: Joi.string().required(),
+        storeOfflineData: Joi.boolean().required(),
+        idleTime: Joi.number().required(),
+        ignoreIdleWhenInactive: Joi.boolean().required(),
+        hideScreenshots: Joi.boolean().required(),
+        disableQuite: Joi.boolean().required(),
+      }).validateAsync(req.body);
+      next();
+    } catch (error) {
+      return BadRequest(res, error.message)
+    }
+  }
 }

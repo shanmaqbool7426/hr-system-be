@@ -58,10 +58,11 @@ module.exports = mongoose.model("user", new Schema({
         screenShotInterval: { type: Number, default: 3 },
         screenShotPerInterval: { type: Number, default: 3 },
         blurScreenShot: { type: Boolean, default: false },
-        canQuite: { type: Boolean, default: true },
+        screenShotQuality: { type: String, default: "sd", enum: ["sd", "hd", "full-hd"] },
         ignoreIdleWhenInactive: { type: Boolean, default: false },
+        hideScreenshots: { type: Boolean, default: false },
+        disableQuite: { type: Boolean, default: false },
     },
-
     emergencyContact: {
         fullname: { type: String },
         relation: { type: String },

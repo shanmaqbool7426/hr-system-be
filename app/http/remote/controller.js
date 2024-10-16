@@ -382,6 +382,28 @@ class RemoteController {
       return serverError(res, error)
     }
   }
+
+  async collectiveSettings(req, res) {
+    try {
+      const { user } = req.payload
+      const { allEmployees, team, ...data } = req.body
+      let filter = { company: user.company._id }
+
+      if (!allEmployees && team) {
+        let employees = await User.find({ team: team, company: user.company._id })
+        employees = employees.reduce((acc, item) => {
+          acc.push(item._id)
+          return acc
+        }, [])
+        filter.user = { $in: employees }
+      }
+
+      await User.updateMany(filter, { $set: { remoteSetting: data } })
+      return Response(res, {})
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
 }
 
 module.exports = new RemoteController
