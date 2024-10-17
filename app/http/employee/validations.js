@@ -20,37 +20,34 @@ module.exports = {
         try {
             await Joi.object({
                 firstName: Joi.string().required().messages({
-                    'any.required': "firstNameRequired",
+                    'any.required': "First name is required",
                 }),
                 lastName: Joi.string().required().messages({
-                    'any.required': "lastNameRequired",
+                    'any.required': "Last name is required",
                 }),
                 fatherName: Joi.string().required().messages({
-                    'any.required': "fatherNameRequired",
+                    'any.required': "Father name is required",
                 }),
                 email: Joi.string().email().required().messages({
-                    'any.required': "emailRequired",
+                    'any.required': "Email is required",
                 }),
                 dateOfBirth: Joi.date().required().messages({
-                    'any.required': "dateOfBirthRequired",
+                    'any.required': "Date of birth is required",
                 }),
                 joiningDate: Joi.date().required().messages({
-                    'any.required': "joiningDateRequired",
-                }),
-                employeeCode: Joi.string().required().messages({
-                    'any.required': "employeeCodeRequired",
+                    'any.required': "Joining date is required",
                 }),
                 status: Joi.string().required().messages({
-                    'any.required': "employeeStatusRequired",
+                    'any.required': "Employee status is required",
                 }),
                 designation: Joi.string().required().messages({
-                    'any.required': "designationRequired",
+                    'any.required': "Designation is required",
                 }),
                 contact: Joi.string().required().messages({
-                    'any.required': "contactRequired",
+                    'any.required': "Contact is required",
                 }),
                 workMode: Joi.string().required().messages({
-                    'any.required': "workModeRequired",
+                    'any.required': "Work mode is required",
                 }),
                 lineManager: Joi.string().optional().allow(null, ""),
                 shiftplan: Joi.string().optional().allow(null, ""),
@@ -122,6 +119,7 @@ module.exports = {
                 address: Joi.string().optional().allow(null, ""),
                 shiftplan: Joi.string().optional().allow(null, ""),
                 team: Joi.string().optional().allow(null, ""),
+                remoteSetting: Joi.any().optional().allow(null, ""),
             }).validateAsync(req.body);
             next();
         } catch (error) {
@@ -132,13 +130,13 @@ module.exports = {
         try {
             await Joi.object({
                 institution: Joi.string().required().messages({
-                    'any.required': "institutionRequired",
+                    'any.required': "Institution is required",
                 }),
                 degree: Joi.string().required().messages({
-                    'any.required': "degreeRequired",
+                    'any.required': "Degree is required",
                 }),
                 startDate: Joi.date().required().messages({
-                    'any.required': "startDateRequired",
+                    'any.required': "Start date is required",
                 }),
                 endDate: Joi.date().optional().allow("", null),
                 user: Joi.string(),
@@ -152,19 +150,19 @@ module.exports = {
         try {
             await Joi.object({
                 company: Joi.string().required().messages({
-                    'any.required': "companyRequired",
+                    'any.required': "Company is required",
                 }),
                 location: Joi.string().required().messages({
-                    'any.required': "locationRequired",
+                    'any.required': "Location is required",
                 }),
                 designation: Joi.string().required().messages({
-                    'any.required': "designationRequired",
+                    'any.required': "Designation is required",
                 }),
                 startDate: Joi.date().required().messages({
-                    'any.required': "startDateRequired",
+                    'any.required': "Start date is required",
                 }),
                 endDate: Joi.date().required().messages({
-                    'any.required': "endDateRequired",
+                    'any.required': "End date is required",
                 }),
                 user: Joi.string(),
             }).validateAsync(req.body);
@@ -177,16 +175,16 @@ module.exports = {
         try {
             await Joi.object({
                 documentType: Joi.string().required().messages({
-                    'any.required': "documentTypeRequired",
+                    'any.required': "Document type is required",
                 }),
                 attachment: Joi.string().required().messages({
-                    'any.required': "attachmentRequired",
+                    'any.required': "Attachment is required",
                 }),
                 documentPath: Joi.string().required().messages({
-                    'any.required': "documentPathRequired",
+                    'any.required': "Document path is required",
                 }),
                 uploadedDate: Joi.date().required().messages({
-                    'any.required': "uploadedDateRequired",
+                    'any.required': "Uploaded date is required",
                 }),
                 user: Joi.string(),
             }).validateAsync(req.body);
@@ -199,10 +197,10 @@ module.exports = {
         try {
             await Joi.object({
                 name: Joi.string().required().messages({
-                    'any.required': "nameRequired",
+                    'any.required': "Name is required",
                 }),
                 description: Joi.string().required().messages({
-                    'any.required': "descriptionRequired",
+                    'any.required': "Description is required",
                 }),
                 user: Joi.string(),
             }).validateAsync(req.body);
@@ -215,17 +213,17 @@ module.exports = {
         try {
             await Joi.object({
                 employee: Joi.string().required().messages({
-                    'any.required': "employeeRequired",
+                    'any.required': "Employee is required",
                 }),
                 designation: Joi.string().required().messages({
-                    'any.required': "designationRequired",
+                    'any.required': "Designation is required",
                 }),
                 effectiveDate: Joi.date().required().messages({
-                    'any.required': "effectiveDateRequired",
+                    'any.required': "Effective date is required",
                 }),
                 currentValue: Joi.string().optional().allow("", null),
                 reason: Joi.string().required().messages({
-                    'any.required': "reasonRequired",
+                    'any.required': "Reason is required",
                 }),
                 detail: Joi.string().optional().allow("", null),
                 attachment: Joi.string().optional().allow(null)
@@ -239,16 +237,16 @@ module.exports = {
         try {
             await Joi.object({
                 employee: Joi.string().required().messages({
-                    'any.required': "employeeRequired",
+                    'any.required': "Employee is required",
                 }),
                 department: Joi.string().required().messages({
-                    'any.required': "departmentRequired",
+                    'any.required': "Department is required",
                 }),
                 effectiveDate: Joi.date().required().messages({
-                    'any.required': "effectiveDateRequired",
+                    'any.required': "Effective date is required",
                 }),
                 reason: Joi.string().required().messages({
-                    'any.required': "reasonRequired",
+                    'any.required': "Reason is required",
                 }),
                 currentValue: Joi.string().optional().allow("", null),
                 detail: Joi.string().optional().allow("", null),
@@ -263,16 +261,16 @@ module.exports = {
         try {
             await Joi.object({
                 employee: Joi.string().required().messages({
-                    'any.required': "employeeRequired",
+                    'any.required': "Employee is required",
                 }),
                 employeeCode: Joi.string().required().messages({
-                    'any.required': "employeeCodeRequired",
+                    'any.required': "Employee code is required",
                 }),
                 effectiveDate: Joi.date().required().messages({
-                    'any.required': "effectiveDateRequired",
+                    'any.required': "Effective date is required",
                 }),
                 reason: Joi.string().required().messages({
-                    'any.required': "reasonRequired",
+                    'any.required': "Reason is required",
                 }),
                 currentValue: Joi.string().optional().allow("", null),
                 detail: Joi.string().optional().allow("", null),
@@ -287,10 +285,10 @@ module.exports = {
         try {
             await Joi.object({
                 employee: Joi.string().required().messages({
-                    'any.required': "employeeRequired",
+                    'any.required': "Employee is required",
                 }),
                 salary: Joi.number().required().messages({
-                    'any.required': "salaryRequired",
+                    'any.required': "Salary is required",
                 }),
                 effectiveDate: Joi.date().required().messages({
                     'any.required': "effectiveDateRequired",
@@ -311,7 +309,7 @@ module.exports = {
         try {
             await Joi.object({
                 employee: Joi.string().required().messages({
-                    'any.required': "employeeRequired",
+                    'any.required': "Employee is required",
                 }),
                 grade: Joi.string().required().messages({
                     'any.required': "gradeRequired",
@@ -335,7 +333,7 @@ module.exports = {
         try {
             await Joi.object({
                 employee: Joi.string().required().messages({
-                    'any.required': "employeeRequired",
+                    'any.required': "Employee is required",
                 }),
                 lineManager: Joi.string().required().messages({
                     'any.required': "lineManagerRequired",

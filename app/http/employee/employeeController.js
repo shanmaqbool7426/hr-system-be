@@ -134,7 +134,6 @@ class EmployeeController {
         email: data.email,
         dateOfBirth: data.dateOfBirth,
         contact: data.contact,
-        employeeCode: data.employeeCode,
         designation: data.designation,
         joiningDate: data.joiningDate,
         workMode: data.workMode,
@@ -236,6 +235,7 @@ class EmployeeController {
       if (data?.station) employee.station = data.station;
       if (data?.address) employee.address = data.address;
       if (data?.team) employee.team = data.team;
+      if (data?.remoteSetting) employee.remoteSetting = data.remoteSetting;
       await employee.save();
 
       employee = await this.populateEmployee(employee._id);

@@ -5,6 +5,7 @@ const RemoteUserScreenshot = require('../../models/remote_user_screenshot')
 const Attendance = require('../../models/attendance')
 const AttendanceBreak = require('../../models/attendance_break')
 const User = require('../../models/user')
+const RemoteService = require('./service')
 const moment = require('moment')
 const { ObjectId } = require('mongoose').Types
 
@@ -19,85 +20,11 @@ class RemoteController {
     try {
       const { user } = req.payload
       let { startDate, endDate } = req.query
-      startDate = startDate || new Date()
-      endDate = endDate || new Date()
-      startDate = moment(startDate).startOf('D').format()
-      endDate = moment(endDate).endOf('D').format()
-      const differenceInDays = moment(endDate).diff(moment(startDate), 'days')
-      let attendance
-      if (differenceInDays > 0) {
-        const allAttendance = await Attendance.find({
-          user: user._id,
-          company: user.company._id,
-          checkInAt: { $gte: startDate, $lt: endDate }
-        });
-
-        if (allAttendance.length > 0) {
-          const totalCheckIns = allAttendance.reduce((sum, att) => sum + new Date(att.checkInAt).getTime(), 0);
-          const totalCheckOuts = allAttendance.reduce((sum, att) => sum + (att.checkOutAt ? new Date(att.checkOutAt).getTime() : 0), 0);
-
-          attendance = {
-            checkInAt: new Date(totalCheckIns / allAttendance.length),
-            checkOutAt: new Date(totalCheckOuts / allAttendance.length)
-          };
-        } else {
-          attendance = {
-            checkInAt: null,
-            checkOutAt: null
-          };
-        }
-      } else {
-        attendance = await Attendance.findOne({
-          checkInAt: { $gte: startDate },
-          user: user._id
-        })
-      }
-      let productiveTime = await RemoteUserProcess.aggregate([
-        {
-          $match: {
-            user: new ObjectId(user._id),
-            company: new ObjectId(user.company._id),
-            createdAt: {
-              $gte: startDate,
-              $lt: endDate
-            },
-            "process.nature": "productive"
-          }
-        },
-        { $group: { _id: null, totalTime: { $sum: "$time_spent" } } }
-      ])
-      productiveTime = productiveTime.length > 0 ? productiveTime[0].totalTime : 0
-
-      let totalRemoteTime = await RemoteUserProcess.aggregate([
-        {
-          $match: {
-            user: new ObjectId(user._id),
-            company: new ObjectId(user.company._id),
-            createdAt: {
-              $gte: new Date(startDate),
-              $lt: new Date(endDate)
-            },
-          }
-        },
-        { $group: { _id: null, totalTime: { $sum: "$time_spent" } } }
-      ])
-
-      totalRemoteTime = totalRemoteTime.length > 0 ? totalRemoteTime[0].totalTime : 0
-      let process_list = await RemoteUserProcess.find({
-        createdAt: {
-          $gte: startDate,
-          $lt: endDate
-        },
-        user: user._id,
-        company: user.company._id
-      }).populate('process')
-
-      const screenshots = await RemoteUserScreenshot.find({
-        user: user._id,
-        company: user.company._id,
-        takenAt: { $gte: startDate, $lt: endDate }
-      })
-
+      const { attendance,
+        productiveTime,
+        totalRemoteTime,
+        process_list,
+        screenshots } = await RemoteService.getUserStats(user, startDate, endDate)
       return Response(res, {
         arrival_time: attendance?.checkInAt ? moment(attendance.checkInAt).format("h: mm A") : null,
         left_time: attendance?.checkOutAt ? moment(attendance.checkOutAt).format("h: mm A") : null,
@@ -214,7 +141,6 @@ class RemoteController {
     }
   }
 
-
   async getScreenShot(req, res) {
     try {
       const { user } = req.payload
@@ -235,6 +161,7 @@ class RemoteController {
       return serverError(res, error)
     }
   }
+
   async syncRemoteData(req, res) {
     try {
       const { user } = req.payload
@@ -319,8 +246,16 @@ class RemoteController {
         }
       }
 
+      // get stats
+      const { attendance, productiveTime, totalRemoteTime, process_list } = await RemoteService.getUserStats(user, startDate, endDate)
 
-      return Response(res, {})
+      return Response(res, {
+        arrival_time: attendance?.checkInAt ? moment(attendance.checkInAt).format("h: mm A") : null,
+        left_time: attendance?.checkOutAt ? moment(attendance.checkOutAt).format("h: mm A") : null,
+        productive_time: getTimeInHoursAndMinutes(productiveTime),
+        total_remote_time: getTimeInHoursAndMinutes(totalRemoteTime),
+        process_list,
+      })
     } catch (error) {
       return serverError(res, error)
     }

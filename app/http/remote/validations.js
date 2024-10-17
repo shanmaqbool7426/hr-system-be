@@ -64,7 +64,7 @@ module.exports = {
         idleTime: Joi.number().required(),
         ignoreIdleWhenInactive: Joi.boolean().required(),
         hideScreenshots: Joi.boolean().required(),
-        disableQuite: Joi.boolean().required(),
+        disableQuit: Joi.boolean().required(),
       }).validateAsync(req.body);
       next();
     } catch (error) {
