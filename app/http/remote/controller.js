@@ -247,7 +247,7 @@ class RemoteController {
       }
 
       // get stats
-      const { attendance, productiveTime, totalRemoteTime, process_list } = await RemoteService.getUserStats(user, startDate, endDate)
+      const { attendance, productiveTime, totalRemoteTime, process_list } = await RemoteService.getUserStats(user)
 
       return Response(res, {
         arrival_time: attendance?.checkInAt ? moment(attendance.checkInAt).format("h: mm A") : null,
