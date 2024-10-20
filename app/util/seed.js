@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 require("dotenv").config();
@@ -9,6 +11,23 @@ db.on("error", console.error.bind(console, "connection error: "));
 db.once("open", function () {
   console.info("Database Connected successfully");
 });
+
+
+
+const truncateAllModels = new Promise(async (resolve, reject) => {
+  try {
+    const modelsDir = path.join(__dirname, '../models');
+    const files = fs.readdirSync(modelsDir)
+    for (let file of files) {
+      const model = require(path.join(modelsDir, file));
+      await model.deleteMany({});
+    }
+    resolve(true);
+  } catch (error) {
+    reject(error);
+  }
+});
+
 const custom_fields = [
   { name: 'Male', type: 'gender' },
   { name: 'Female', type: 'gender' },
@@ -54,18 +73,11 @@ const Role = require("../models/role")
 const Department = require("../models/department")
 const CustomField = require("../models/custom_field")
 
+
 // Seed
 const Seed = async () => {
-  // remove all exiting records
-  await Company.deleteMany({})
-  await Department.deleteMany({})
-  await Role.deleteMany({})
-  await User.deleteMany({})
-  await CustomField.deleteMany({})
-
   const company = await Company.create({
     name: "Zaffre",
-    currentEmployeeCode: "100002"
   })
   const role = await Role.create({
     name: "Admin",
@@ -92,8 +104,18 @@ const Seed = async () => {
     password: bcrypt.hashSync('Admin@123', bcrypt.genSaltSync(10)),
     company: company._id,
     role: role._id,
-    department: department._id,
-    employeeCode: "100001"
+    department: department._id
+  })
+  await User.create({
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john@doe.com',
+    emailVerifiedAt: new Date,
+    password: bcrypt.hashSync('Admin@123', bcrypt.genSaltSync(10)),
+    company: company._id,
+    role: role2._id,
+    workMode: 'remote',
+    department: department._id
   })
   for (let index in custom_fields) {
     await CustomField.create(custom_fields[index])
@@ -102,5 +124,7 @@ const Seed = async () => {
   console.info("Database is seeded");
   process.exit()
 }
-
-Seed()
+truncateAllModels.then(() => Seed())
+  .finally(() => {
+    process.exit()
+  })

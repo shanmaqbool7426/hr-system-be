@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-module.exports = mongoose.model("user", new Schema({
+const userSchema = new Schema({
     email: { type: String, required: true },
     firstName: { type: String },
     lastName: { type: String },
@@ -36,7 +36,6 @@ module.exports = mongoose.model("user", new Schema({
     team: { type: mongoose.Types.ObjectId, ref: 'remote_team' },
     department: { type: mongoose.Types.ObjectId, ref: 'department' },
     company: { type: mongoose.Types.ObjectId, ref: 'company' },
-    devices: [{ type: mongoose.Types.ObjectId, ref: 'userdevice' }],
     cnicIssueDate: { type: Date },
     cnicExpiryDate: { type: Date },
     EOBI: { type: String },
@@ -107,4 +106,18 @@ module.exports = mongoose.model("user", new Schema({
 
 }, {
     timestamps: true,
-}));
+})
+
+userSchema.pre('save', async function (next) {
+    if (!this.isNew) {
+        return next();
+    }
+
+    const maxNumber = await this.constructor.findOne({ company: this.company }).sort('-employeeCode').exec();
+    const count = maxNumber ? parseInt(maxNumber.employeeCode) : 100000;
+    this.employeeCode = count + 1;
+
+    next();
+});
+
+module.exports = mongoose.model("user", userSchema);

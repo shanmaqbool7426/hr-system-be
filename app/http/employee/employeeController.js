@@ -138,7 +138,6 @@ class EmployeeController {
         joiningDate: data.joiningDate,
         workMode: data.workMode,
         status: data.status,
-        employeeCode: user.company.currentEmployeeCode,
         company: user.company._id,
       };
 
@@ -166,10 +165,6 @@ class EmployeeController {
       }
 
       let employee = await User.create(insert);
-      await Company.updateOne(
-        { _id: user.company._id },
-        { $set: { currentEmployeeCode: (parseInt(user.company.currentEmployeeCode) + 1).toString() } }
-      );
       employee = await this.populateEmployee(employee._id);
       return Response(res, {
         employee,

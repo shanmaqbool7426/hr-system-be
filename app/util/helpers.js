@@ -1,8 +1,11 @@
 const JWT = require("jsonwebtoken");
 const { socket } = require('../../bin/socket')
-const { origin, DEBUG, TOKENEXPIRY, REFRESHTOKENEXPIRY, REMOTEEXPIRY, JWT_SECRET } = require('../util/config')
+const { origin, DEBUG, TOKENEXPIRY, REFRESHTOKENEXPIRY, REMOTEEXPIRY } = require('../util/config')
 const mesages = require('../messages')
 const getMessage = (res, key) => mesages[res.language][key] || key
+const fs = require('fs')
+const privateKey = fs.readFileSync('private_key.pem', 'utf8');
+
 
 module.exports.emit = (channel, data) => socket.emit(channel, data);
 
@@ -11,7 +14,8 @@ module.exports.jwt = (userId, refresh = false, is_remote = false) => {
   if (refresh) expiresIn = REFRESHTOKENEXPIRY
   if (is_remote) expiresIn = REMOTEEXPIRY
   return new Promise((resolve, reject) => {
-    JWT.sign({}, JWT_SECRET, {
+    JWT.sign({ type: refresh ? 'refresh' : 'access' }, privateKey, {
+      algorithm: 'RS256',
       expiresIn,
       issuer: origin,
       audience: String(userId),

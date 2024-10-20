@@ -1,9 +1,10 @@
 const JWT = require("jsonwebtoken");
 const { UnAuthorized, Forbidden } = require('../util/helpers')
-const { JWT_SECRET, USER_FIELDS } = require('../util/config')
+const { JWT_SECRET, origin } = require('../util/config')
 const User = require('../models/user')
 const Role = require('../models/role')
-const UserDevice = require('../models/userdevice')
+const fs = require('fs')
+const publicKey = fs.readFileSync('public_key.pem');
 
 
 const validateRole = async (req, res, next, user) => {
@@ -28,19 +29,18 @@ class Middlewares {
     if (!token) {
       return UnAuthorized(res);
     }
-    JWT.verify(token, JWT_SECRET, async (err, payload) => {
+    JWT.verify(token, publicKey, { algorithms: ['RS256'] }, async (err, payload) => {
       if (err) {
         return UnAuthorized(res);
       }
-      const device = await UserDevice.findOne({ token: token })
-      if (payload.aud !== device?.user?.toString()) {
+      if (payload.type !== 'access' || payload.iss !== origin) {
         return UnAuthorized(res);
       }
-      const user = await User.findById(device.user).populate('company').populate('role');
+      const user = await User.findById(payload.aud).populate('company').populate('role');
       if (!user) {
         return UnAuthorized(res)
       }
-      req.payload = { user: { ...user.toObject() } }
+      req.payload = { user: user.toObject() }
       return await validateRole(req, res, next, user)
     })
   }
@@ -49,20 +49,18 @@ class Middlewares {
     if (!token) {
       return UnAuthorized(res);
     }
-    JWT.verify(token, JWT_SECRET, async (err, payload) => {
+    JWT.verify(token, publicKey, { algorithms: ['RS256'] }, async (err, payload) => {
       if (err) {
         return UnAuthorized(res);
       }
-      const device = await UserDevice.findOne({ refreshToken: token })
-      if (payload.aud !== device?.user?.toString()) {
+      if (payload.type !== 'refresh' || payload.iss !== origin) {
         return UnAuthorized(res);
       }
-      const user = await User.findById(device.user);
+      const user = await User.findById(payload.aud);
       if (!user) {
         return UnAuthorized(res)
       }
-      req.payload = { user: user.toObject(), device: device.toObject() }
-
+      req.payload = { user: user.toObject() }
       next()
     })
   }

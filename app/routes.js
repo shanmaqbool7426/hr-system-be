@@ -26,6 +26,7 @@ router.use("/exemption-types", require("./http/exemption-type/routes"));
 router.use("/feedback", require("./http/feedback/routes"));
 router.use("/files", require("./http/files/routes"));
 router.use("/gazette-holidays", require("./http/gazetted-holiday/routes"));
+router.use("/helpdesk-tickets", require("./http/helpdesk/routes"));
 router.use("/leaves", require("./http/leave/routes"));
 router.use("/leave-requests", require("./http/leave-request/routes"));
 router.use("/projects", require("./http/projects/routes"));
