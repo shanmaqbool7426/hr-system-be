@@ -2,6 +2,7 @@ const { Response, BadRequest, serverError } = require('../../util/helpers')
 const Asset = require("../../models/asset")
 const AssetHistory = require("../../models/asset_history")
 const CustomField = require("../../models/custom_field")
+const { USER_FIELDS } = require("../../util/config")
 class AssetController {
 
     async list(req, res) {
@@ -13,7 +14,7 @@ class AssetController {
                 filter.deletedAt = { $ne: null }
             }
             let list = await Asset.find(filter)
-                .populate('assetType').populate('user').populate('deletedBy')
+                .populate('assetType').populate('user', USER_FIELDS).populate('deletedBy')
 
             return Response(res, { list })
         } catch (error) {
@@ -25,7 +26,7 @@ class AssetController {
             const { id } = req.params
             const { user } = req.payload
             let asset = await Asset.findOne({ _id: id, deletedAt: null, $or: [{ company: user.company._id }, { company: null }] })
-                .populate('assetType').populate('user')
+                .populate('assetType').populate('user', USER_FIELDS).populate('deletedBy')
 
             return Response(res, { asset })
         } catch (error) {
@@ -67,7 +68,7 @@ class AssetController {
             insert.vendor = data.vendor
             insert.fields = data.fields
             let asset = await Asset.create(insert)
-            asset = await Asset.findById(asset._id).populate('assetType').populate('user')
+            asset = await Asset.findById(asset._id).populate('assetType').populate('user', USER_FIELDS).populate('deletedBy')
             return Response(res, { asset })
         } catch (error) {
             return serverError(res, error)
@@ -92,7 +93,7 @@ class AssetController {
             asset.vendor = data.vendor
             asset.fields = data.fields
             await asset.save()
-            asset = await Asset.findById(asset._id).populate('assetType').populate('user')
+            asset = await Asset.findById(asset._id).populate('assetType').populate('user', USER_FIELDS).populate('deletedBy')
             return Response(res, { asset })
         } catch (error) {
             return serverError(res, error)
@@ -148,7 +149,7 @@ class AssetController {
             asset.user = data.assignTo
             asset.status = "assigned"
             await asset.save()
-            
+
             await AssetHistory.create({
                 asset: asset._id,
                 issueDate: data.assignDate,

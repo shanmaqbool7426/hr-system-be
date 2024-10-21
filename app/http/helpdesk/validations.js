@@ -14,6 +14,7 @@ module.exports = {
         type: Joi.string().required().messages({
           'any.required': "Type is required",
         }),
+        hardwareType: Joi.string().optional().allow("", null),
         priority: Joi.string().required().messages({
           'any.required': "Priority is required",
         }),
@@ -26,5 +27,31 @@ module.exports = {
     }
   },
 
-
+  assign: async (req, res, next) => {
+    try {
+      await Joi.object({ assignTo: Joi.string().required().messages({ 'any.required': "Assign to is required" }) }).validateAsync(req.body);
+      next();
+    } catch (error) {
+      return BadRequest(res, error.message)
+    }
+  },
+  transfer: async (req, res, next) => {
+    try {
+      await Joi.object({ assignTo: Joi.string().required().messages({ 'any.required': "Assign to is required" }) }).validateAsync(req.body);
+      next();
+    } catch (error) {
+      return BadRequest(res, error.message)
+    }
+  },
+  close: async (req, res, next) => {
+    try {
+      await Joi.object({
+        remarks: Joi.string().required().messages({ 'any.required': "Remarks is required" }),
+        repairCost: Joi.number().optional().allow(null)
+      }).validateAsync(req.body);
+      next();
+    } catch (error) {
+      return BadRequest(res, error.message)
+    }
+  }
 }
