@@ -9,3 +9,4 @@ lerna-debug.log*
 .vscode
 .env
 node_modules
+app/swagger-docs/swagger_output.json
