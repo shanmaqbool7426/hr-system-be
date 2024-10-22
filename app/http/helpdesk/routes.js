@@ -13,5 +13,6 @@ router.patch('/update/:id', [verifyToken, validations.create], (req, res) => con
 router.delete('/delete/:id', [verifyToken], (req, res) => controller.delete(req, res));
 router.patch('/assign/:id', [verifyToken, validations.assign], (req, res) => controller.assign(req, res));
 router.patch('/transfer/:id', [verifyToken, validations.transfer], (req, res) => controller.transfer(req, res));
-router.patch('/close/:id', [verifyToken], (req, res) => controller.close(req, res));
+router.patch('/close/:id', [verifyToken, validations.close], (req, res) => controller.close(req, res));
+router.post('/feedback/:id', [verifyToken, validations.feedback], (req, res) => controller.feedback(req, res));
 module.exports = router;

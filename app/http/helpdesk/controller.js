@@ -109,8 +109,8 @@ class HelpdeskController {
       startDate.setMonth(startDate.getMonth() - 11);
 
       for (let d = startDate; d <= endDate; d.setMonth(d.getMonth() + 1)) {
-        const existingData = lastTwelveMonths.find(item => 
-          item.date.getMonth() === d.getMonth() && 
+        const existingData = lastTwelveMonths.find(item =>
+          item.date.getMonth() === d.getMonth() &&
           item.date.getFullYear() === d.getFullYear()
         );
 
@@ -251,6 +251,23 @@ class HelpdeskController {
       ticket.modifiedBy = user._id
       await ticket.save()
 
+      ticket = await this.#getTicket(ticket._id)
+      return Response(res, { ticket })
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
+  async feedback(req, res) {
+    try {
+      const { user } = req.payload
+      const { id } = req.params
+      const data = req.body
+      let ticket = await HelpdeskTicket.findOne({ _id: id, company: user.company._id })
+      if (!ticket) return BadRequest(res)
+
+      ticket.feedback = data.feedback
+      ticket.rating = data.rating
+      await ticket.save()
       ticket = await this.#getTicket(ticket._id)
       return Response(res, { ticket })
     } catch (error) {

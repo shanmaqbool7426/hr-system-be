@@ -17,6 +17,8 @@ const TicketSchema = new Schema({
     assignedTo: { type: mongoose.Types.ObjectId, ref: 'user' },
     modifiedBy: { type: mongoose.Types.ObjectId, ref: 'user' },
     company: { type: mongoose.Types.ObjectId, ref: 'company' },
+    feedback: { type: String },
+    rating: { type: Number, min: 1, max: 5 },
 }, {
     timestamps: true,
 });

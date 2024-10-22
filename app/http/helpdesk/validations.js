@@ -53,5 +53,16 @@ module.exports = {
     } catch (error) {
       return BadRequest(res, error.message)
     }
+  },
+  feedback: async (req, res, next) => {
+    try {
+      await Joi.object({
+        feedback: Joi.string().required().messages({ 'any.required': "Feedback is required" }),
+        rating: Joi.number().min(1).max(5).required().messages({ 'any.required': "Rating is required" })
+      }).validateAsync(req.body);
+      next();
+    } catch (error) {
+      return BadRequest(res, error.message)
+    }
   }
 }
