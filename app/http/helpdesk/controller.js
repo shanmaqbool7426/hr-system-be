@@ -1,6 +1,8 @@
 const { Response, BadRequest, serverError } = require('../../util/helpers')
 const HelpdeskTicket = require('../../models/helpdesk_ticket')
+const User = require('../../models/user')
 const { USER_FIELDS } = require('../../util/config')
+const moment = require('moment')
 class HelpdeskController {
   async #getTicket(id) {
     return await HelpdeskTicket.findById(id)
@@ -155,7 +157,11 @@ class HelpdeskController {
         type: data.type,
         priority: data.priority,
         company: user.company._id,
-        createdBy: user._id
+        createdBy: user._id,
+        history: [{
+          status: "created",
+          timestamp: moment().format(),
+        }]
       }
       if (data?.attachment) insert.attachment = data.attachment
       if (data?.asset) insert.asset = data.asset
@@ -181,6 +187,10 @@ class HelpdeskController {
       if (data?.priority) ticket.priority = data.priority
       if (data?.assignedTo) ticket.assignedTo = data.assignedTo
       if (data?.status) ticket.status = data.status
+      ticket.history.push({
+        status: "updated",
+        timestamp: moment().format(),
+      })
       ticket.modifiedBy = user._id
       await ticket.save()
       ticket = await this.#getTicket(ticket._id)
@@ -210,9 +220,16 @@ class HelpdeskController {
       const data = req.body
       let ticket = await HelpdeskTicket.findOne({ _id: id, company: user.company._id })
       if (!ticket) return BadRequest(res)
+      let assignee = await User.findById(data.assignTo, USER_FIELDS)
       ticket.status = "in-progress"
+      ticket.priority = data.priority
       ticket.assignedTo = data.assignTo
       ticket.modifiedBy = user._id
+      ticket.history.push({
+        assignedTo: `${assignee.firstName} ${assignee.lastName}`,
+        status: "assigned",
+        timestamp: moment().format(),
+      })
       await ticket.save()
       ticket = await this.#getTicket(ticket._id)
       return Response(res, { ticket })
@@ -245,10 +262,14 @@ class HelpdeskController {
       let ticket = await HelpdeskTicket.findOne({ _id: id, company: user.company._id })
       if (!ticket) return BadRequest(res)
 
-      if (ticket.hardwareType === 'faulty' && data?.repairCost) ticket.repairCost = data.repairCost
+      if (ticket.hardwareType === 'support' && data?.repairCost) ticket.repairCost = data.repairCost
       ticket.status = "closed"
       ticket.remarks = data.remarks
       ticket.modifiedBy = user._id
+      ticket.history.push({
+        status: "closed",
+        timestamp: moment().format(),
+      })
       await ticket.save()
 
       ticket = await this.#getTicket(ticket._id)
@@ -267,6 +288,10 @@ class HelpdeskController {
 
       ticket.feedback = data.feedback
       ticket.rating = data.rating
+      ticket.history.push({
+        status: "feedback",
+        timestamp: moment().format(),
+      })
       await ticket.save()
       ticket = await this.#getTicket(ticket._id)
       return Response(res, { ticket })

@@ -179,6 +179,10 @@ class RemoteController {
           company: user.company._id
         })
         let exist = await RemoteUserProcess.findOne({
+          createdAt: {
+            $gte: moment().startOf('D').format(),
+            $lt: moment().endOf('D').format()
+          },
           process: remote_process._id,
           user: user._id,
           company: user.company._id,
@@ -277,6 +281,10 @@ class RemoteController {
           company: user.company._id
         })
         let exist = await RemoteUserProcess.findOne({
+          createdAt: {
+            $gte: moment().startOf('D').format(),
+            $lt: moment().endOf('D').format()
+          },
           process: remote_process._id,
           user: user._id,
           company: user.company._id,

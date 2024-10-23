@@ -6,7 +6,7 @@ const TicketSchema = new Schema({
     title: { type: String },
     description: { type: String },
     type: { type: String, enum: ['hardware', 'software', 'support', 'network'], default: 'support' },
-    hardwareType: { type: String, enum: ['new', 'faulty', 'replace'], default: 'other' },
+    hardwareType: { type: String, enum: ['new', 'support'] },
     priority: { type: String, enum: ['low', 'medium', 'high', 'critical'], default: 'low' },
     status: { type: String, enum: ['open', 'in-progress', 'closed'], default: 'open' },
     asset: { type: mongoose.Types.ObjectId, ref: 'asset' },
@@ -19,6 +19,11 @@ const TicketSchema = new Schema({
     company: { type: mongoose.Types.ObjectId, ref: 'company' },
     feedback: { type: String },
     rating: { type: Number, min: 1, max: 5 },
+    history: [{
+        status: { type: String },
+        timestamp: { type: Date },
+        assignedTo: { type: String },
+    }],
 }, {
     timestamps: true,
 });

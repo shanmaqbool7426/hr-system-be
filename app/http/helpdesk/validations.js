@@ -29,7 +29,10 @@ module.exports = {
 
   assign: async (req, res, next) => {
     try {
-      await Joi.object({ assignTo: Joi.string().required().messages({ 'any.required': "Assign to is required" }) }).validateAsync(req.body);
+      await Joi.object({
+        assignTo: Joi.string().required().messages({ 'any.required': "Assign to is required" }),
+        priority: Joi.string().required().messages({ 'any.required': "Priority is required" })
+      }).validateAsync(req.body);
       next();
     } catch (error) {
       return BadRequest(res, error.message)
