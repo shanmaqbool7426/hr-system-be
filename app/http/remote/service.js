@@ -77,7 +77,22 @@ class RemoteService {
             },
             user: user._id,
             company: user.company._id
-        }).populate('process')
+        }).populate('application')
+
+        process_list = process_list.reduce((acc, item) => {
+            let exist = acc.find(app => app.name === item?.application?.name)
+            if (!exist) {
+                acc.push({
+                    _id: item?.application?._id,
+                    name: item?.application?.name,
+                    nature: item?.application?.nature,
+                    time_spent: item?.time_spent
+                })
+            } else {
+                exist.time_spent += item?.time_spent
+            }
+            return acc
+        }, [])
 
         const screenshots = user?.remoteSetting?.hideScreenshots ? [] : await RemoteUserScreenshot.find({
             user: user._id,

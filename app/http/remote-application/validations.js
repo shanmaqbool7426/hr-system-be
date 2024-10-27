@@ -2,21 +2,16 @@ const Joi = require("joi");
 const { BadRequest } = require('../../util/helpers');
 
 module.exports = {
-  create: async (req, res, next) => {
+  update: async (req, res, next) => {
     try {
       await Joi.object({
-        name: Joi.string().required().messages({
-          'any.required': "Name is required",
-        }),
-        color: Joi.string().required().messages({
-          'any.required': "Color is required",
-        }),
+        ids: Joi.array().items(Joi.string()).required(),
+        category: Joi.string().optional().allow(null, ""),
+        nature: Joi.string().optional().allow(null, ""),
       }).validateAsync(req.body);
       next();
     } catch (error) {
       return BadRequest(res, error.message)
     }
   },
-
-
 }

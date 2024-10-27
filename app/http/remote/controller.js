@@ -1,5 +1,5 @@
-const { Response, BadRequest, serverError } = require('../../util/helpers')
-const RemoteProcess = require('../../models/remote_process')
+const { Response, emit, serverError } = require('../../util/helpers')
+const RemoteApplication = require('../../models/remote_application')
 const RemoteUserProcess = require('../../models/remote_user_process')
 const RemoteUserScreenshot = require('../../models/remote_user_screenshot')
 const Attendance = require('../../models/attendance')
@@ -170,12 +170,15 @@ class RemoteController {
       for (let index in process) {
         let row = process[index]
 
-        let remote_process = await RemoteProcess.findOne({
-          name: row.name,
+        let remote_application = await RemoteApplication.findOne({
+          name: row.url || row.application_name,
+          url: row.url,
           company: user.company._id
         })
-        if (!remote_process) remote_process = await RemoteProcess.create({
-          name: row.name,
+
+        if (!remote_application) remote_application = await RemoteApplication.create({
+          name: row.url || row.application_name,
+          url: row.url,
           company: user.company._id
         })
         let exist = await RemoteUserProcess.findOne({
@@ -183,14 +186,15 @@ class RemoteController {
             $gte: moment().startOf('D').format(),
             $lt: moment().endOf('D').format()
           },
-          process: remote_process._id,
+          application: remote_application._id,
           user: user._id,
           company: user.company._id,
         })
 
         if (!exist) {
           exist = await RemoteUserProcess.create({
-            process: remote_process._id,
+            title: row.process_name,
+            application: remote_application._id,
             user: user._id,
             company: user.company._id
           })
@@ -264,67 +268,6 @@ class RemoteController {
       return serverError(res, error)
     }
   }
-  async saveProcessStats(req, res) {
-    try {
-      const { user } = req.payload
-      const { process } = req.body
-
-      for (let index in process) {
-        let row = process[index]
-
-        let remote_process = await RemoteProcess.findOne({
-          name: row.name,
-          company: user.company._id
-        })
-        if (!remote_process) remote_process = await RemoteProcess.create({
-          name: row.name,
-          company: user.company._id
-        })
-        let exist = await RemoteUserProcess.findOne({
-          createdAt: {
-            $gte: moment().startOf('D').format(),
-            $lt: moment().endOf('D').format()
-          },
-          process: remote_process._id,
-          user: user._id,
-          company: user.company._id,
-        })
-
-        if (!exist) {
-          exist = await RemoteUserProcess.create({
-            process: remote_process._id,
-            user: user._id,
-            company: user.company._id
-          })
-        }
-
-        exist.time_spent = row.time_spent
-        await exist.save()
-      }
-
-      return Response(res, {})
-    } catch (error) {
-      return serverError(res, error)
-    }
-  }
-  async saveScreenShots(req, res) {
-    try {
-      const { user } = req.payload
-      const { urls } = req.body
-
-      for (let index in urls) {
-        await RemoteUserScreenshot.create({
-          url: urls[index].url,
-          takenAt: urls[index].taken_at,
-          user: user._id,
-          company: user.company._id
-        })
-      }
-      return Response(res, {})
-    } catch (error) {
-      return serverError(res, error)
-    }
-  }
 
   async collectiveSettings(req, res) {
     try {
@@ -342,6 +285,22 @@ class RemoteController {
       }
 
       await User.updateMany(filter, { $set: { remoteSetting: data } })
+      return Response(res, {})
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
+
+  async sendBuzz(req, res) {
+    try {
+      const { user } = req.payload
+      const { id } = req.params
+      emit(`user_${id}`, {
+        type: "buzz",
+        data: {
+          message: "Buzz message"
+        }
+      })
       return Response(res, {})
     } catch (error) {
       return serverError(res, error)

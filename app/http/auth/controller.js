@@ -22,7 +22,7 @@ class AuthController {
           .populate('shiftplan')
 
         // sync_data_interval is in minutes
-        return Response(res, { user, access_token, refresh_token, sync_data_interval: 30 })
+        return Response(res, { user, access_token, refresh_token, sync_data_interval: 1 })
       }
       return BadRequest(res, 'invalidCredential')
     } catch (error) {
