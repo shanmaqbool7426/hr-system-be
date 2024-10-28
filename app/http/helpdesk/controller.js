@@ -1,5 +1,6 @@
 const { Response, BadRequest, serverError } = require('../../util/helpers')
 const HelpdeskTicket = require('../../models/helpdesk_ticket')
+const Asset = require('../../models/asset')
 const User = require('../../models/user')
 const { USER_FIELDS } = require('../../util/config')
 const moment = require('moment')
@@ -168,6 +169,9 @@ class HelpdeskController {
       if (data?.hardwareType) insert.hardwareType = data.hardwareType
       let ticket = await HelpdeskTicket.create(insert)
       ticket = await this.#getTicket(ticket._id)
+      if (data?.asset) {
+        await Asset.updateOne({ _id: data.asset }, { $set: { status: "reported" } })
+      }
       return Response(res, { ticket })
     } catch (error) {
       return serverError(res, error)
@@ -262,7 +266,12 @@ class HelpdeskController {
       let ticket = await HelpdeskTicket.findOne({ _id: id, company: user.company._id })
       if (!ticket) return BadRequest(res)
 
-      if (ticket.hardwareType === 'support' && data?.repairCost) ticket.repairCost = data.repairCost
+      if (ticket.hardwareType === 'support') {
+        ticket.repairCost = data.repairCost
+        let update = { status: "returned" }
+        if (data?.repairCost > 0) update.isRepaired = true
+        if (ticket?.asset) await Asset.updateOne({ _id: ticket.asset }, { $set: update })
+      }
       ticket.status = "closed"
       ticket.remarks = data.remarks
       ticket.modifiedBy = user._id

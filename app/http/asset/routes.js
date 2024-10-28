@@ -3,13 +3,14 @@ const router = express.Router();
 const controller = require('./controller')
 const validations = require('./validations')
 const { verifyToken } = require('../../middlewares')
-router.get('/list', [verifyToken], controller.list);
-router.get('/history', [verifyToken], controller.history);
-router.get('/details/:id', [verifyToken], controller.details);
-router.post('/create', [verifyToken, validations.create], controller.create);
-router.patch('/update/:id', [verifyToken, validations.update], controller.update);
-router.delete('/delete/:id', [verifyToken], controller.delete);
-router.post('/restore/:id', [verifyToken], controller.restore);
-router.patch('/assign-asset/:id', [verifyToken, validations.assignAsset], controller.assignAsset);
-router.patch('/return-asset/:id', [verifyToken, validations.returnAsset], controller.returnAsset);
+router.get('/dashboard', [verifyToken], (req, res) => controller.dashboard(req, res));
+router.get('/list', [verifyToken], (req, res) => controller.list(req, res));
+router.get('/history', [verifyToken], (req, res) => controller.history(req, res));
+router.get('/details/:id', [verifyToken], (req, res) => controller.details(req, res));
+router.post('/create', [verifyToken, validations.create], (req, res) => controller.create(req, res));
+router.patch('/update/:id', [verifyToken, validations.update], (req, res) => controller.update(req, res));
+router.delete('/delete/:id', [verifyToken], (req, res) => controller.delete(req, res));
+router.post('/restore/:id', [verifyToken], (req, res) => controller.restore(req, res));
+router.patch('/assign-asset/:id', [verifyToken, validations.assignAsset], (req, res) => controller.assignAsset(req, res));
+router.patch('/return-asset/:id', [verifyToken, validations.returnAsset], (req, res) => controller.returnAsset(req, res));
 module.exports = router;

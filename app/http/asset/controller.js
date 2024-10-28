@@ -1,10 +1,56 @@
 const { Response, BadRequest, serverError } = require('../../util/helpers')
 const Asset = require("../../models/asset")
-const AssetHistory = require("../../models/asset_history")
 const CustomField = require("../../models/custom_field")
+const AssetHistory = require("../../models/asset_history")
+const HelpdeskTicket = require("../../models/helpdesk_ticket")
 const { USER_FIELDS } = require("../../util/config")
 class AssetController {
 
+    async dashboard(req, res) {
+        try {
+            const { user } = req.payload
+            const total = await Asset.countDocuments({ company: user.company._id, deletedAt: null })
+            const issued = await Asset.countDocuments({ company: user.company._id, deletedAt: null, status: "assigned" })
+            const reserved = await Asset.countDocuments({ company: user.company._id, deletedAt: null, status: { $in: ["new", "returned"] } })
+            const reported = await Asset.countDocuments({ company: user.company._id, deletedAt: null, status: "reported" })
+            const repaired = await Asset.countDocuments({ company: user.company._id, deletedAt: null, isRepaired: true })
+            const deleted = await Asset.countDocuments({ company: user.company._id, deletedAt: { $ne: null } })
+
+            let netWorth = await Asset.aggregate([
+                { $match: { company: user.company._id, deletedAt: null } },
+                { $group: { _id: null, total: { $sum: "$cost" } } }
+            ])
+            netWorth = netWorth?.length ? netWorth[0].total : 0
+
+            let repairCost = await HelpdeskTicket.aggregate([
+                { $match: { company: user.company._id, status: "closed", hardwareType: "support" } },
+                { $group: { _id: null, total: { $sum: "$repairCost" } } }
+            ])
+            repairCost = repairCost?.length ? repairCost[0].total : 0
+
+            let assetsByType = await Asset.aggregate([
+                { $match: { company: user.company._id, deletedAt: null } },
+                { $lookup: {
+                    from: "custom_fields",
+                    localField: "assetType", 
+                    foreignField: "_id",
+                    as: "assetType"
+                }},
+                { $unwind: "$assetType" },
+                { $group: { _id: "$assetType.name", count: { $sum: 1 } } },
+                { $project: { _id: 0, assetType: "$_id", count: 1 } }
+            ]);
+
+            assetsByType = assetsByType.reduce((acc, curr) => {
+                acc[curr.assetType] = curr.count;
+                return acc;
+            }, {});
+
+            return Response(res, { countStats: { total, issued, reserved, reported, repaired, deleted }, assetsByType, netWorth, repairCost })
+        } catch (error) {
+            return serverError(res, error)
+        }
+    }
     async list(req, res) {
         try {
             const { user } = req.payload
@@ -111,7 +157,7 @@ class AssetController {
             }
             await Asset.updateOne({
                 _id: id, company: user.company._id
-            }, { $set: { deletedAt: new Date, deletedBy: user._id } })
+            }, { $set: { deletedAt: new Date, deletedBy: user._id, status: "deleted" } })
             return Response(res)
         } catch (error) {
             return serverError(res, error)
@@ -129,7 +175,7 @@ class AssetController {
             }
             await Asset.updateOne({
                 _id: id, company: user.company._id
-            }, { $set: { deletedAt: null, deletedBy: null } })
+            }, { $set: { deletedAt: null, deletedBy: null, status: "returned" } })
             return Response(res)
         } catch (error) {
             return serverError(res, error)
