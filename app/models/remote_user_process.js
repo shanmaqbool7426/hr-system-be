@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+// TODO: Add a field to manage the timestamp of the process
 module.exports = mongoose.model("remote_user_process", new Schema({
   title: { type: String },
   time_spent: { type: Number }, // in seconds
