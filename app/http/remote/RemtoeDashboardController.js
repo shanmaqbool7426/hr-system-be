@@ -92,6 +92,85 @@ class RemoteDashboardController {
 
     return topUsers;
   }
+  async #getApplicationTimeSpent(filters, startDate = null, endDate = null) {
+    startDate = startDate ? moment(startDate) : moment().startOf('month')
+    endDate = endDate ? moment(endDate) : moment().endOf('month')
+
+    const applicationTimeSpent = await RemoteUserProcess.aggregate([
+      {
+        $match: {
+          ...filters,
+          createdAt: { $gte: startDate.toDate(), $lt: endDate.toDate() }
+        }
+      },
+      {
+        $lookup: {
+          from: "remote_applications",
+          localField: "application",
+          foreignField: "_id",
+          as: "applicationDetails"
+        }
+      },
+      {
+        $unwind: "$applicationDetails"
+      },
+      {
+        $group: {
+          _id: {
+            application: "$application",
+            name: "$applicationDetails.name"
+          },
+          timeSpent: { $sum: "$time_spent" }
+        }
+      },
+      {
+        $project: {
+          _id: "$_id.application",
+          name: "$_id.name",
+          timeSpent: 1
+        }
+      }
+    ])
+    return applicationTimeSpent.map(app => ({ name: app.name, timeSpent: (app.timeSpent / 60 / 60).toFixed(2) }))
+  }
+  async #getApplicationTimeSpentByNature(filters, startDate = null, endDate = null) {
+    startDate = startDate ? moment(startDate) : moment().startOf('month')
+    endDate = endDate ? moment(endDate) : moment().endOf('month')
+
+    const applicationTimeSpent = await RemoteUserProcess.aggregate([
+      {
+        $match: {
+          ...filters,
+          createdAt: { $gte: startDate.toDate(), $lt: endDate.toDate() }
+        }
+      },
+      {
+        $lookup: {
+          from: "remote_applications",
+          localField: "application",
+          foreignField: "_id",
+          as: "applicationDetails"
+        }
+      },
+      {
+        $unwind: "$applicationDetails"
+      },
+      {
+        $group: {
+          _id: "$applicationDetails.nature",
+          timeSpent: { $sum: "$time_spent" }
+        }
+      },
+      {
+        $project: {
+          _id: "$_id",
+          name: "$_id",
+          timeSpent: 1
+        }
+      }
+    ])
+    return applicationTimeSpent.map(app => ({ name: app.name, timeSpent: (app.timeSpent / 60 / 60).toFixed(2) }))
+  }
   async dashboard(req, res) {
     try {
       const { user } = req.payload
@@ -105,24 +184,7 @@ class RemoteDashboardController {
       const totalOffline = await User.countDocuments({ company: user.company._id, workMode: "remote", online: false })
       const totalAbsent = totalRemoteEmployees - present_ids.length
 
-      const twelveMonthsAgo = moment().subtract(12, 'months').startOf('month');
-      const applicationTimeSpent = await RemoteApplication.aggregate([
-        {
-          $match: {
-            user: new ObjectId(user._id),
-            createdAt: { $gte: twelveMonthsAgo.toDate() }
-          }
-        },
-        {
-          $group: {
-            _id: { $month: "$createdAt" },
-            total: { $sum: "$timeSpent" }
-          }
-        }
-      ]);
 
-
-      const productiveTimeSpent = await this.#getProductiveTimeSpent(moment().format('MM'), { company: user.company._id })
       return Response(res, {
         stats: {
           total: totalRemoteEmployees,
@@ -130,9 +192,9 @@ class RemoteDashboardController {
           offline: totalOffline,
           absent: totalAbsent,
         },
-        applicationTimeSpent,
-        productiveTimeSpent,
-        topPerformers: await this.#getTopUsers({ company: user.company._id })
+        productiveTimeSpent: await this.#getProductiveTimeSpent(moment().format('MM'), { company: user.company._id }),
+        topPerformers: await this.#getTopUsers({ company: user.company._id }),
+        applicationTimeSpentByNature: await this.#getApplicationTimeSpentByNature({ company: user.company._id })
       })
     } catch (error) {
       return serverError(res, error)
