@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-const controller = require('./RemtoeController')
-const dashboardController = require('./RemtoeDashboardController')
+const controller = require('./RemoteController')
+const dashboardController = require('./RemoteDashboardController')
 
 const validations = require('./validations')
 const { verifyToken } = require('../../middlewares')

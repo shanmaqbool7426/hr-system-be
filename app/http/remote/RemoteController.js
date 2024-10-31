@@ -171,13 +171,13 @@ class RemoteController {
         let row = process[index]
 
         let remote_application = await RemoteApplication.findOne({
-          name: row.url || row.application_name,
+          name: row.url ? row.url.replace(/^(?:https?:\/\/)?(?:www\.)?([^\/]+).*/, '$1') : row.application_name,
           url: row.url,
           company: user.company._id
         })
 
         if (!remote_application) remote_application = await RemoteApplication.create({
-          name: row.url || row.application_name,
+          name: row.url ? row.url.replace(/^(?:https?:\/\/)?(?:www\.)?([^\/]+).*/, '$1') : row.application_name,
           url: row.url,
           company: user.company._id
         })
@@ -194,6 +194,7 @@ class RemoteController {
         if (!exist) {
           exist = await RemoteUserProcess.create({
             title: row.process_name,
+            url: row.url,
             application: remote_application._id,
             user: user._id,
             company: user.company._id
@@ -295,10 +296,15 @@ class RemoteController {
     try {
       const { user } = req.payload
       const { id } = req.params
-      emit(`user_${id}`, {
+      const { message } = req.body
+      emit(`user-${id}`, {
         type: "buzz",
-        data: {
-          message: "Buzz message"
+        message,
+        from: {
+          id: user._id,
+          name: user.firstName + " " + user.lastName,
+          email: user.email,
+          avatar: user.avatars
         }
       })
       return Response(res, {})

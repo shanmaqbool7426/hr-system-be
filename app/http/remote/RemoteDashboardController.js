@@ -1,11 +1,8 @@
-const { Response, emit, serverError } = require('../../util/helpers')
+const { Response, serverError } = require('../../util/helpers')
 const RemoteApplication = require('../../models/remote_application')
 const RemoteUserProcess = require('../../models/remote_user_process')
-const RemoteUserScreenshot = require('../../models/remote_user_screenshot')
 const Attendance = require('../../models/attendance')
-const AttendanceBreak = require('../../models/attendance_break')
 const User = require('../../models/user')
-const RemoteService = require('./service')
 const moment = require('moment')
 const { ObjectId } = require('mongoose').Types
 
@@ -14,9 +11,9 @@ class RemoteDashboardController {
   async #getProductiveTimeSpent(month, filters) {
     const productiveApplications = await RemoteApplication.find({ nature: "productive" }, '_id')
     let productiveTimeSpent = [];
-    const daysInMonth = moment(month).daysInMonth();
+    const daysInMonth = month.daysInMonth();
     const promises = Array.from({ length: daysInMonth }, (_, day) => {
-      const date = moment(`${moment().format('YYYY')}-${month}-${day + 1}`);
+      const date = moment(`${month.format('YYYY-MM')}-${(day + 1).toString().padStart(2, '0')}`);
       return RemoteUserProcess.aggregate([
         {
           $match: {
@@ -46,8 +43,8 @@ class RemoteDashboardController {
   async #getTopUsers(filters) {
     const productiveApplications = await RemoteApplication.find({ nature: "productive" }, '_id')
     let topUsers = [];
-    const startOfMonth = moment().startOf('month').toDate();
-    const endOfMonth = moment().endOf('month').toDate();
+    const startOfMonth = moment().subtract(1, 'month').startOf('month').toDate();
+    const endOfMonth = moment().subtract(1, 'month').endOf('month').toDate();
 
     const result = await RemoteUserProcess.aggregate([
       {
@@ -63,10 +60,24 @@ class RemoteDashboardController {
           localField: "user",
           foreignField: "_id",
           as: "userDetails"
-        }
+        },
       },
       {
         $unwind: "$userDetails"
+      },
+      {
+        $lookup: {
+          from: "shifts",
+          localField: "user",
+          foreignField: "userId",
+          as: "shiftDetails"
+        }
+      },
+      {
+        $unwind: {
+          path: "$shiftDetails",
+          preserveNullAndEmptyArrays: true
+        }
       },
       {
         $group: {
@@ -75,7 +86,8 @@ class RemoteDashboardController {
             firstName: "$userDetails.firstName",
             lastName: "$userDetails.lastName"
           },
-          total: { $sum: "$time_spent" }
+          total: { $sum: "$time_spent" },
+          shift: { $first: "$shiftDetails" }
         }
       },
       {
@@ -87,7 +99,13 @@ class RemoteDashboardController {
     ]);
 
     result.forEach(user => {
-      topUsers.push({ _id: user._id, firstName: user._id.firstName, lastName: user._id.lastName, total: user.total });
+      topUsers.push({
+        _id: user._id,
+        firstName: user._id.firstName,
+        lastName: user._id.lastName,
+        total: user.total,
+        shift: user.shift
+      });
     });
 
     return topUsers;
@@ -134,14 +152,13 @@ class RemoteDashboardController {
     return applicationTimeSpent.map(app => ({ name: app.name, timeSpent: (app.timeSpent / 60 / 60).toFixed(2) }))
   }
   async #getApplicationTimeSpentByNature(filters, startDate = null, endDate = null) {
-    startDate = startDate ? moment(startDate) : moment().startOf('month')
-    endDate = endDate ? moment(endDate) : moment().endOf('month')
-
+    if (startDate && endDate) {
+      filters.createdAt = { $gte: startDate.toDate(), $lt: endDate.toDate() }
+    }
     const applicationTimeSpent = await RemoteUserProcess.aggregate([
       {
         $match: {
-          ...filters,
-          createdAt: { $gte: startDate.toDate(), $lt: endDate.toDate() }
+          ...filters
         }
       },
       {
@@ -180,19 +197,16 @@ class RemoteDashboardController {
       }, 'user').distinct('user')
 
       const totalRemoteEmployees = await User.countDocuments({ company: user.company._id, workMode: "remote" })
-      const totalOnline = await User.countDocuments({ company: user.company._id, workMode: "remote", online: true })
-      const totalOffline = await User.countDocuments({ company: user.company._id, workMode: "remote", online: false })
+      const remoteEmployees = await User.find({ company: user.company._id, workMode: "remote" }, '_id online firstName lastName email avatar')
       const totalAbsent = totalRemoteEmployees - present_ids.length
-
 
       return Response(res, {
         stats: {
           total: totalRemoteEmployees,
-          online: totalOnline,
-          offline: totalOffline,
           absent: totalAbsent,
         },
-        productiveTimeSpent: await this.#getProductiveTimeSpent(moment().format('MM'), { company: user.company._id }),
+        remoteEmployees,
+        productiveTimeSpent: await this.#getProductiveTimeSpent(moment().subtract(1, 'month'), { company: user.company._id }),
         topPerformers: await this.#getTopUsers({ company: user.company._id }),
         applicationTimeSpentByNature: await this.#getApplicationTimeSpentByNature({ company: user.company._id })
       })
