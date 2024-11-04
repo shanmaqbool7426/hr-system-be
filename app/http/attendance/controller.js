@@ -23,6 +23,24 @@ class AttendanceController {
       return serverError(res, error)
     }
   }
+  async getAttendance(req, res) {
+    try {
+      const { user } = req.payload
+      const data = req.query
+      const attendace = await Attendance.findOne({
+        checkInAt: {
+          $gte: moment(data.date).startOf('day').format(),
+          $lt: moment(data.date).endOf('day').format(),
+        },
+        user: data.employee,
+        company: user.company
+      })
+      return Response(res, { attendace })
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
+
   async list(req, res) {
     try {
       const { user } = req.payload

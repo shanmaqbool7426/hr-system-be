@@ -86,10 +86,12 @@ class RemoteService {
                     _id: item?.application?._id,
                     name: item?.application?.name,
                     nature: item?.application?.nature,
-                    time_spent: item?.time_spent
+                    time_spent: item?.time_spent,
+                    sub_process: [item]
                 })
             } else {
                 exist.time_spent += item?.time_spent
+                exist.sub_process.push(item)
             }
             return acc
         }, [])

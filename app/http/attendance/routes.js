@@ -5,6 +5,7 @@ const validations = require('./validations')
 const { verifyToken } = require('../../middlewares')
 
 router.get('/list', [verifyToken], controller.list); 
+router.post('/get-attendance', [verifyToken], controller.getAttendance);
 router.post('/todays-attendance', [verifyToken], controller.todaysAttendance);
 router.post('/start-break/:id', [verifyToken], controller.startBreak);
 router.post('/end-break/:id', [verifyToken], controller.endBreak);
