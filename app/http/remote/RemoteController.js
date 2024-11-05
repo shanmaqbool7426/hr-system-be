@@ -264,6 +264,7 @@ class RemoteController {
         productive_time: getTimeInHoursAndMinutes(productiveTime),
         total_remote_time: getTimeInHoursAndMinutes(totalRemoteTime),
         process_list,
+        remoteSetting: user.remoteSetting
       })
     } catch (error) {
       return serverError(res, error)

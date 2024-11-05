@@ -9,15 +9,32 @@ class AssetController {
     async dashboard(req, res) {
         try {
             const { user } = req.payload
-            const total = await Asset.countDocuments({ company: user.company._id, deletedAt: null })
-            const issued = await Asset.countDocuments({ company: user.company._id, deletedAt: null, status: "assigned" })
-            const reserved = await Asset.countDocuments({ company: user.company._id, deletedAt: null, status: { $in: ["new", "returned"] } })
-            const reported = await Asset.countDocuments({ company: user.company._id, deletedAt: null, status: "reported" })
-            const repaired = await Asset.countDocuments({ company: user.company._id, deletedAt: null, isRepaired: true })
-            const deleted = await Asset.countDocuments({ company: user.company._id, deletedAt: { $ne: null } })
+            const counts = await Promise.all([
+                Asset.countDocuments({ company: user.company._id, deletedAt: null, status: { $nin: ["sold", "expired", "deleted"] } }),
+                Asset.countDocuments({ company: user.company._id, deletedAt: null, status: "assigned" }),
+                Asset.countDocuments({ company: user.company._id, deletedAt: null, status: { $in: ["new", "returned"] } }),
+                Asset.countDocuments({ company: user.company._id, deletedAt: null, status: "reported" }),
+                Asset.countDocuments({ company: user.company._id, deletedAt: null, isRepaired: true }),
+                Asset.countDocuments({ company: user.company._id, deletedAt: null, status: "expired" }),
+                Asset.countDocuments({ company: user.company._id, deletedAt: null, status: "sold" }),
+                Asset.countDocuments({ company: user.company._id, deletedAt: { $ne: null } }),
+                Asset.countDocuments({ company: user.company._id, deletedAt: null, status: { $nin: ["sold", "expired", "deleted"] }, condition: 1 }),
+                Asset.countDocuments({ company: user.company._id, deletedAt: null, status: { $nin: ["sold", "expired", "deleted"] }, condition: 2 }),
+                Asset.countDocuments({ company: user.company._id, deletedAt: null, status: { $nin: ["sold", "expired", "deleted"] }, condition: 3 }),
+                Asset.countDocuments({ company: user.company._id, deletedAt: null, status: { $nin: ["sold", "expired", "deleted"] }, condition: 4 }),
+                Asset.countDocuments({ company: user.company._id, deletedAt: null, status: { $nin: ["sold", "expired", "deleted"] }, condition: 5 }),
+            ]);
+
+            const [total, issued, reserved, reported, repaired, expired, sold, deleted, poor, fair, good, excellent, best] = counts;
+
+            let totalPurchase = await Asset.aggregate([
+                { $match: { company: user.company._id, deletedAt: null } },
+                { $group: { _id: null, total: { $sum: "$cost" } } }
+            ])
+            totalPurchase = totalPurchase?.length ? totalPurchase[0].total : 0
 
             let netWorth = await Asset.aggregate([
-                { $match: { company: user.company._id, deletedAt: null } },
+                { $match: { company: user.company._id, deletedAt: null, status: { $in: ["new", "returned", "reported", "assigned"] } } },
                 { $group: { _id: null, total: { $sum: "$cost" } } }
             ])
             netWorth = netWorth?.length ? netWorth[0].total : 0
@@ -28,25 +45,38 @@ class AssetController {
             ])
             repairCost = repairCost?.length ? repairCost[0].total : 0
 
-            let assetsByType = await Asset.aggregate([
-                { $match: { company: user.company._id, deletedAt: null } },
-                { $lookup: {
-                    from: "custom_fields",
-                    localField: "assetType", 
-                    foreignField: "_id",
-                    as: "assetType"
-                }},
+            let reservedAssets = await Asset.aggregate([
+                { $match: { company: user.company._id, deletedAt: null, status: { $in: ["new", "returned", "assigned", "reported"] } } },
+                {
+                    $lookup: {
+                        from: "custom_fields",
+                        localField: "assetType",
+                        foreignField: "_id",
+                        as: "assetType"
+                    }
+                },
                 { $unwind: "$assetType" },
-                { $group: { _id: "$assetType.name", count: { $sum: 1 } } },
-                { $project: { _id: 0, assetType: "$_id", count: 1 } }
+                {
+                    $group: {
+                        _id: "$assetType.name",
+                        count: { $sum: 1 },
+                        reserveCount: { $sum: { $cond: [{ $in: ["$status", ["new", "returned"]] }, 1, 0] } },
+                        reportedCount: { $sum: { $cond: [{ $in: ["$status", ["reported"]] }, 1, 0] } }
+                    }
+                },
+                { $project: { _id: 0, assetType: "$_id", count: 1, reserveCount: 1, reportedCount: 1 } }
             ]);
 
-            assetsByType = assetsByType.reduce((acc, curr) => {
-                acc[curr.assetType] = curr.count;
+            reservedAssets = reservedAssets.reduce((acc, curr) => {
+                acc[curr.assetType] = { total: curr.count, reserved: curr.reserveCount, reported: curr.reportedCount };
                 return acc;
             }, {});
 
-            return Response(res, { countStats: { total, issued, reserved, reported, repaired, deleted }, assetsByType, netWorth, repairCost })
+
+            return Response(res, {
+                countStats: { netWorth, repairCost, totalPurchase, total, issued, reserved, reported, repaired, expired, sold, deleted, poor, fair, good, excellent, best },
+                reservedAssets
+            })
         } catch (error) {
             return serverError(res, error)
         }
@@ -60,7 +90,7 @@ class AssetController {
                 filter.deletedAt = { $ne: null }
             }
             let list = await Asset.find(filter)
-                .populate('assetType').populate('user', USER_FIELDS).populate('deletedBy')
+                .populate('assetType').populate('user', USER_FIELDS).populate('deletedBy', USER_FIELDS)
 
             return Response(res, { list })
         } catch (error) {
@@ -72,7 +102,7 @@ class AssetController {
             const { id } = req.params
             const { user } = req.payload
             let asset = await Asset.findOne({ _id: id, deletedAt: null, $or: [{ company: user.company._id }, { company: null }] })
-                .populate('assetType').populate('user', USER_FIELDS).populate('deletedBy')
+                .populate('assetType').populate('user', USER_FIELDS).populate('deletedBy', USER_FIELDS)
 
             return Response(res, { asset })
         } catch (error) {
@@ -113,8 +143,9 @@ class AssetController {
             insert.cost = data.cost
             insert.vendor = data.vendor
             insert.fields = data.fields
+            insert.condition = data.condition
             let asset = await Asset.create(insert)
-            asset = await Asset.findById(asset._id).populate('assetType').populate('user', USER_FIELDS).populate('deletedBy')
+            asset = await Asset.findById(asset._id).populate('assetType').populate('user', USER_FIELDS).populate('deletedBy', USER_FIELDS)
             return Response(res, { asset })
         } catch (error) {
             return serverError(res, error)
@@ -138,8 +169,9 @@ class AssetController {
             asset.cost = data.cost
             asset.vendor = data.vendor
             asset.fields = data.fields
+            asset.condition = data.condition
             await asset.save()
-            asset = await Asset.findById(asset._id).populate('assetType').populate('user', USER_FIELDS).populate('deletedBy')
+            asset = await Asset.findById(asset._id).populate('assetType').populate('user', USER_FIELDS).populate('deletedBy', USER_FIELDS)
             return Response(res, { asset })
         } catch (error) {
             return serverError(res, error)
@@ -235,6 +267,26 @@ class AssetController {
             }
 
             asset = await Asset.findById(asset._id).populate('assetType').populate('user')
+            return Response(res, { asset })
+        } catch (error) {
+            return serverError(res, error)
+        }
+    }
+    async changeStatus(req, res) {
+        try {
+            const { id } = req.params
+            const { user } = req.payload
+            const data = req.body
+            let asset = await Asset.findOne({
+                _id: id, company: user.company._id
+            })
+            if (!asset) {
+                return BadRequest(res)
+            }
+            asset.status = data.status
+            asset.remarks = data.remarks
+            await asset.save()
+            asset = await Asset.findById(asset._id).populate('assetType').populate('user', USER_FIELDS).populate('deletedBy', USER_FIELDS)
             return Response(res, { asset })
         } catch (error) {
             return serverError(res, error)

@@ -8,44 +8,22 @@ module.exports = {
         try {
             await Joi.object({
                 assetType: Joi.string().required().messages({
-                    'any.required': "nameRequired",
+                    'any.required': "Name is required",
                 }),
                 warrantyExpiry: Joi.date().required().messages({
-                    'any.required': "warrantyExpiryRequired",
+                    'any.required': "Warranty expiry is required",
                 }),
                 purchaseDate: Joi.date().required().messages({
-                    'any.required': "purchaseDateRequired",
+                    'any.required': "Purchase date is required",
                 }),
                 cost: Joi.number().required().messages({
-                    'any.required': "costRequired",
+                    'any.required': "Cost is required",
                 }),
                 vendor: Joi.string().required().messages({
-                    'any.required': "vendorRequired",
+                    'any.required': "Vendor is required",
                 }),
-                fields: Joi.any().optional().allow("", null),
-            }).validateAsync(req.body);
-            next();
-        } catch (error) {
-            return BadRequest(res, error.message)
-        }
-    },
-    update: async (req, res, next) => {
-        try {
-            await Joi.object({
-                assetType: Joi.string().required().messages({
-                    'any.required': "nameRequired",
-                }),
-                warrantyExpiry: Joi.date().required().messages({
-                    'any.required': "warrantyExpiryRequired",
-                }),
-                purchaseDate: Joi.date().required().messages({
-                    'any.required': "purchaseDateRequired",
-                }),
-                cost: Joi.number().required().messages({
-                    'any.required': "costRequired",
-                }),
-                vendor: Joi.string().required().messages({
-                    'any.required': "vendorRequired",
+                condition: Joi.number().optional().allow(1, 2, 3, 4, 5).messages({
+                    'any.optional': "Condition is required",
                 }),
                 fields: Joi.any().optional().allow("", null),
                 status: Joi.string().optional().allow('', null),
@@ -59,13 +37,13 @@ module.exports = {
         try {
             await Joi.object({
                 assignDate: Joi.date().required().messages({
-                    'any.required': "assignDateRequired",
+                    'any.required': "Assign date is required",
                 }),
                 assignTo: Joi.string().required().messages({
-                    'any.required': "assignToRequired",
+                    'any.required': "Assign to is required",
                 }),
                 remarks: Joi.string().required().messages({
-                    'any.required': "remarksRequired",
+                    'any.required': "Remarks is required",
                 }),
             }).validateAsync(req.body);
             next();
@@ -77,13 +55,28 @@ module.exports = {
         try {
             await Joi.object({
                 returnDate: Joi.date().required().messages({
-                    'any.required': "returnDateRequired",
+                    'any.required': "Return date is required",
                 }),
                 returnTo: Joi.string().required().messages({
-                    'any.required': "returnToRequired",
+                    'any.required': "Return to is required",
                 }),
                 remarks: Joi.string().required().messages({
-                    'any.required': "remarksRequired",
+                    'any.required': "Remarks is required",
+                }),
+            }).validateAsync(req.body);
+            next();
+        } catch (error) {
+            return BadRequest(res, error.message)
+        }
+    },
+    changeStatus: async (req, res, next) => {
+        try {
+            await Joi.object({
+                status: Joi.string().required().messages({
+                    'any.required': "Status is required",
+                }),
+                remarks: Joi.string().required().messages({
+                    'any.required': "Remarks is required",
                 }),
             }).validateAsync(req.body);
             next();
