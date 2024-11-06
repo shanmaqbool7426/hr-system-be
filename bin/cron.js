@@ -3,6 +3,7 @@ const ResetPassword = require('../app/models/resetpassword')
 const RemoteWorkRequest = require('../app/models/remote_work_request');
 const User = require('../app/models/user');
 const UserChangeRequest = require('../app/models/user_change_request');
+const ChangeShiftRequest = require('../app/models/change_shift_request');
 const moment = require('moment');
 const RemoveExpiredOTP = async () => {
     await ResetPassword.deleteMany({ createdAt: { $lte: moment().subtract(30, 'minutes').toDate() } });
@@ -50,6 +51,19 @@ const CheckChangeRequest = async () => {
     }
 }
 
+const CheckChangeShiftRequest = async () => {
+    const requests = await ChangeShiftRequest.find({ effectiveDate: { $gte: moment().startOf('day').toDate(), $lt: moment().endOf('day').toDate() } })
+    for (const request of requests) {
+        await User.updateOne({ _id: request.employee }, { $set: { shiftplan: request.requestedShift } })
+    }
+    await ChangeShiftRequest.updateMany({ effectiveDate: { $gte: moment().startOf('day').toDate(), $lt: moment().endOf('day').toDate() } }, { $set: { status: 'approved' } })
+
+    const expiredRequests = await ChangeShiftRequest.find({ validTill: { $lt: moment().startOf('day').toDate() } })
+    for (const request of expiredRequests) {
+        await User.updateOne({ _id: request.employee }, { $set: { shiftplan: request.previousShift } })
+    }
+}
+
 const everyMinute = cron.schedule('* * * * *', async () => {
     await RemoveExpiredOTP()
 });
@@ -57,6 +71,7 @@ const everyMinute = cron.schedule('* * * * *', async () => {
 const everyDay = cron.schedule('0 0 * * *', async () => {
     await CheckRemoteWork()
     await CheckChangeRequest()
+    await CheckChangeShiftRequest()
 });
 
 

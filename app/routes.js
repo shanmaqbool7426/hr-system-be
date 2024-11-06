@@ -19,6 +19,7 @@ router.use("/assets", require("./http/asset/routes"));
 router.use("/auth", require("./http/auth/routes"));
 router.use("/biometric", require("./http/biometric/routes"));
 router.use("/custom-fields", require("./http/custom-field/routes"));
+router.use("/change-shift-requests", require("./http/change-shift-request/routes"));
 router.use("/departments", require("./http/department/routes"));
 router.use("/employees", require("./http/employee/routes"));
 router.use("/exemption-requests", require("./http/exemption-request/routes"));

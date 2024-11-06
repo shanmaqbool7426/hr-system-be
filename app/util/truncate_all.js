@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
+const db = 'mongodb+srv://waqar:4fmyJb92CmPLRN1h@zaffre.gmi2scd.mongodb.net/zaffre';
 // Connect to the MongoDB database
-mongoose.connect('mongodb://localhost:27017/yourDatabase', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log('Connected to MongoDB');
 
