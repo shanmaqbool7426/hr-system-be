@@ -45,13 +45,33 @@ class RemoteService {
                     user: new ObjectId(user._id),
                     company: new ObjectId(user.company._id),
                     createdAt: {
-                        $gte: startDate,
-                        $lt: endDate
-                    },
+                        $gte: moment(startDate).toDate(),
+                        $lt: moment(endDate).toDate()
+                    }
+                }
+            },
+            {
+                $lookup: {
+                    from: "remote_applications",
+                    localField: "application",
+                    foreignField: "_id",
+                    as: "process"
+                }
+            },
+            {
+                $unwind: "$process"
+            },
+            {
+                $match: {
                     "process.nature": "productive"
                 }
             },
-            { $group: { _id: null, totalTime: { $sum: "$time_spent" } } }
+            {
+                $group: {
+                    _id: null,
+                    totalTime: { $sum: "$time_spent" }
+                }
+            }
         ])
         productiveTime = productiveTime.length > 0 ? productiveTime[0].totalTime : 0
 

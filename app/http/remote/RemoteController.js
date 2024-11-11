@@ -44,14 +44,14 @@ class RemoteController {
       let { startDate, endDate, team, employee } = req.query
       startDate = startDate || new Date()
       endDate = endDate || new Date()
-      startDate = moment(startDate).startOf('D').format()
-      endDate = moment(endDate).endOf('D').format()
-      employee = employee ? [employee] : []
+      startDate = moment(startDate).startOf('D').toDate()
+      endDate = moment(endDate).endOf('D').toDate()
+      employee = employee ? [new ObjectId(employee)] : []
       const filters = { company: (user.company._id) }
       if (team) {
         employee = await User.find({ team: team, company: user.company._id })
         employee = employee.reduce((acc, item) => {
-          acc.push((item._id.toString()))
+          acc.push(new ObjectId(item._id.toString()))
           return acc
         }, [])
       }
@@ -93,7 +93,22 @@ class RemoteController {
             createdAt: {
               $gte: startDate,
               $lt: endDate
-            },
+            }
+          }
+        },
+        {
+          $lookup: {
+            from: "remote_applications",
+            localField: "application",
+            foreignField: "_id",
+            as: "process"
+          }
+        },
+        {
+          $unwind: "$process"
+        },
+        {
+          $match: {
             "process.nature": "productive"
           }
         },
@@ -106,8 +121,8 @@ class RemoteController {
           $match: {
             ...filters,
             createdAt: {
-              $gte: new Date(startDate),
-              $lt: new Date(endDate)
+              $gte: startDate,
+              $lt: endDate
             },
           }
         },
@@ -121,7 +136,7 @@ class RemoteController {
           $lt: endDate
         },
         ...filters
-      }).populate('process')
+      }).populate('application')
 
       const screenshots = await RemoteUserScreenshot.find({
         ...filters,
