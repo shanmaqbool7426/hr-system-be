@@ -104,7 +104,7 @@ const Seed = async () => {
     password: bcrypt.hashSync('Admin@123', bcrypt.genSaltSync(10)),
     company: company._id,
     role: role._id,
-    workMode: 'remote',
+    workMode: 'onsite',
     department: department._id
   })
   await User.create({
