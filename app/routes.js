@@ -30,6 +30,7 @@ router.use("/gazette-holidays", require("./http/gazetted-holiday/routes"));
 router.use("/helpdesk-tickets", require("./http/helpdesk/routes"));
 router.use("/leaves", require("./http/leave/routes"));
 router.use("/leave-requests", require("./http/leave-request/routes"));
+router.use("/onboarding-offboarding", require("./http/onboarding-offboarding/routes"));
 router.use("/projects", require("./http/projects/routes"));
 router.use("/remote", require("./http/remote/routes"));
 router.use("/remote-applications", require("./http/remote-application/routes"));
