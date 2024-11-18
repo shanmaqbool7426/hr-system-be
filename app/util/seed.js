@@ -122,6 +122,8 @@ const Seed = async () => {
     await CustomField.create(custom_fields[index])
   }
 
+  const onboarding = await CustomField.findOne({ name: "On Boarding" })
+  await User.updateMany({}, { $set: { status: onboarding._id } })
   console.info("Database is seeded");
   process.exit()
 }

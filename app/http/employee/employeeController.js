@@ -1,6 +1,5 @@
 const { Response, BadRequest, serverError } = require("../../util/helpers");
 const User = require("../../models/user");
-const Company = require("../../models/company");
 const Asset = require("../../models/asset");
 const Project = require("../../models/project");
 const UserDocument = require("../../models/user_documents");
@@ -8,6 +7,7 @@ const UserWarning = require("../../models/user_warning");
 const bcrypt = require("bcryptjs");
 const Mailer = require("../../util/mailer");
 const UserCredentialsEmail = require("../../emails/userCredentials");
+const CustomField = require('../../models/custom_field')
 class EmployeeController {
   async populateEmployee(id) {
     return await User.findById(id)
@@ -163,7 +163,8 @@ class EmployeeController {
           UserCredentialsEmail(data?.firstName + " " + data?.lastName, data?.email, data?.password)
         );
       }
-
+      const status = await CustomField.findOne({ name: "On Boarding" })
+      insert.status = status._id
       let employee = await User.create(insert);
       employee = await this.populateEmployee(employee._id);
       return Response(res, {

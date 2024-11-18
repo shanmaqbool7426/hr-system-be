@@ -11,4 +11,9 @@ router.post('/tasks/:type/create', [verifyToken, validations.createTask], (req, 
 router.post('/tasks/:type/update/:id', [verifyToken, validations.updateTask], (req, res) => controller.updateTask(req, res));
 router.delete('/tasks/:type/delete/:id', [verifyToken], (req, res) => controller.deleteTask(req, res));
 
+router.post('/assets/create', [verifyToken, validations.createAsset], (req, res) => controller.createAsset(req, res));
+router.post('/assets/update/:id', [verifyToken, validations.updateAsset], (req, res) => controller.updateAsset(req, res));
+router.delete('/assets/delete/:id', [verifyToken], (req, res) => controller.deleteAsset(req, res));
+
+router.get('/employees/onboarding', [verifyToken], (req, res) => controller.getOnboardingEmployees(req, res));
 module.exports = router;
