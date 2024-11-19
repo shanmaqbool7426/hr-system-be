@@ -1,4 +1,6 @@
 const { Response, BadRequest, serverError } = require('../../util/helpers')
+const Onboarding = require('../../models/onboarding')
+const Offboarding = require('../../models/offboarding')
 const OnboardingTask = require('../../models/onboarding_task')
 const OnboardingAsset = require('../../models/onboarding_asset')
 const OffboardingTask = require('../../models/offboarding_task')
@@ -128,11 +130,68 @@ class OnboardingController {
     try {
       const { user } = req.payload
       const status = await CustomField.findOne({ name: "On Boarding" })
-      const employees = await User.find({ company: user.company._id, status: status._id }, "_id firstName lastName email avatar employeeCode")
+      const employees = await User.find({ company: user.company._id, status: status._id }, "-password")
         .populate('department')
         .populate('designation')
         .populate('status')
       return Response(res, { employees })
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
+
+  async getEmployeeProcess(req, res) {
+    try {
+      const { user } = req.payload
+      const { type, employee } = req.params
+      const Model = type === 'onboarding' ? Onboarding : Offboarding
+      let process = await Model.findOne({ employee, company: user.company._id })
+      if (!process) {
+        process = await Model.create({ employee, company: user.company._id, createdBy: user._id })
+      }
+
+      return Response(res, { process })
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
+
+
+  async updateEmployeeProcess(req, res) {
+    try {
+      const { user } = req.payload
+      const { id, type } = req.params
+      const data = req.body
+      const Model = type === 'onboarding' ? Onboarding : Offboarding
+      let process = await Model.findOne({ _id: id, company: user.company._id })
+      if (!process) {
+        return BadRequest(res, "Process not found")
+      }
+      if (data?.completedTasks) process.completedTasks = data.completedTasks
+      if (data?.employeeStatus) process.employeeStatus = data.employeeStatus
+      await process.save()
+      return Response(res, { process })
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
+
+  async completeEmployeeProcess(req, res) {
+    try {
+      const { user } = req.payload
+      const { id, type } = req.params
+      const Model = type === 'onboarding' ? Onboarding : Offboarding
+      let process = await Model.findOne({ _id: id, company: user.company._id })
+      if (!process) {
+        return BadRequest(res, "Process not found")
+      }
+      process.isCompleted = true
+      await process.save()
+
+      if (type === 'onboarding') {
+        await User.updateOne({ _id: process.employee }, { status: process.employeeStatus })
+      }
+      return Response(res, { process })
     } catch (error) {
       return serverError(res, error)
     }

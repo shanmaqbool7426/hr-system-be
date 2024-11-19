@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const { Response, BadRequest, serverError, jwt } = require('../../util/helpers')
 const { sendEmail } = require('../../util/mailer')
 const User = require("../../models/user")
+const Company = require("../../models/company")
 const ResetPassword = require("../../models/resetpassword")
 const ResetPasswordEmail = require('../../emails/forgotPasswordOTP')
 

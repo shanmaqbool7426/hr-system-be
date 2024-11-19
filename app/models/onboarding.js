@@ -6,6 +6,7 @@ module.exports = mongoose.model("onboarding", new Schema({
     completedTasks: [{ type: mongoose.Types.ObjectId, ref: 'onboarding_task' }],
     issuedAssets: [{ type: mongoose.Types.ObjectId, ref: 'onboarding_asset' }],
     isCompleted: { type: Boolean, default: false },
+    employeeStatus: { type: mongoose.Types.ObjectId, ref: 'customfield' },
     company: { type: mongoose.Types.ObjectId, ref: 'company', required: true },
     createdBy: { type: mongoose.Types.ObjectId, ref: 'user', required: true },
 }, {

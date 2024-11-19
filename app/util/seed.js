@@ -100,6 +100,7 @@ const Seed = async () => {
     firstName: 'Syed',
     lastName: 'Shujjat',
     email: 'shujaat@zaffretech.co',
+    avatar: "https://media.licdn.com/dms/image/v2/D4D03AQGJmFo4juxQ_Q/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1730796028848?e=1737590400&v=beta&t=K_udciOkp2TetN2iMxANthfyUXc7ecemEZ392kJ1xSE",
     emailVerifiedAt: new Date,
     password: bcrypt.hashSync('Admin@123', bcrypt.genSaltSync(10)),
     company: company._id,
