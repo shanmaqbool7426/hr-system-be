@@ -16,6 +16,7 @@ router.post('/assets/update/:id', [verifyToken, validations.updateAsset], (req, 
 router.delete('/assets/delete/:id', [verifyToken], (req, res) => controller.deleteAsset(req, res));
 
 router.get('/employees/onboarding', [verifyToken], (req, res) => controller.getOnboardingEmployees(req, res));
+router.get('/employees/offboarding', [verifyToken], (req, res) => controller.getOffboardingEmployees(req, res));
 router.get('/process/:type/:employee', [verifyToken], (req, res) => controller.getEmployeeProcess(req, res));
 router.patch('/process/:type/update/:id', [verifyToken], (req, res) => controller.updateEmployeeProcess(req, res));
 router.post('/process/:type/complete/:id', [verifyToken], (req, res) => controller.completeEmployeeProcess(req, res));

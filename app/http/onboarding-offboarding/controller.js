@@ -140,6 +140,20 @@ class OnboardingController {
     }
   }
 
+  async getOffboardingEmployees(req, res) {
+    try {
+      const { user } = req.payload
+      const status = await CustomField.findOne({ name: "Off Boarding" })
+      const employees = await User.find({ company: user.company._id, status: status._id }, "-password")
+        .populate('department')
+        .populate('designation')
+        .populate('status')
+      return Response(res, { employees })
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
+
   async getEmployeeProcess(req, res) {
     try {
       const { user } = req.payload

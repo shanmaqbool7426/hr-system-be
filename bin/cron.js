@@ -4,7 +4,9 @@ const RemoteWorkRequest = require('../app/models/remote_work_request');
 const User = require('../app/models/user');
 const UserChangeRequest = require('../app/models/user_change_request');
 const ChangeShiftRequest = require('../app/models/change_shift_request');
+const EmployeeResignation = require('../app/models/employee_resignation');
 const moment = require('moment');
+
 const RemoveExpiredOTP = async () => {
     await ResetPassword.deleteMany({ createdAt: { $lte: moment().subtract(30, 'minutes').toDate() } });
 }
@@ -64,6 +66,16 @@ const CheckChangeShiftRequest = async () => {
     }
 }
 
+const CheckEmployeeResignation = async () => {
+    const requests = await EmployeeResignation.find({ lastWorkingDay: { $gte: moment().startOf('day').toDate(), $lt: moment().endOf('day').toDate() } })
+    const _ids = requests.reduce((acc, request) => {
+        acc.push(request.employee)
+        return acc
+    }, [])
+    const status = await CustomField.findOne({ name: "Off Boarding" })
+    await User.updateMany({ _id: { $in: _ids } }, { $set: { status: status._id } })
+}
+
 const everyMinute = cron.schedule('* * * * *', async () => {
     await RemoveExpiredOTP()
 });
@@ -72,6 +84,7 @@ const everyDay = cron.schedule('0 0 * * *', async () => {
     await CheckRemoteWork()
     await CheckChangeRequest()
     await CheckChangeShiftRequest()
+    await CheckEmployeeResignation()
 });
 
 
