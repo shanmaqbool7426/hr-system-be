@@ -22,6 +22,7 @@ router.use("/custom-fields", require("./http/custom-field/routes"));
 router.use("/change-shift-requests", require("./http/change-shift-request/routes"));
 router.use("/departments", require("./http/department/routes"));
 router.use("/employees", require("./http/employee/routes"));
+router.use("/employee-resignations", require("./http/employee-resignation/routes"));
 router.use("/exemption-requests", require("./http/exemption-request/routes"));
 router.use("/exemption-types", require("./http/exemption-type/routes"));
 router.use("/feedback", require("./http/feedback/routes"));
