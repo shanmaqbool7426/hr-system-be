@@ -3,9 +3,9 @@ require("dotenv").config();
 
 const doc = {
   info: {
-    title: "HRM-Zaffre",
+    title: "Stratis HR",
     version: "1.0.0",
-    description: "HRM-Zaffre API Server endpoints",
+    description: "Stratis HR API Server endpoints",
     contact: {
       name: "Danish Gakhar",
     },

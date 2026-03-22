@@ -1,11 +1,12 @@
 {
-    "name": "zaffre-backend",
+    "name": "stratis-hr-backend",
     "version": "0.0.0",
     "private": true,
     "scripts": {
         "dev": "nodemon ./bin/www",
         "start": "node ./bin/www",
         "seed": "node ./app/util/seed",
+        "add-dummy": "node ./app/util/add-dummy-account",
         "swagger-autogen": "node ./app/swagger-docs/swagger.js"
     },
     "dependencies": {
